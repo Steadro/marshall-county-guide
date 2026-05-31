@@ -2,7 +2,7 @@
 
 A polished, public directory of local businesses across **Marshall County, Tennessee** — the county
 seat **Lewisburg** plus Chapel Hill, Cornersville, Petersburg, and Belfast. Curated and
-design-forward, with strong local SEO baked in. **163 businesses across 16 categories.**
+design-forward, with strong local SEO baked in. **150+ businesses across more than a dozen categories at launch.**
 
 Live at **[marshallcountyguide.com](https://marshallcountyguide.com)**. A community project — no ads,
 no paid placement, no sponsored listings.

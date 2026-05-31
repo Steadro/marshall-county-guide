@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+/* ===========================================================================
+   Design tokens for the "Warm & local-craft" look.
+   Editorial, handmade-and-proud. One warm accent (clay/terracotta) + earthy
+   neutrals. Retune the whole site from here.
+   ========================================================================= */
+@theme {
+  /* Typography, wired to next/font CSS variables (see app/layout.tsx) */
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-script: var(--font-fancy), Georgia, "Times New Roman", serif;
+
+  /* Surfaces, warm paper, not stark white */
+  --color-paper: #fbf6ee;
+  --color-paper-2: #f4ecdf;
+  --color-card: #fffdf9;
+
+  /* Ink, deep warm near-black plus muted steps */
+  --color-ink: #241e1a;
+  --color-ink-soft: #574c44;
+  --color-ink-faint: #8a7e74;
+
+  /* Lines / borders */
+  --color-line: #e7dccd;
+  --color-line-strong: #d9cab4;
+
+  /* Primary accent, clay / terracotta */
+  --color-clay: #bf522d;
+  --color-clay-dark: #9c3e1f;
+  --color-clay-soft: #f1dccf;
+
+  /* Secondary accent, forest, used sparingly */
+  --color-forest: #3e5c49;
+  --color-forest-soft: #dde7df;
+
+  /* Gold — reserved for the gold-standard (verified) trust signal only */
+  --color-gold: #b07d1f;
+  --color-gold-dark: #8a6113;
+  --color-gold-soft: #f6e9c6;
+
+  /* Radii */
+  --radius-card: 1rem;
+  --radius-pill: 999px;
+
+  /* Shadows, soft and warm-tinted */
+  --shadow-soft: 0 1px 2px rgba(36, 30, 26, 0.04), 0 8px 24px rgba(36, 30, 26, 0.06);
+  --shadow-lift: 0 2px 6px rgba(36, 30, 26, 0.06), 0 16px 40px rgba(36, 30, 26, 0.1);
+  /* Gold-standard card: soft warm halo on hover (subtle, not a full glow) */
+  --shadow-gold: 0 2px 6px rgba(176, 125, 31, 0.1), 0 16px 40px rgba(176, 125, 31, 0.16);
+
+  /* Motion */
+  --ease-gentle: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ===========================================================================
+   Base layer
+   ========================================================================= */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+  }
+
+  /* Visible, on-brand focus ring for keyboard users (WCAG) */
+  :focus-visible {
+    outline: 2px solid var(--color-clay);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-clay-soft);
+    color: var(--color-ink);
+  }
+}
+
+/* ===========================================================================
+   Small reusable utilities
+   ========================================================================= */
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 76rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Gentle entrance used on cards / sections */
+  .animate-fade-up {
+    animation: fade-up 0.5s var(--ease-gentle) both;
+  }
+
+  /* Each swapped line in the rotating hero place-name (rolls in as one unit) */
+  .place-word {
+    animation: place-in 0.9s var(--ease-gentle) both;
+  }
+}
+
+@keyframes place-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-fade-up {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

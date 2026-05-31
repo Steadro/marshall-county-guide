@@ -1,0 +1,230 @@
+// Lewisburg Local Business Directory — Prisma schema
+// Target: PostgreSQL (works cleanly with Next.js or Astro)
+//
+// Design notes:
+// - Starts CURATED (you/an editor own the data) but every piece needed for
+//   self-service ("businesses claim & edit their own listing") is already here
+//   (User, ownerId, claimStatus, Claim). You can ship without auth and turn it
+//   on later with NO schema rewrite.
+// - Fields map 1:1 to schema.org/LocalBusiness so each listing page can emit
+//   JSON-LD structured data — the single biggest SEO lever for a directory.
+// - Provenance fields (dataSource, sourceUrl, lastVerifiedAt) are first-class
+//   because stale small-town data is the #1 way a directory like this dies.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Core entity
+// ---------------------------------------------------------------------------
+
+model Business {
+  id        String  @id @default(cuid())
+  slug      String  @unique // URL-safe, e.g. "lawlers-barbecue" -> /business/lawlers-barbecue
+  name      String
+  legalName String? // if different from display name
+
+  // Descriptions
+  tagline          String? // one-liner for cards
+  description      String? @db.Text // long-form, listing page
+  shortDescription String? // 1 sentence, used for meta description fallback
+
+  // Classification
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+  subcategory String? // controlled-vocab refinement within a category (e.g. "BBQ", "Pharmacy"); see GOLD_STANDARD.md
+  tags       Tag[] // many-to-many secondary descriptors ("dog-friendly", "family-owned")
+
+  // Contact
+  email   String?
+  phone   String?
+  website String?
+
+  // Address (schema.org PostalAddress)
+  streetAddress String?
+  city          String  @default("Lewisburg")
+  state         String  @default("TN")
+  postalCode    String?
+  country       String  @default("US")
+
+  // Geo (schema.org GeoCoordinates) — drives the map + "near me"
+  latitude  Float?
+  longitude Float?
+
+  // Commerce details (all schema.org LocalBusiness props)
+  priceRange   String? // "$", "$$", "$$$"
+  foundingYear Int?
+
+  // Media
+  logoUrl     String?
+  coverUrl    String? // hero image for the listing page
+  photos      Photo[]
+
+  // Social / sameAs (emitted into JSON-LD "sameAs")
+  facebookUrl  String?
+  instagramUrl String?
+  twitterUrl   String?
+  youtubeUrl   String?
+
+  // Hours
+  hours   BusinessHours[]
+  hoursNote String? // free text for irregular hours ("Closed during walking-horse season")
+
+  // Editorial / lifecycle
+  status   BusinessStatus @default(DRAFT)
+  featured Boolean        @default(false) // hand-pick for the "fancy" showcase sections
+
+  // Provenance — where the data came from + how fresh it is
+  dataSource     String? // "Lewisburg Industrial Directory 2023", "Chamber", "manual"
+  sourceUrl      String?
+  lastVerifiedAt DateTime?
+  verifiedBy     String?
+
+  // Quality / gold-standard pipeline (see GOLD_STANDARD.md)
+  qualityTier    QualityTier @default(UNREVIEWED) // data depth/trust, distinct from publish `status`
+  internalContext String?    @db.Text // internal-only brief; NEVER rendered publicly
+  reviewFlag     String?     // set when auto-enrichment can't safely promote (conflict, rebrand, no source)
+
+  // Google Business Profile linkage + activity signal
+  googlePlaceId  String?   // GBP place_id, stable key for re-checks
+  googleMapsUrl  String?   // canonical maps URL (also usable in sameAs)
+  lastActiveAt   DateTime? // date of most recent Google activity signal (review/photo/post)
+  activitySource String?   // how activity was confirmed (e.g. "GBP review 2026-04-18")
+
+  // SEO overrides (optional; fall back to name/shortDescription if null)
+  metaTitle       String?
+  metaDescription String?
+
+  // Ownership / self-service (unused while curated; ready when you flip it on)
+  claimStatus ClaimStatus @default(UNCLAIMED)
+  ownerId     String?
+  owner       User?       @relation("BusinessOwner", fields: [ownerId], references: [id])
+  claims      Claim[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([city])
+  @@index([status])
+  @@index([featured])
+  @@index([qualityTier])
+}
+
+// ---------------------------------------------------------------------------
+// Classification
+// ---------------------------------------------------------------------------
+
+model Category {
+  id          String     @id @default(cuid())
+  slug        String     @unique // /category/restaurants
+  name        String // "Restaurant & Food"
+  description String?
+  icon        String? // lucide icon name or asset key
+  sortOrder   Int        @default(0)
+  businesses  Business[]
+}
+
+model Tag {
+  id         String     @id @default(cuid())
+  slug       String     @unique
+  name       String
+  businesses Business[]
+}
+
+// ---------------------------------------------------------------------------
+// Hours — one row per day-of-week block (supports split hours via multiple rows)
+// ---------------------------------------------------------------------------
+
+model BusinessHours {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  dayOfWeek Int // 0 = Sunday ... 6 = Saturday
+  opens     String // "09:00" (24h, store as string to keep TZ-free)
+  closes    String // "17:00"
+  isClosed  Boolean @default(false) // closed all day
+
+  @@index([businessId])
+}
+
+// ---------------------------------------------------------------------------
+// Media
+// ---------------------------------------------------------------------------
+
+model Photo {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  url        String
+  alt        String?
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@index([businessId])
+}
+
+// ---------------------------------------------------------------------------
+// Self-service (future) — kept minimal; safe to ignore until you enable auth
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  name          String?
+  role          UserRole   @default(OWNER)
+  ownedBusiness Business[] @relation("BusinessOwner")
+  claims        Claim[]
+  createdAt     DateTime   @default(now())
+}
+
+model Claim {
+  id         String      @id @default(cuid())
+  businessId String
+  business   Business    @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  status     ClaimStatus @default(PENDING)
+  message    String?     @db.Text
+  createdAt  DateTime    @default(now())
+
+  @@index([businessId])
+  @@index([userId])
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum BusinessStatus {
+  DRAFT // not yet shown publicly
+  PUBLISHED // live
+  UNVERIFIED // shown but flagged as needing a freshness check
+  CLOSED // kept for SEO/history, rendered as permanently closed
+}
+
+enum ClaimStatus {
+  UNCLAIMED
+  PENDING
+  CLAIMED
+  REJECTED
+}
+
+enum QualityTier {
+  UNREVIEWED // seed data as imported; unconfirmed
+  STANDARD // name/category/contact confirmed against a primary source
+  GOLD // meets every criterion in GOLD_STANDARD.md, dated + sourced
+}
+
+enum UserRole {
+  ADMIN
+  EDITOR
+  OWNER
+}

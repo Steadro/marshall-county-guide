@@ -262,7 +262,9 @@ export default async function BusinessPage({
                 </a>
               ) : (
                 <p className="mt-3 text-sm text-ink-faint">
-                  A street address isn’t listed, so the map shows {b.city}, {b.state}.{" "}
+                  {b.streetAddress
+                    ? `Showing the ${b.city} area for now while we pin down the exact spot.`
+                    : `A street address isn’t listed, so the map shows ${b.city}, ${b.state}.`}{" "}
                   <a
                     href={mapsSearch}
                     target="_blank"

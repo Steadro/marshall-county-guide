@@ -37,7 +37,7 @@ export function RotatingPlace() {
   if (isFinal) {
     return (
       <span key="final" className="place-word inline-block whitespace-nowrap">
-        <span className={cn(SCRIPT, "text-forest")}>Marshall County</span> home.
+        <span className={cn(SCRIPT, "text-pine")}>Marshall County</span> home.
       </span>
     );
   }
@@ -54,7 +54,7 @@ export function RotatingPlace() {
             key={i}
             aria-hidden={i !== index}
             className={cn(
-              "col-start-1 row-start-1 whitespace-nowrap text-clay",
+              "col-start-1 row-start-1 whitespace-nowrap text-pine",
               SCRIPT,
               i === index ? "place-word" : "invisible",
             )}

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <div className="container-page max-w-3xl py-16">
-      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-clay">
+      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-pine">
         About this project
       </p>
       <h1 className="text-balance text-4xl sm:text-5xl">
@@ -58,7 +58,7 @@ export default function AboutPage() {
             <li key={t.slug}>
               <Link
                 href={`/${t.slug}`}
-                className="inline-flex rounded-pill border border-line bg-card px-4 py-1.5 text-sm font-medium text-ink-soft transition hover:border-clay hover:text-clay"
+                className="inline-flex rounded-pill border border-line bg-card px-4 py-1.5 text-sm font-medium text-ink-soft transition hover:border-pine hover:text-pine"
               >
                 {t.name}, TN
               </Link>
@@ -87,7 +87,7 @@ export default function AboutPage() {
           href="https://github.com/Steadro/marshall-county-guide"
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-5 inline-flex items-center gap-1.5 rounded-pill border border-line bg-paper px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-clay hover:text-clay"
+          className="mt-5 inline-flex items-center gap-1.5 rounded-pill border border-line bg-paper px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-pine hover:text-pine"
         >
           View the source on GitHub
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -108,7 +108,7 @@ export default function AboutPage() {
           information, and inclusion here is not an endorsement of any business. Business names,
           logos, and trademarks belong to their respective owners. If a listing is yours and you’d
           like it updated or removed, just{" "}
-          <Link href="/for-owners" className="font-medium text-clay hover:text-clay-dark">
+          <Link href="/for-owners" className="font-medium text-pine hover:text-pine-dark">
             let us know
           </Link>
           .
@@ -122,7 +122,7 @@ export default function AboutPage() {
         </p>
         <Link
           href="/businesses"
-          className="mt-6 inline-flex items-center gap-1.5 rounded-pill bg-clay px-6 py-3 text-sm font-semibold text-white transition hover:bg-clay-dark"
+          className="mt-6 inline-flex items-center gap-1.5 rounded-pill bg-pine px-6 py-3 text-sm font-semibold text-white transition hover:bg-pine-dark"
         >
           Browse all businesses
           <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -143,7 +143,7 @@ function Value({
 }) {
   return (
     <div className="rounded-card bg-card p-6 shadow-soft ring-1 ring-line/70">
-      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-clay-soft text-clay-dark">
+      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-pine-soft text-pine-dark">
         <Icon className="h-5 w-5" aria-hidden={true} />
       </span>
       <h3 className="mt-4 font-serif text-lg font-semibold text-ink">{title}</h3>

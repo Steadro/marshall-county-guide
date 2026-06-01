@@ -60,7 +60,7 @@ export function BrowseTabs({
                 href={`/${t.slug}`}
                 className="group rounded-card bg-card p-5 text-center shadow-soft ring-1 ring-line/70 transition duration-300 hover:-translate-y-0.5 hover:shadow-lift"
               >
-                <span className="block font-serif text-lg font-semibold text-ink group-hover:text-clay-dark">
+                <span className="block font-serif text-lg font-semibold text-ink group-hover:text-creek-dark">
                   {t.name}
                 </span>
                 <span className="text-sm text-ink-faint">
@@ -94,7 +94,7 @@ function TabButton({
       onClick={onClick}
       className={cn(
         "inline-flex flex-1 items-center justify-center gap-2 rounded-pill px-4 py-2.5 text-sm font-semibold transition sm:flex-none",
-        active ? "bg-clay text-white shadow-soft" : "text-ink-soft hover:text-ink",
+        active ? "bg-creek-dark text-white shadow-soft" : "text-ink-soft hover:text-ink",
       )}
     >
       {icon}

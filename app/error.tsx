@@ -11,7 +11,7 @@ export default function Error({ reset }: { error: Error & { digest?: string }; r
 
   return (
     <div className="container-page flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
-      <p className="font-serif text-5xl font-semibold text-clay">Something went wrong</p>
+      <p className="font-serif text-5xl font-semibold text-pine">Something went wrong</p>
       <p className="mt-4 max-w-md text-ink-soft">
         We hit a snag loading this page. It’s usually temporary, please try again.
       </p>
@@ -19,13 +19,13 @@ export default function Error({ reset }: { error: Error & { digest?: string }; r
         <button
           type="button"
           onClick={reset}
-          className="inline-flex items-center gap-1.5 rounded-pill bg-clay px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-clay-dark"
+          className="inline-flex items-center gap-1.5 rounded-pill bg-pine px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-pine-dark"
         >
           <RefreshCw className="h-4 w-4" aria-hidden="true" /> Try again
         </button>
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-card px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-clay hover:text-clay"
+          className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-card px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-pine hover:text-pine"
         >
           <Home className="h-4 w-4" aria-hidden="true" /> Home
         </Link>

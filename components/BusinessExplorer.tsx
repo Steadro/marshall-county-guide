@@ -88,7 +88,7 @@ export function BusinessExplorer({
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search businesses…"
             aria-label="Search businesses"
-            className="w-full rounded-pill border border-line bg-paper py-2.5 pl-9 pr-3 text-sm text-ink outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/20"
+            className="w-full rounded-pill border border-line bg-paper py-2.5 pl-9 pr-3 text-sm text-ink outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
           />
         </div>
 
@@ -107,7 +107,7 @@ export function BusinessExplorer({
                   id="filter-category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="rounded-pill border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/20"
+                  className="rounded-pill border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
                 >
                   <option value="">All categories</option>
                   {categoryOptions.map((o) => (
@@ -128,7 +128,7 @@ export function BusinessExplorer({
                   id="filter-town"
                   value={town}
                   onChange={(e) => setTown(e.target.value)}
-                  className="rounded-pill border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/20"
+                  className="rounded-pill border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
                 >
                   <option value="">All towns</option>
                   {townOptions.map((o) => (
@@ -147,15 +147,15 @@ export function BusinessExplorer({
             className={cn(
               "flex shrink-0 cursor-pointer select-none items-center gap-2 rounded-pill border px-3 py-2.5 text-sm font-medium transition",
               localOnly
-                ? "border-clay bg-clay-soft text-clay-dark"
-                : "border-line bg-paper text-ink-soft hover:border-clay/50",
+                ? "border-pine bg-pine-soft text-pine-dark"
+                : "border-line bg-paper text-ink-soft hover:border-pine/50",
             )}
           >
             <input
               type="checkbox"
               checked={localOnly}
               onChange={(e) => setLocalOnly(e.target.checked)}
-              className="h-4 w-4 accent-clay"
+              className="h-4 w-4 accent-pine"
             />
             Locally owned only
           </label>

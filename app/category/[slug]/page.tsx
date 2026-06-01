@@ -77,15 +77,15 @@ export default async function CategoryPage({
       />
 
       <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-ink-faint">
-        <Link href="/" className="hover:text-clay">Home</Link>
+        <Link href="/" className="hover:text-pine">Home</Link>
         <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-        <Link href="/businesses" className="hover:text-clay">Businesses</Link>
+        <Link href="/businesses" className="hover:text-pine">Businesses</Link>
         <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
         <span className="text-ink-soft">{category.name}</span>
       </nav>
 
       <header className="mt-6 flex items-start gap-4">
-        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-clay-soft text-clay-dark">
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-pine-soft text-pine-dark">
           <CategoryIcon slug={category.slug} className="h-7 w-7" />
         </span>
         <div className="max-w-2xl">

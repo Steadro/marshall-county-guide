@@ -38,7 +38,7 @@ export function BusinessCard({
       </div>
 
       <h3 className="flex items-start justify-between gap-2 font-serif text-lg font-semibold leading-snug text-ink">
-        <span className="group-hover:text-clay-dark">{business.name}</span>
+        <span className="group-hover:text-pine-dark">{business.name}</span>
         <ArrowUpRight
           className="mt-0.5 h-4 w-4 shrink-0 text-ink-faint opacity-0 transition-opacity group-hover:opacity-100"
           aria-hidden="true"

@@ -32,7 +32,7 @@ const ACTIONS = [
 export default function ForOwnersPage() {
   return (
     <div className="container-page max-w-3xl py-16">
-      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-clay">
+      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-pine">
         For business owners
       </p>
       <h1 className="text-balance text-4xl sm:text-5xl">Is this your business?</h1>
@@ -50,12 +50,12 @@ export default function ForOwnersPage() {
             href={ownerMailto(subject)}
             className="group flex flex-col gap-3 rounded-card bg-card p-6 shadow-soft ring-1 ring-line/70 transition duration-300 hover:-translate-y-0.5 hover:shadow-lift"
           >
-            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-clay-soft text-clay-dark transition-colors group-hover:bg-clay group-hover:text-white">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-pine-soft text-pine-dark transition-colors group-hover:bg-pine group-hover:text-white">
               <Icon className="h-5 w-5" aria-hidden="true" />
             </span>
             <span className="font-serif text-lg font-semibold text-ink">{title}</span>
             <span className="text-sm leading-relaxed text-ink-soft">{body}</span>
-            <span className="mt-auto inline-flex items-center gap-1.5 pt-2 text-sm font-medium text-clay group-hover:text-clay-dark">
+            <span className="mt-auto inline-flex items-center gap-1.5 pt-2 text-sm font-medium text-pine group-hover:text-pine-dark">
               <Mail className="h-4 w-4" aria-hidden="true" /> Email us
             </span>
           </a>

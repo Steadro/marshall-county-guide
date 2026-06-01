@@ -60,13 +60,13 @@ export default async function TownPage({
       />
 
       <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-ink-faint">
-        <Link href="/" className="hover:text-clay">Home</Link>
+        <Link href="/" className="hover:text-pine">Home</Link>
         <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
         <span className="text-ink-soft">{name}</span>
       </nav>
 
       <header className="mt-6 max-w-2xl">
-        <p className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-clay">
+        <p className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-pine">
           <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> Marshall County, TN
         </p>
         <h1 className="text-3xl sm:text-4xl">Businesses in {name}</h1>

@@ -27,12 +27,12 @@ export function HomeSearch() {
           onChange={(e) => setValue(e.target.value)}
           placeholder="Search restaurants, shops, services…"
           aria-label="Search the directory"
-          className="w-full rounded-pill border border-line bg-card py-3 pl-11 pr-4 text-sm text-ink shadow-soft outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/20"
+          className="w-full rounded-pill border border-line bg-card py-3 pl-11 pr-4 text-sm text-ink shadow-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
         />
       </div>
       <button
         type="submit"
-        className="rounded-pill bg-clay px-5 py-3.5 text-sm font-semibold text-white shadow-soft transition hover:bg-clay-dark"
+        className="rounded-pill bg-pine px-5 py-3.5 text-sm font-semibold text-white shadow-soft transition hover:bg-pine-dark"
       >
         Search
       </button>

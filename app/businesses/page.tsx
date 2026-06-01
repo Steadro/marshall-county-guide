@@ -18,7 +18,7 @@ export default async function BusinessesPage() {
   return (
     <div className="container-page py-12">
       <header className="mb-8 max-w-2xl">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-clay">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-pine">
           The directory
         </p>
         <h1 className="text-3xl sm:text-4xl">All businesses</h1>

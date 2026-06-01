@@ -109,11 +109,11 @@ export default async function BusinessPage({
             aria-label="Breadcrumb"
             className="flex flex-wrap items-center gap-1 py-5 text-sm text-ink-faint"
           >
-            <Link href="/" className="hover:text-clay">Home</Link>
+            <Link href="/" className="hover:text-pine">Home</Link>
             <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-            <Link href="/businesses" className="hover:text-clay">Businesses</Link>
+            <Link href="/businesses" className="hover:text-pine">Businesses</Link>
             <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
-            <Link href={`/category/${b.category.slug}`} className="hover:text-clay">
+            <Link href={`/category/${b.category.slug}`} className="hover:text-pine">
               {b.category.name}
             </Link>
           </nav>
@@ -133,9 +133,9 @@ export default async function BusinessPage({
           ) : null}
 
           <p className="mt-2 inline-flex items-center gap-1.5 text-ink-soft">
-            <MapPin className="h-4 w-4 text-clay" aria-hidden="true" />
+            <MapPin className="h-4 w-4 text-pine" aria-hidden="true" />
             {townSlug ? (
-              <Link href={`/${townSlug}`} className="hover:text-clay">
+              <Link href={`/${townSlug}`} className="hover:text-pine">
                 {b.city}, {b.state}
               </Link>
             ) : (
@@ -153,7 +153,7 @@ export default async function BusinessPage({
                   href={websiteHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-pill bg-clay px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-clay-dark"
+                  className="inline-flex items-center gap-1.5 rounded-pill bg-pine px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-pine-dark"
                 >
                   Visit website
                   <ExternalLink className="h-4 w-4" aria-hidden="true" />
@@ -162,7 +162,7 @@ export default async function BusinessPage({
               {phoneLink ? (
                 <a
                   href={phoneLink}
-                  className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-card px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-clay hover:text-clay"
+                  className="inline-flex items-center gap-1.5 rounded-pill border border-line bg-card px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-pine hover:text-pine"
                 >
                   <Phone className="h-4 w-4" aria-hidden="true" /> Call
                 </a>
@@ -194,15 +194,15 @@ export default async function BusinessPage({
               <dl className="mt-4 divide-y divide-line/60 overflow-hidden rounded-card bg-card text-sm ring-1 ring-line/70">
                 {addressLine ? (
                   <div className="flex gap-3 px-5 py-3.5">
-                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-clay" aria-hidden="true" />
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-pine" aria-hidden="true" />
                     <span className="text-ink-soft">{addressLine}</span>
                   </div>
                 ) : null}
                 {phoneDisplay ? (
                   <div className="flex gap-3 px-5 py-3.5">
-                    <Phone className="mt-0.5 h-4 w-4 shrink-0 text-clay" aria-hidden="true" />
+                    <Phone className="mt-0.5 h-4 w-4 shrink-0 text-pine" aria-hidden="true" />
                     {phoneLink ? (
-                      <a href={phoneLink} className="text-ink hover:text-clay">{phoneDisplay}</a>
+                      <a href={phoneLink} className="text-ink hover:text-pine">{phoneDisplay}</a>
                     ) : (
                       <span className="text-ink-soft">{phoneDisplay}</span>
                     )}
@@ -210,12 +210,12 @@ export default async function BusinessPage({
                 ) : null}
                 {websiteHref ? (
                   <div className="flex gap-3 px-5 py-3.5">
-                    <Globe className="mt-0.5 h-4 w-4 shrink-0 text-clay" aria-hidden="true" />
+                    <Globe className="mt-0.5 h-4 w-4 shrink-0 text-pine" aria-hidden="true" />
                     <a
                       href={websiteHref}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="break-words text-ink hover:text-clay"
+                      className="break-words text-ink hover:text-pine"
                     >
                       {websiteLabel}
                     </a>
@@ -229,7 +229,7 @@ export default async function BusinessPage({
           {b.hours.length > 0 ? (
             <section className="mt-10">
               <h2 className="flex items-center gap-2 text-xl">
-                <Clock className="h-5 w-5 text-clay" aria-hidden="true" /> Hours
+                <Clock className="h-5 w-5 text-pine" aria-hidden="true" /> Hours
               </h2>
               <dl className="mt-4 divide-y divide-line/70 overflow-hidden rounded-card bg-card ring-1 ring-line/70">
                 {b.hours.map((h, i) => (
@@ -255,7 +255,7 @@ export default async function BusinessPage({
                   href={`https://www.google.com/maps/dir/?api=1&destination=${b.latitude},${b.longitude}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-clay hover:text-clay-dark"
+                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-pine hover:text-pine-dark"
                 >
                   Get directions
                   <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
@@ -267,7 +267,7 @@ export default async function BusinessPage({
                     href={mapsSearch}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-clay hover:text-clay-dark"
+                    className="font-medium text-pine hover:text-pine-dark"
                   >
                     Find on Google Maps
                   </a>
@@ -288,7 +288,7 @@ export default async function BusinessPage({
                     href={href!}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-pill bg-paper-2 px-3 py-1.5 text-xs font-medium text-ink-soft transition hover:bg-clay hover:text-white"
+                    className="inline-flex items-center gap-1.5 rounded-pill bg-paper-2 px-3 py-1.5 text-xs font-medium text-ink-soft transition hover:bg-pine hover:text-white"
                   >
                     {label}
                     <ExternalLink className="h-3 w-3" aria-hidden="true" />
@@ -304,7 +304,7 @@ export default async function BusinessPage({
             business?{" "}
             <a
               href={ownerMailto("Update or remove my listing", { name: b.name, slug: b.slug })}
-              className="font-medium text-clay hover:text-clay-dark"
+              className="font-medium text-pine hover:text-pine-dark"
             >
               Update or remove this listing.
             </a>

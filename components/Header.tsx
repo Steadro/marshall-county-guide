@@ -8,7 +8,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-line/70 bg-paper/85 backdrop-blur-md">
       <div className="container-page flex h-16 items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-2.5 rounded-md">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-clay text-white shadow-soft">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-pine text-white shadow-soft">
             <MapPin className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
           </span>
           <span className="flex flex-col leading-none">

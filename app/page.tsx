@@ -13,6 +13,7 @@ import { GoldNote } from "@/components/GoldNote";
 import { SectionHeading } from "@/components/SectionHeading";
 import { HomeSearch } from "@/components/HomeSearch";
 import { RotatingPlace } from "@/components/RotatingPlace";
+import { VisitorBand } from "@/components/VisitorBand";
 import { BrowseTabs } from "@/components/BrowseTabs";
 import { HistoryTabs } from "@/components/HistoryTabs";
 import { DinnerPicker } from "@/components/DinnerPicker";
@@ -99,16 +100,19 @@ export default async function HomePage() {
           href="https://commons.wikimedia.org/wiki/File:Marshall_County_Tennessee_Courthouse.jpg"
           target="_blank"
           rel="noopener noreferrer"
-          className="absolute bottom-2 right-3 z-10 rounded bg-paper/70 px-1.5 py-0.5 text-[10px] text-ink-faint backdrop-blur-sm hover:text-clay"
+          className="absolute bottom-2 right-3 z-10 rounded bg-paper/70 px-1.5 py-0.5 text-[10px] text-ink-faint backdrop-blur-sm hover:text-pine"
         >
           Courthouse photo: Ichabod, CC BY-SA 3.0
         </a>
       </section>
 
+      {/* Just visiting? — a front door for visitors, before the resident-focused browse */}
+      <VisitorBand />
+
       {/* Spotlight: rotates daily so every business gets a turn */}
       {spotlight.length > 0 ? (
         <section className="container-page pt-8 pb-12">
-          <div className="rounded-[1.75rem] bg-paper-2/70 p-6 ring-1 ring-line/70 sm:p-8 lg:p-10">
+          <div className="rounded-[1.75rem] bg-paper-2 p-6 ring-1 ring-line sm:p-8 lg:p-10">
             <SectionHeading
               eyebrow="In the spotlight"
               title="A few local businesses worth a look"
@@ -128,11 +132,11 @@ export default async function HomePage() {
       ) : null}
 
       {/* Categories */}
-      <section id="categories" className="scroll-mt-20 bg-paper-2/60 py-16">
+      <section id="categories" className="scroll-mt-20 bg-paper-2 py-16">
         <div className="container-page">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-xl">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-clay">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-creek-dark">
                 Browse
               </p>
               <h2 className="text-balance text-2xl sm:text-3xl">Find a local business</h2>
@@ -154,7 +158,7 @@ export default async function HomePage() {
       {/* History: a little background on the county and its towns */}
       <section id="history" className="container-page scroll-mt-20 py-16">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-clay">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-pine">
             A little local history
           </p>
           <h2 className="text-balance text-2xl sm:text-3xl">How these towns came to be</h2>
@@ -180,7 +184,7 @@ export default async function HomePage() {
           </p>
           <Link
             href="/about"
-            className="mt-7 inline-flex items-center gap-1.5 rounded-pill bg-clay px-6 py-3 text-sm font-semibold text-white transition hover:bg-clay-dark"
+            className="mt-7 inline-flex items-center gap-1.5 rounded-pill bg-pine px-6 py-3 text-sm font-semibold text-white transition hover:bg-pine-dark"
           >
             About this project
             <ArrowRight className="h-4 w-4" aria-hidden="true" />

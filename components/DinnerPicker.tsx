@@ -95,7 +95,7 @@ export function DinnerPicker({
           resetState();
           setOpen(true);
         }}
-        className="inline-flex shrink-0 items-center gap-2 rounded-pill border border-clay/30 bg-clay-soft px-4 py-2.5 text-sm font-semibold text-clay-dark transition hover:border-clay hover:bg-clay hover:text-white"
+        className="inline-flex shrink-0 items-center gap-2 rounded-pill border border-creek/30 bg-creek-soft px-4 py-2.5 text-sm font-semibold text-creek-dark transition hover:border-creek-dark hover:bg-creek-dark hover:text-white"
       >
         <UtensilsCrossed className="h-4 w-4" aria-hidden="true" />
         Can’t decide on dinner?
@@ -124,7 +124,7 @@ export function DinnerPicker({
 
             {!city ? (
               <>
-                <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-clay-soft text-clay-dark">
+                <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-creek-soft text-creek-dark">
                   <UtensilsCrossed className="h-6 w-6" aria-hidden="true" />
                 </span>
                 <h2 id="dinner-title" className="mt-4 font-serif text-2xl font-semibold text-ink">
@@ -139,7 +139,7 @@ export function DinnerPicker({
                       key={t.slug}
                       type="button"
                       onClick={() => chooseCity(t.name)}
-                      className="rounded-pill border border-line bg-paper px-4 py-3 text-sm font-medium text-ink-soft transition hover:border-clay hover:text-clay"
+                      className="rounded-pill border border-line bg-paper px-4 py-3 text-sm font-medium text-ink-soft transition hover:border-creek hover:text-creek"
                     >
                       {t.name}
                     </button>
@@ -147,7 +147,7 @@ export function DinnerPicker({
                   <button
                     type="button"
                     onClick={() => chooseCity("*")}
-                    className="rounded-pill bg-clay px-4 py-3 text-sm font-semibold text-white transition hover:bg-clay-dark"
+                    className="rounded-pill bg-creek-dark px-4 py-3 text-sm font-semibold text-white transition hover:brightness-110"
                   >
                     Anywhere nearby
                   </button>
@@ -171,7 +171,7 @@ export function DinnerPicker({
                       <span className="text-xs uppercase tracking-wide text-ink-faint">
                         {result.city}
                       </span>
-                      <span className="mt-1 inline-flex items-center gap-1.5 text-sm font-medium text-clay group-hover:text-clay-dark">
+                      <span className="mt-1 inline-flex items-center gap-1.5 text-sm font-medium text-creek group-hover:text-creek-dark">
                         Visit listing <ArrowRight className="h-4 w-4" aria-hidden="true" />
                       </span>
                     </Link>
@@ -186,7 +186,7 @@ export function DinnerPicker({
                     type="button"
                     onClick={() => spin(poolFor(city))}
                     disabled={spinning}
-                    className="inline-flex items-center gap-2 rounded-pill bg-clay px-5 py-3 text-sm font-semibold text-white transition hover:bg-clay-dark disabled:opacity-70"
+                    className="inline-flex items-center gap-2 rounded-pill bg-creek-dark px-5 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-70"
                   >
                     <Dices className={spinning ? "h-4 w-4 animate-spin" : "h-4 w-4"} aria-hidden="true" />
                     {spinning ? "Picking…" : "Pick again"}

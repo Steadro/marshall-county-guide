@@ -54,6 +54,7 @@ export const townCentroidByName = new Map<string, { lat: number; lng: number }>(
 
 export const mainNav = [
   { href: "/businesses", label: "All Businesses" },
+  { href: "/#visit", label: "Things to Do" },
   { href: "/#categories", label: "Categories" },
   { href: "/about", label: "About" },
 ] as const;

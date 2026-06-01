@@ -26,7 +26,7 @@ export function HistoryTabs() {
             className={cn(
               "shrink-0 whitespace-nowrap rounded-pill px-4 py-2 text-sm font-semibold transition",
               p.key === active
-                ? "bg-clay text-white shadow-soft"
+                ? "bg-pine text-white shadow-soft"
                 : "text-ink-soft hover:bg-paper-2 hover:text-ink",
             )}
           >
@@ -37,7 +37,7 @@ export function HistoryTabs() {
 
       <div className="mt-7 grid gap-8 lg:grid-cols-[1.6fr_1fr]">
         <div role="tabpanel">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-clay">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-pine">
             {place.meta}
           </p>
           <h3 className="mt-2 font-serif text-2xl text-ink sm:text-3xl">{place.label}</h3>
@@ -59,7 +59,7 @@ export function HistoryTabs() {
               <li key={i} className="flex gap-3 text-sm leading-relaxed text-ink-soft">
                 <span
                   aria-hidden="true"
-                  className="mt-2 h-1.5 w-1.5 shrink-0 rounded-pill bg-clay"
+                  className="mt-2 h-1.5 w-1.5 shrink-0 rounded-pill bg-pine"
                 />
                 <span>{fact}</span>
               </li>

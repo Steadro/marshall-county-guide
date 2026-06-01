@@ -4,17 +4,18 @@
 
 import { hashString, initials } from "./utils";
 
-// Muted, harmonious earthy duotones, warm/local-craft, no neon. Each entry is
-// [from, to, ink] where `ink` is the legible text color over the gradient.
+// Harmonious "Courthouse Green" duotones, no neon, no brown. Centered on the
+// brand families (pine, creek, goldenrod) with clay rose for warm variety. Each
+// entry is [from, to, ink] where `ink` is the legible text color over the gradient.
 export const PLACEHOLDER_PALETTES: ReadonlyArray<readonly [string, string, string]> = [
-  ["#c4663b", "#9c3e1f", "#fbf1e9"], // terracotta
-  ["#4e6e55", "#314b3a", "#eef3ec"], // forest
-  ["#c39a44", "#8f6820", "#fdf6e6"], // ochre / mustard
-  ["#b3604a", "#7e3a2a", "#fdeee6"], // clay rose
-  ["#7c7b3e", "#565626", "#f7f6e6"], // olive
-  ["#3f6e6a", "#284946", "#e9f2f0"], // teal stone
-  ["#7c5057", "#4d2e33", "#f6e9ea"], // plum brown
-  ["#a9794f", "#785130", "#fcefe2"], // sand
+  ["#3f6b54", "#284946", "#eef2ec"], // pine
+  ["#5b8bb0", "#3c6485", "#eaf2f8"], // creek blue
+  ["#d4a13f", "#a1721d", "#fbf4e0"], // goldenrod
+  ["#c07a63", "#8f5240", "#f7ece7"], // clay rose
+  ["#6f8b5b", "#4a5e38", "#f0f4e9"], // sage
+  ["#3f7e74", "#27514a", "#e9f2f0"], // teal stone
+  ["#6d77a6", "#454e7e", "#eef0f8"], // slate periwinkle
+  ["#4d7fa3", "#2f5573", "#e9f1f6"], // lake deep
 ];
 
 export interface PlaceholderArt {

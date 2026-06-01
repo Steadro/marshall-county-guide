@@ -44,7 +44,8 @@ interface EnrichmentRecord {
   verifiedName?: string; // overrides display name if branding differs
   categoryName?: string; // must be an existing Category name
   subcategory?: string;
-  shortDescription?: string; // the 1–2 line public copy
+  tagline?: string; // card one-liner; word-boundary truncated to CARD_TAGLINE_MAX
+  shortDescription?: string; // the 1–2 sentence page lead (also meta fallback)
   internalContext?: string; // internal-only brief
   priceRange?: string;
   phone?: string;
@@ -66,6 +67,24 @@ interface EnrichmentRecord {
 
 function present<T>(v: T | undefined | null): v is T {
   return v !== undefined && v !== null;
+}
+
+/**
+ * Max length for the card `tagline`. The card (BusinessCard.tsx) clamps to two
+ * lines at text-sm; ~80 chars fills that without a mid-word CSS cut. This is a
+ * data-level guardrail — authored taglines should target ~60–75 chars. Stored
+ * copy is word-boundary truncated to this so cards never show "…BB…".
+ */
+const CARD_TAGLINE_MAX = 80;
+
+/** Trim a tagline to CARD_TAGLINE_MAX at a whole-word boundary. */
+function capTagline(s: string): { value: string; truncated: boolean } {
+  const t = s.trim().replace(/\s+/g, " ");
+  if (t.length <= CARD_TAGLINE_MAX) return { value: t, truncated: false };
+  const slice = t.slice(0, CARD_TAGLINE_MAX);
+  const lastSpace = slice.lastIndexOf(" ");
+  const cut = lastSpace > 0 ? slice.slice(0, lastSpace) : slice;
+  return { value: cut.replace(/[\s,;:.\-–—]+$/, ""), truncated: true };
 }
 
 /** Returns the list of unmet GOLD criteria for a record (empty = passes). */
@@ -146,9 +165,15 @@ async function applyRecord(r: EnrichmentRecord) {
     lastVerifiedAt: new Date(),
     verifiedBy: r.verifiedBy ?? "enrich-apply",
   };
+  let taglineWarning: string | null = null;
   if (present(r.verifiedName)) data.name = r.verifiedName;
   if (present(categoryId)) data.categoryId = categoryId;
   if (present(r.subcategory)) data.subcategory = r.subcategory;
+  if (present(r.tagline)) {
+    const capped = capTagline(r.tagline);
+    data.tagline = capped.value;
+    if (capped.truncated) taglineWarning = `tagline truncated to ${capped.value.length}c`;
+  }
   if (present(r.shortDescription)) data.shortDescription = r.shortDescription;
   if (present(r.internalContext)) data.internalContext = r.internalContext;
   if (present(r.priceRange)) data.priceRange = r.priceRange;
@@ -164,8 +189,9 @@ async function applyRecord(r: EnrichmentRecord) {
   if (present(r.sourceUrl)) data.sourceUrl = r.sourceUrl;
   if (present(r.status)) data.status = BusinessStatus[r.status];
 
+  const warn = taglineWarning ? ` [${taglineWarning}]` : "";
   if (DRY) {
-    return { label, outcome: `DRY ${tier}${note ? ` — ${note}` : ""}`, biz };
+    return { label, outcome: `DRY ${tier}${note ? ` — ${note}` : ""}${warn}`, biz };
   }
 
   await prisma.$transaction(async (tx) => {
@@ -183,7 +209,7 @@ async function applyRecord(r: EnrichmentRecord) {
       }
     }
   });
-  return { label, outcome: `${tier}${note ? ` — ${note}` : ""}`, biz };
+  return { label, outcome: `${tier}${note ? ` — ${note}` : ""}${warn}`, biz };
 }
 
 async function main() {

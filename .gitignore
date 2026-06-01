@@ -33,11 +33,22 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
+# auto-enrich watcher logs (local runtime output)
+/scripts/logs/
+
 # maintainer-local working docs (operating truth, kept out of the repo by choice)
 /PROJECT.md
 /DATA.md
 
-# enrichment batches are the maintainer's working data: internal research notes on
-# named businesses, kept local. The pipeline that applies them ships in the repo
-# (scripts/apply-enrichment.ts, .github/workflows/enrich.yml); the batch files don't.
+# Enrichment batches are the maintainer's local working data: research notes on
+# named businesses, kept off GitHub. The pipeline that applies them ships in the
+# repo (scripts/apply-enrichment.ts + scripts/auto-enrich-push.ps1); the batch
+# files and their applied archive do not. Neon is the system of record.
 /data/enrichment/*.json
+/data/enrichment/.applied/
+
+# research / scratch data outputs (regenerated locally, not source)
+/data/coverage-scan-*.json
+
+# redundant binary seed (the CSV is authoritative)
+*.xlsx

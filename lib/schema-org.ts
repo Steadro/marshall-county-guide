@@ -4,6 +4,7 @@
 import type { BusinessDetail } from "@/lib/queries";
 import { siteConfig } from "@/lib/site";
 import { ensureHttp } from "@/lib/utils";
+import { PLACES } from "@/lib/history";
 
 // Refine schema.org @type by category slug; fall back to LocalBusiness.
 const TYPE_BY_CATEGORY: Record<string, string> = {
@@ -113,6 +114,46 @@ export function buildSiteJsonLd(): Record<string, unknown> {
       name: siteConfig.name,
       areaServed: siteConfig.region,
     },
+    // Advertise the directory search so engines can offer a sitelinks searchbox.
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${siteConfig.url}/businesses?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+}
+
+/**
+ * ItemList of the county and its towns as schema.org Place entities, carrying
+ * the local-history copy as descriptions. Rendered on the homepage so the
+ * History section is machine-readable (towns link to their directory pages).
+ */
+export function buildHistoryJsonLd(): Record<string, unknown> {
+  const items = PLACES.map((p, i) => {
+    const isCounty = p.key === "county";
+    const place: Record<string, unknown> = {
+      "@type": isCounty ? "AdministrativeArea" : "City",
+      name: p.label,
+      url: isCounty ? siteConfig.url : `${siteConfig.url}/${p.key}`,
+      description: p.paragraphs.join(" "),
+    };
+    if (!isCounty) {
+      place.containedInPlace = {
+        "@type": "AdministrativeArea",
+        name: "Marshall County, Tennessee",
+      };
+    }
+    return { "@type": "ListItem", position: i + 1, item: place };
+  });
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Marshall County, Tennessee and its towns",
+    itemListElement: items,
   };
 }
 

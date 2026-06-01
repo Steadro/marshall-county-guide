@@ -28,12 +28,20 @@ export async function generateMetadata({
   const data = await getCategoryBySlug(slug);
   if (!data) return { title: "Category not found" };
   const { category } = data;
+  const title = `${category.name} in Marshall County, TN`;
+  const description =
+    category.description ??
+    `Find ${category.name.toLowerCase()} businesses across Marshall County, Tennessee.`;
   return {
-    title: `${category.name} in Marshall County, TN`,
-    description:
-      category.description ??
-      `Find ${category.name.toLowerCase()} businesses across Marshall County, Tennessee.`,
+    title,
+    description,
     alternates: { canonical: `/category/${category.slug}` },
+    openGraph: {
+      type: "website",
+      title,
+      description,
+      url: `${siteConfig.url}/category/${category.slug}`,
+    },
   };
 }
 

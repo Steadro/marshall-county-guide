@@ -137,7 +137,7 @@ scripts/
   sql/                     Hand-written additive SQL migrations
 data/
   businesses-seed.csv      Source data for every business
-  enrichment/              Data-quality enrichment batches (JSON; gitignored, maintainer-local)
+  enrichment/              Data-quality enrichment batches (JSON)
 ```
 
 ---
@@ -157,12 +157,11 @@ data/
   [`scripts/apply-enrichment.ts`](scripts/apply-enrichment.ts), which only promotes a record to
   `GOLD` when every criterion is met and otherwise holds it at `STANDARD`. GOLD listings get a subtle
   gold tint on their cards.
-- **Enrichment pipeline:** enrichment batches are JSON files in `data/enrichment/` that update
-  existing records to the quality bar. `npm run enrich:apply <file>` / `npm run enrich:dry` apply or
-  preview a batch, and [`.github/workflows/enrich.yml`](.github/workflows/enrich.yml) runs that in CI
-  against the configured database (open a PR for a dry-run preview; merge to `main` to apply). ISR
-  means enrichment shows up live within ~1h with no redeploy. The batch files are the maintainer's
-  working research data and are gitignored, so this repo ships the pipeline, not the batches.
+- **Enrichment pipeline:** batches are drafted as `data/enrichment/*.json` (gitignored — they hold
+  the maintainer's local research notes, so they stay off GitHub). A local watcher
+  ([`scripts/auto-enrich-push.ps1`](scripts/auto-enrich-push.ps1)) applies new batches to Neon via
+  `npm run enrich:apply <file>` and archives the applied file; `npm run enrich:dry` previews without
+  writing. Neon is the system of record. (ISR means enrichment shows up live within ~1h, no redeploy.)
 - **Editing content:** add/extend rows in `data/businesses-seed.csv` and re-run `npm run seed` (it
   only creates new rows and refreshes `UNREVIEWED` ones — it never overwrites enriched records), or
   edit directly via `npm run db:studio`. Slugs are stable and unique (chains are de-collided by

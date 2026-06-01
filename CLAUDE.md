@@ -1,8 +1,8 @@
 # CLAUDE.md — Marshall County Business Directory
 
-Conventions and context for working in this repo. This file holds the durable coding conventions. (The maintainer keeps two additional working docs — `PROJECT.md` for current state and runbooks, `DATA.md` for the data model and quality bar — locally; they are gitignored and not part of this public repo.)
+Conventions and context for working in this repo. **Start with the two local master docs (gitignored, not on GitHub — they live only on the maintainer's machine):** `PROJECT.md` for current state, the company-entry lifecycle, decisions, and runbooks; `DATA.md` for the data model, the gold-standard quality bar, and the enrichment workflow. This file holds the durable coding conventions.
 
-Enrichment batches are JSON files in `data/enrichment/` that raise records to the quality bar; `scripts/apply-enrichment.ts` applies them and `.github/workflows/enrich.yml` runs that against a maintainer's database (PR = dry-run preview, merge to `main` = apply). The batch files are the maintainer's working data and are gitignored, so this repo ships the pipeline, not the batches.
+**If you are Claude Cowork, read `COWORK.md` first** — it explains your role (draft enrichment batches into `data/enrichment/`, never apply them) and the network boundary: Cowork's sandbox cannot reach Neon. The apply is automated and local: a watcher on the maintainer's machine (`scripts/auto-enrich-push.ps1`, Task Scheduler, every 15 min) applies new batches straight to Neon via `scripts/apply-enrichment.ts`, then archives each to `data/enrichment/.applied/` (gitignored). Batch files are never committed — Neon is the system of record, and this repo is public, so the research notes inside batches stay on the maintainer's machine. Writing a valid batch file is the whole job. Claude Code on the maintainer's machine is the tool that touches Neon directly.
 
 ## Project
 

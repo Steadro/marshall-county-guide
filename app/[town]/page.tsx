@@ -24,10 +24,18 @@ export async function generateMetadata({
   const { town } = await params;
   const name = townSlugToName.get(town);
   if (!name) return { title: "Town not found" };
+  const title = `Businesses in ${name}, TN`;
+  const description = `A directory of local businesses in ${name}, Tennessee. Find restaurants, shops, services, and more in Marshall County.`;
   return {
-    title: `Businesses in ${name}, TN`,
-    description: `A directory of local businesses in ${name}, Tennessee. Find restaurants, shops, services, and more in Marshall County.`,
+    title,
+    description,
     alternates: { canonical: `/${town}` },
+    openGraph: {
+      type: "website",
+      title,
+      description,
+      url: `${siteConfig.url}/${town}`,
+    },
   };
 }
 

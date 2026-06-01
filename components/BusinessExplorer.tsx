@@ -6,6 +6,7 @@ import { Search, X, SlidersHorizontal } from "lucide-react";
 import type { BusinessCard as BusinessCardData } from "@/lib/queries";
 import { BusinessCard } from "@/components/BusinessCard";
 import { GoldNote } from "@/components/GoldNote";
+import { matchesQuery } from "@/lib/search";
 import { cn } from "@/lib/utils";
 
 interface FilterOption {
@@ -52,22 +53,12 @@ export function BusinessExplorer({
   }, [businesses]);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
     return businesses.filter((b) => {
       if (localOnly && b.isChain) return false;
       if (category && b.category.slug !== category) return false;
       if (town && b.city !== town) return false;
-      if (!q) return true;
-      const haystack = [
-        b.name,
-        b.category.name,
-        b.city,
-        b.tagline ?? "",
-        b.shortDescription ?? "",
-      ]
-        .join(" ")
-        .toLowerCase();
-      return haystack.includes(q);
+      // Synonym-aware match ("haircut" -> hair salons), see lib/search.ts
+      return matchesQuery(b, query);
     });
   }, [businesses, query, category, town, localOnly]);
 

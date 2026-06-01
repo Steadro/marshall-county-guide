@@ -24,6 +24,14 @@ export const categoryColors: Record<string, CategoryColor> = {
   agriculture: { bg: "#e7efcf", text: "#54661c" }, // olive
   manufacturing: { bg: "#e4e7ea", text: "#424c57" }, // steel gray
   other: { bg: "#ece5da", text: "#5f5443" }, // sand
+  "pets-and-animals": { bg: "#f3e2ee", text: "#8a3a72" }, // orchid
+  // Community-guide categories
+  "government-and-civic": { bg: "#e3e8ef", text: "#39495f" }, // civic steel
+  "public-safety": { bg: "#f9ddd8", text: "#9c2f22" }, // emergency red
+  "places-of-worship": { bg: "#e7e4f3", text: "#4d4690" }, // indigo
+  "community-and-nonprofit": { bg: "#d8eeea", text: "#1f6b62" }, // teal
+  "wedding-and-event-venues": { bg: "#fbe2ea", text: "#a52e60" }, // blush rose
+  schools: { bg: "#fdf0c8", text: "#7a5a12" }, // amber gold
 };
 
 export function categoryColor(slug: string): CategoryColor {

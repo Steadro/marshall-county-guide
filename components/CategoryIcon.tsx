@@ -15,6 +15,13 @@ import {
   UtensilsCrossed,
   ShoppingBag,
   Store,
+  Building,
+  Shield,
+  Church,
+  Users,
+  PartyPopper,
+  School,
+  PawPrint,
   type LucideIcon,
 } from "lucide-react";
 
@@ -31,10 +38,18 @@ const ICONS: Record<string, LucideIcon> = {
   "home-and-trades": Wrench,
   manufacturing: Factory,
   other: Boxes,
+  "pets-and-animals": PawPrint,
   "professional-services": Briefcase,
   "real-estate": Building2,
   "restaurant-and-food": UtensilsCrossed,
   "retail-and-shopping": ShoppingBag,
+  // Community-guide categories (civic, faith, community, events)
+  "government-and-civic": Building,
+  "public-safety": Shield,
+  "places-of-worship": Church,
+  "community-and-nonprofit": Users,
+  "wedding-and-event-venues": PartyPopper,
+  schools: School,
 };
 
 export function iconForCategory(slug: string): LucideIcon {

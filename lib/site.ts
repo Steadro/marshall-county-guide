@@ -56,5 +56,6 @@ export const mainNav = [
   { href: "/businesses", label: "All Businesses" },
   { href: "/#visit", label: "Things to Do" },
   { href: "/#categories", label: "Categories" },
+  { href: "/history", label: "History" },
   { href: "/about", label: "About" },
 ] as const;

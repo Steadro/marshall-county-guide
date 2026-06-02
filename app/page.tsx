@@ -6,8 +6,10 @@ import {
   getCategoriesWithCounts,
   getCityCounts,
   getRestaurantsForPicker,
+  getAllBusinesses,
 } from "@/lib/queries";
 import { siteConfig, TOWNS } from "@/lib/site";
+import { buildBrowseGroups } from "@/lib/category-groups";
 import { BusinessCard } from "@/components/BusinessCard";
 import { GoldNote } from "@/components/GoldNote";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -15,10 +17,9 @@ import { HomeSearch } from "@/components/HomeSearch";
 import { RotatingPlace } from "@/components/RotatingPlace";
 import { VisitorBand } from "@/components/VisitorBand";
 import { BrowseTabs } from "@/components/BrowseTabs";
-import { HistoryTabs } from "@/components/HistoryTabs";
 import { DinnerPicker } from "@/components/DinnerPicker";
 import { JsonLd } from "@/components/JsonLd";
-import { buildSiteJsonLd, buildHistoryJsonLd } from "@/lib/schema-org";
+import { buildSiteJsonLd } from "@/lib/schema-org";
 
 export const revalidate = 3600;
 
@@ -27,11 +28,12 @@ export const metadata = {
 };
 
 export default async function HomePage() {
-  const [spotlight, categories, cityCounts, restaurants] = await Promise.all([
+  const [spotlight, categories, cityCounts, restaurants, allBiz] = await Promise.all([
     getSpotlightBusinesses(6),
     getCategoriesWithCounts(),
     getCityCounts(),
     getRestaurantsForPicker(),
+    getAllBusinesses(),
   ]);
 
   const total = categories.reduce((sum, c) => sum + c.count, 0);
@@ -41,10 +43,25 @@ export default async function HomePage() {
     count: cityCounts.get(t.name.toLowerCase()) ?? 0,
   }));
 
+  // Up to 3 sample business names per category for the browse tiles.
+  const samples = new Map<string, string[]>();
+  for (const b of allBiz) {
+    const slug = b.category?.slug;
+    if (!slug) continue;
+    const arr = samples.get(slug) ?? [];
+    if (arr.length < 3) {
+      arr.push(b.name);
+      samples.set(slug, arr);
+    }
+  }
+  const { commercial: browseGroups, civic: browseCivic } = buildBrowseGroups(
+    categories,
+    samples,
+  );
+
   return (
     <>
       <JsonLd data={buildSiteJsonLd()} />
-      <JsonLd data={buildHistoryJsonLd()} />
 
       {/* Hero: full-bleed courthouse background, weighted right, text over a
           left scrim. (Stand-in image; swap for the right-weighted hi-res later.) */}
@@ -150,25 +167,12 @@ export default async function HomePage() {
             />
           </div>
           <div className="mt-8">
-            <BrowseTabs categories={categories} towns={townsWithCount} />
+            <BrowseTabs
+              groups={browseGroups}
+              civic={browseCivic}
+              towns={townsWithCount}
+            />
           </div>
-        </div>
-      </section>
-
-      {/* History: a little background on the county and its towns */}
-      <section id="history" className="container-page scroll-mt-20 py-16">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-pine">
-            A little local history
-          </p>
-          <h2 className="text-balance text-2xl sm:text-3xl">How these towns came to be</h2>
-          <p className="mt-2 text-pretty leading-relaxed text-ink-soft">
-            Five towns, one county seat, and a couple of centuries between them. Pick a place and
-            read a bit of its story.
-          </p>
-        </div>
-        <div className="mt-10">
-          <HistoryTabs />
         </div>
       </section>
 

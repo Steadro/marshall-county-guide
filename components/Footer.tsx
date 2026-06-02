@@ -66,6 +66,11 @@ export function Footer() {
               </Link>
             </li>
             <li>
+              <Link href="/history" className="text-ink-soft hover:text-pine">
+                Local history
+              </Link>
+            </li>
+            <li>
               <Link href="/about" className="text-ink-soft hover:text-pine">
                 About this guide
               </Link>

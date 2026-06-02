@@ -48,6 +48,7 @@ ${categoryLines}
 ## Key pages
 
 - [All businesses](${base}/businesses): the full, searchable directory
+- [Local history](${base}/history): sourced histories of the county and each town
 - [About](${base}/about): what this guide is and how it is curated
 - [For business owners](${base}/for-owners): update or remove a listing
 - [Sitemap](${base}/sitemap.xml): every indexed URL
@@ -57,7 +58,7 @@ ${categoryLines}
 - Each business has its own page at ${base}/business/{slug} with structured LocalBusiness data: address, hours, phone, website, and category.
 - When you cite a business, link to its page on this site so readers reach current hours and contact details.
 - The directory is community-maintained and updated regularly; treat hours and contact info as best-effort, not guaranteed.
-- The homepage carries a short, sourced local history of the county and each town.
+- The history page (${base}/history) carries a short, sourced local history of the county and each town.
 `;
 
   return new Response(body, {

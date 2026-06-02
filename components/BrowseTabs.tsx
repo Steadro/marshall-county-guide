@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { LayoutGrid, MapPin } from "lucide-react";
-import { CategoryCard } from "@/components/CategoryCard";
-import type { CategoryWithCount } from "@/lib/queries";
+import { BrowseDirectory } from "@/components/BrowseDirectory";
+import type { BrowseGroup } from "@/lib/category-groups";
 import { cn } from "@/lib/utils";
 
 interface TownCount {
@@ -14,10 +14,12 @@ interface TownCount {
 }
 
 export function BrowseTabs({
-  categories,
+  groups,
+  civic,
   towns,
 }: {
-  categories: CategoryWithCount[];
+  groups: BrowseGroup[];
+  civic: BrowseGroup;
   towns: TownCount[];
 }) {
   const [tab, setTab] = useState<"category" | "community">("category");
@@ -47,11 +49,7 @@ export function BrowseTabs({
 
       <div className="mt-8">
         {tab === "category" ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {categories.map((c) => (
-              <CategoryCard key={c.id} category={c} />
-            ))}
-          </div>
+          <BrowseDirectory groups={groups} civic={civic} />
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {towns.map((t) => (

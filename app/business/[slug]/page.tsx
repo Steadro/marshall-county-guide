@@ -5,7 +5,6 @@ import { Phone, Globe, MapPin, Clock, ChevronRight, ExternalLink } from "lucide-
 import { getBusinessBySlug, getAllBusinessSlugs } from "@/lib/queries";
 import { Badge } from "@/components/Badge";
 import { CategoryTag } from "@/components/CategoryTag";
-import { GoldStandardTag } from "@/components/GoldStandardTag";
 import { LocationMap } from "@/components/LocationMap";
 import { JsonLd } from "@/components/JsonLd";
 import { buildBusinessJsonLd, buildBreadcrumbJsonLd, businessUrl } from "@/lib/schema-org";
@@ -32,7 +31,7 @@ export async function generateMetadata({
   const fallbackDesc =
     b.shortDescription ||
     b.description?.slice(0, 155) ||
-    `${b.name}, a ${b.category.name} business in ${b.city}, ${b.state}.`;
+    `${b.name}, ${b.category.name} in ${b.city}, ${b.state}.`;
 
   return {
     title: b.metaTitle ?? `${b.name} in ${b.city}, ${b.state}`,
@@ -90,8 +89,24 @@ export default async function BusinessPage({
     `${b.name} ${b.city} ${b.state}`,
   )}`;
 
+  const isGold = b.qualityTier === "GOLD";
+
   return (
-    <article className="pb-12">
+    <article className="relative isolate pb-12">
+      {/* Gold-standard listings get a soft gold wash that bleeds down from the top.
+          Explained in plain language in the footnotes at the bottom of the page. */}
+      {isGold ? (
+        <>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 bg-gradient-to-b from-gold-soft via-gold-soft/40 to-transparent"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute left-1/2 top-0 -z-10 h-64 w-[44rem] max-w-full -translate-x-1/2 rounded-full bg-gold/20 blur-3xl"
+          />
+        </>
+      ) : null}
       <JsonLd data={buildBusinessJsonLd(b)} />
       <JsonLd
         data={buildBreadcrumbJsonLd([
@@ -124,7 +139,6 @@ export default async function BusinessPage({
               <CategoryTag name={b.category.name} slug={b.category.slug} />
             </Link>
             {b.priceRange ? <Badge>{b.priceRange}</Badge> : null}
-            {b.qualityTier === "GOLD" ? <GoldStandardTag /> : null}
           </div>
 
           <h1 className="mt-3 text-3xl sm:text-4xl">{b.name}</h1>
@@ -183,7 +197,7 @@ export default async function BusinessPage({
           ) : null}
           {!b.shortDescription && !b.description ? (
             <p className="mt-8 text-ink-soft">
-              A {b.category.name.toLowerCase()} business in {b.city}, {b.state}.
+              {b.category.name} in {b.city}, {b.state}.
             </p>
           ) : null}
 
@@ -300,17 +314,32 @@ export default async function BusinessPage({
             </section>
           ) : null}
 
-          {/* Owner note */}
-          <p className="mt-12 border-t border-line/70 pt-6 text-xs leading-relaxed text-ink-faint">
-            Details can change, so please confirm with the business before you visit. Is this your
-            business?{" "}
-            <a
-              href={ownerMailto("Update or remove my listing", { name: b.name, slug: b.slug })}
-              className="font-medium text-pine hover:text-pine-dark"
-            >
-              Update or remove this listing.
-            </a>
-          </p>
+          {/* Footnotes: gold-standard explainer (explains the gold wash up top) + owner note */}
+          <div className="mt-12 space-y-3 border-t border-line/70 pt-6 text-xs leading-relaxed">
+            {isGold ? (
+              <p className="flex items-start gap-2 text-gold-dark">
+                <span
+                  aria-hidden="true"
+                  className="mt-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-gold ring-1 ring-gold/40"
+                />
+                <span>
+                  <span className="font-semibold">Gold-standard listing.</span> The gold at the top
+                  of the page marks listings we&apos;ve researched in depth and are fairly confident
+                  the hours and details are current. Still worth a quick confirm before you go.
+                </span>
+              </p>
+            ) : null}
+            <p className="text-ink-faint">
+              Details can change, so please confirm with the business before you visit. Is this your
+              business?{" "}
+              <a
+                href={ownerMailto("Update or remove my listing", { name: b.name, slug: b.slug })}
+                className="font-medium text-pine hover:text-pine-dark"
+              >
+                Update or remove this listing.
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </article>

@@ -23,7 +23,7 @@
   /* Ink, deep green-leaning near-black plus muted steps */
   --color-ink: oklch(0.265 0.018 162);
   --color-ink-soft: oklch(0.43 0.018 160);
-  --color-ink-faint: oklch(0.565 0.014 155);
+  --color-ink-faint: oklch(0.51 0.014 155); /* darkened to clear WCAG AA (4.5:1) as text on paper/paper-2/card */
 
   /* Lines / borders */
   --color-line: oklch(0.905 0.011 95);

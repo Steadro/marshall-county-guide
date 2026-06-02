@@ -107,7 +107,7 @@ export function Footer() {
             </p>
             <p>Details can change, so please confirm with each business before you visit.</p>
           </div>
-          <p className="mt-4 text-[11px] leading-relaxed text-ink-faint/80">
+          <p className="mt-4 text-[11px] leading-relaxed text-ink-faint">
             Photos via Wikimedia Commons:{" "}
             {PHOTO_CREDITS.map((c, i) => (
               <span key={c.label}>

@@ -27,7 +27,7 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: `${siteConfig.name}: Local Business Directory for Lewisburg & Marshall County, TN`,
+    default: `${siteConfig.name}: Local Business & Services Directory for Lewisburg & Marshall County, TN`,
     template: `%s · ${siteConfig.name}`,
   },
   description: siteConfig.description,
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteConfig.url,
     siteName: siteConfig.name,
-    title: `${siteConfig.name}: Local Business Directory for Lewisburg & Marshall County, TN`,
+    title: `${siteConfig.name}: Local Business & Services Directory for Lewisburg & Marshall County, TN`,
     description: siteConfig.description,
   },
   twitter: {

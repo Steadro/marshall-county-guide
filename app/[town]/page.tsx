@@ -25,7 +25,7 @@ export async function generateMetadata({
   const name = townSlugToName.get(town);
   if (!name) return { title: "Town not found" };
   const title = `Businesses in ${name}, TN`;
-  const description = `A directory of local businesses in ${name}, Tennessee. Find restaurants, shops, services, and more in Marshall County.`;
+  const description = `A directory of local businesses and services in ${name}, Tennessee. Find restaurants, shops, trades, schools, and more in Marshall County.`;
   return {
     title,
     description,
@@ -71,8 +71,7 @@ export default async function TownPage({
         </p>
         <h1 className="text-3xl sm:text-4xl">Businesses in {name}</h1>
         <p className="mt-2 text-pretty leading-relaxed text-ink-soft">
-          {businesses.length} local {businesses.length === 1 ? "business" : "businesses"} in {name},
-          Tennessee.
+          {businesses.length} {businesses.length === 1 ? "place" : "places"} in {name}, Tennessee.
         </p>
       </header>
 
@@ -85,7 +84,7 @@ export default async function TownPage({
           <div className="rounded-card border border-dashed border-line-strong bg-card/60 p-12 text-center">
             <p className="font-serif text-lg text-ink">No listings here yet.</p>
             <p className="mt-1 text-sm text-ink-soft">
-              We’re still gathering businesses in {name}. Check back soon.
+              We’re still adding places in {name}. Check back soon.
             </p>
           </div>
         )}

@@ -5,7 +5,7 @@ import { siteConfig, TOWNS } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "About",
-  description: `About ${siteConfig.name}, a curated, community-minded directory of local businesses across Marshall County, Tennessee.`,
+  description: `About ${siteConfig.name}, a curated, community-minded directory of local businesses and services across Marshall County, Tennessee.`,
   alternates: { canonical: "/about" },
 };
 

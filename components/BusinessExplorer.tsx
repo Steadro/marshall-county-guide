@@ -77,8 +77,8 @@ export function BusinessExplorer({
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search businesses…"
-            aria-label="Search businesses"
+            placeholder="Search places…"
+            aria-label="Search places"
             className="w-full rounded-pill border border-line bg-paper py-2.5 pl-9 pr-3 text-sm text-ink outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
           />
         </div>
@@ -156,7 +156,7 @@ export function BusinessExplorer({
       <div className="mt-4 flex items-center justify-between gap-3 text-sm text-ink-soft">
         <p aria-live="polite">
           <span className="font-semibold text-ink">{filtered.length}</span>{" "}
-          {filtered.length === 1 ? "business" : "businesses"}
+          {filtered.length === 1 ? "place" : "places"}
         </p>
         {hasFilters ? (
           <button
@@ -185,7 +185,7 @@ export function BusinessExplorer({
         </div>
       ) : (
         <div className="mt-10 rounded-card border border-dashed border-line-strong bg-card/60 p-12 text-center">
-          <p className="font-serif text-lg text-ink">No businesses match your search.</p>
+          <p className="font-serif text-lg text-ink">No places match your search.</p>
           <p className="mt-1 text-sm text-ink-soft">
             Try a different term, or clear the filters to see everything.
           </p>

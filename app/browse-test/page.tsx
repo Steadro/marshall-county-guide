@@ -64,7 +64,7 @@ export default async function BrowseTestPage() {
             layouts below. Category links are live; town chips are illustrative.
           </p>
           <p className="mt-2 text-sm text-ink-faint">
-            {totalCount} businesses · {categories.length} categories · not indexed, not
+            {totalCount} places · {categories.length} categories · not indexed, not
             linked from the live site.
           </p>
         </div>

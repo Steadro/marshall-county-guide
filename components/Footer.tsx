@@ -34,7 +34,8 @@ export function Footer() {
         <div className="sm:col-span-2 lg:col-span-2">
           <p className="font-serif text-xl font-semibold text-ink">{siteConfig.name}</p>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink-soft">
-            {siteConfig.tagline} Built to help neighbors find and support local businesses.
+            {siteConfig.tagline} Built to help neighbors find and support local businesses and
+            services.
           </p>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink-soft">
             Designed and maintained by{" "}

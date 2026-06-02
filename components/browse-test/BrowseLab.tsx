@@ -232,7 +232,7 @@ function AccordionRow({ group, muted }: { group: BrowseGroup; muted?: boolean })
             {group.title}
           </span>
           <span className="text-xs text-ink-faint">
-            {group.count} businesses · {group.categories.length}{" "}
+            {group.count} places · {group.categories.length}{" "}
             {group.categories.length === 1 ? "category" : "categories"}
           </span>
         </span>

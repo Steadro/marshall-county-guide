@@ -103,7 +103,7 @@ export default async function HomePage() {
             <HomeSearch />
 
             <div className="mt-6 flex flex-wrap items-center justify-start gap-x-8 gap-y-3 text-sm text-ink-soft">
-              <Stat value={String(total)} label="businesses" />
+              <Stat value={String(total)} label="places" />
               <span className="hidden h-4 w-px bg-line-strong sm:block" />
               <Stat value={String(categories.length)} label="categories" />
               <span className="hidden h-4 w-px bg-line-strong sm:block" />
@@ -156,7 +156,7 @@ export default async function HomePage() {
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-creek-dark">
                 Browse
               </p>
-              <h2 className="text-balance text-2xl sm:text-3xl">Find a local business</h2>
+              <h2 className="text-balance text-2xl sm:text-3xl">Find a local business or service</h2>
               <p className="mt-2 text-pretty leading-relaxed text-ink-soft">
                 Look by category, or by the community it’s in.
               </p>

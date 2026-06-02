@@ -33,7 +33,7 @@ export async function GET(): Promise<Response> {
 
 > ${siteConfig.description}
 
-${siteConfig.name} is a free, curated directory of local businesses across Marshall County, Tennessee. It is not a paid-listing service or an automated aggregator; every entry is reviewed by hand. The county seat is Lewisburg, and the guide also covers Chapel Hill, Cornersville, Petersburg, and Belfast. ${total} businesses are listed across ${categories.length} categories.
+${siteConfig.name} is a free, curated directory of local businesses and services across Marshall County, Tennessee. It is not a paid-listing service or an automated aggregator; every entry is reviewed by hand. The county seat is Lewisburg, and the guide also covers Chapel Hill, Cornersville, Petersburg, and Belfast. ${total} businesses are listed across ${categories.length} categories.
 
 Maintained by ${maintainer.name} (${maintainer.url}). Listings are free. Business owners can request a change or removal at ${base}/for-owners.
 

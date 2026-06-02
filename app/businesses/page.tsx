@@ -8,7 +8,7 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "All Businesses",
-  description: `Browse and search every business in the ${siteConfig.name} directory. Filter by category and town across Marshall County, Tennessee.`,
+  description: `Browse and search every business and service in the ${siteConfig.name} directory. Filter by category and town across Marshall County, Tennessee.`,
   alternates: { canonical: "/businesses" },
 };
 
@@ -23,8 +23,8 @@ export default async function BusinessesPage() {
         </p>
         <h1 className="text-3xl sm:text-4xl">All businesses</h1>
         <p className="mt-3 text-pretty leading-relaxed text-ink-soft">
-          Locally owned businesses across {siteConfig.region}. Search by name, filter by category
-          and town, or uncheck “Locally owned only” to include national chains.
+          Locally owned businesses and services across {siteConfig.region}. Search by name, filter
+          by category and town, or uncheck “Locally owned only” to include national chains.
         </p>
       </header>
 

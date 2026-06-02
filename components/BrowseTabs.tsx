@@ -62,7 +62,7 @@ export function BrowseTabs({
                   {t.name}
                 </span>
                 <span className="text-sm text-ink-faint">
-                  {t.count} {t.count === 1 ? "business" : "businesses"}
+                  {t.count} {t.count === 1 ? "place" : "places"}
                 </span>
               </Link>
             ))}

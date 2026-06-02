@@ -2,9 +2,9 @@
 
 export const siteConfig = {
   name: "Marshall County Guide",
-  tagline: "A guide to the local businesses of Marshall County, Tennessee.",
+  tagline: "A guide to the local businesses and services of Marshall County, Tennessee.",
   description:
-    "Discover local restaurants, shops, services, and makers across Marshall County, Tennessee, from the county seat of Lewisburg to Chapel Hill, Cornersville, Petersburg, and Belfast. A community guide to the area's local businesses.",
+    "Discover local restaurants, shops, services, and makers across Marshall County, Tennessee, from the county seat of Lewisburg to Chapel Hill, Cornersville, Petersburg, and Belfast. A community guide to the area's local businesses and services.",
   // Resolve the canonical base URL (no trailing slash). Set NEXT_PUBLIC_SITE_URL
   // in production; falls back to localhost for dev.
   url: (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, ""),

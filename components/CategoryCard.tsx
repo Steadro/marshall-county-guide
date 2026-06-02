@@ -17,7 +17,7 @@ export function CategoryCard({ category }: { category: CategoryWithCount }) {
           {category.name}
         </span>
         <span className="text-sm text-ink-faint">
-          {category.count} {category.count === 1 ? "business" : "businesses"}
+          {category.count} {category.count === 1 ? "place" : "places"}
         </span>
       </span>
       <ArrowUpRight

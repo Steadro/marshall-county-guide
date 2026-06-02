@@ -74,6 +74,7 @@ export default async function HomePage() {
             fill
             priority
             sizes="100vw"
+            quality={60}
             className="object-cover object-[82%_center] sm:object-[70%_center]"
           />
           {/* Left scrim: keeps the headline legible over the open gutter. Heavier
@@ -87,10 +88,10 @@ export default async function HomePage() {
         <div className="container-page py-8 sm:py-10 lg:py-10">
           <div className="max-w-2xl">
             {/* Fluid size + nowrap locks the headline to exactly three lines at
-                every width, so "businesses that make" never wraps. */}
+                every width, so "places that make" never wraps. */}
             <h1 className="leading-[1.05] [font-size:clamp(1.5rem,6.5vw,3.75rem)]">
               <span className="block whitespace-nowrap">Discover the</span>
-              <span className="block whitespace-nowrap">businesses that make</span>
+              <span className="block whitespace-nowrap">places that make</span>
               <span className="block whitespace-nowrap">
                 <RotatingPlace />
               </span>

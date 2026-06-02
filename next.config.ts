@@ -10,6 +10,12 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   // No remote images in v1 (listings are text + a website link). Add
   // remotePatterns here if real photos are ever introduced.
+  images: {
+    // AVIF first (≈30–50% smaller than WebP) for the hero/LCP image; WebP
+    // fallback for browsers without AVIF. Long cache since photos are static.
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 31536000,
+  },
   outputFileTracingExcludes: {
     "*": ["./app/generated/**/*"],
   },

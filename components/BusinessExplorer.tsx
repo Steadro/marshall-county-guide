@@ -20,6 +20,7 @@ export function BusinessExplorer({
   initialTown,
   showCategoryFilter = true,
   showTownFilter = true,
+  showSubcategoryFilter = false,
   defaultLocalOnly = false,
 }: {
   businesses: BusinessCardData[];
@@ -27,6 +28,7 @@ export function BusinessExplorer({
   initialTown?: string;
   showCategoryFilter?: boolean;
   showTownFilter?: boolean;
+  showSubcategoryFilter?: boolean;
   defaultLocalOnly?: boolean;
 }) {
   // Seed the search box from `?q=` so the homepage search can deep-link here.
@@ -34,6 +36,7 @@ export function BusinessExplorer({
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
   const [category, setCategory] = useState(initialCategory ?? "");
   const [town, setTown] = useState(initialTown ?? "");
+  const [subcategory, setSubcategory] = useState("");
   const [localOnly, setLocalOnly] = useState(defaultLocalOnly);
 
   const hasChains = useMemo(() => businesses.some((b) => b.isChain), [businesses]);
@@ -52,17 +55,31 @@ export function BusinessExplorer({
     return [...set].sort().map((c) => ({ value: c, label: c }));
   }, [businesses]);
 
+  // Subcategory facet (the "what kind of place" axis) — counts reflect the
+  // currently-applicable set, sorted most-common first. Only meaningful when the
+  // list shares a category (e.g. a category page), so it's opt-in.
+  const subcategoryOptions = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const b of businesses) {
+      if (b.subcategory) map.set(b.subcategory, (map.get(b.subcategory) ?? 0) + 1);
+    }
+    return [...map.entries()]
+      .map(([value, count]) => ({ value, count }))
+      .sort((a, b) => b.count - a.count || a.value.localeCompare(b.value));
+  }, [businesses]);
+
   const filtered = useMemo(() => {
     return businesses.filter((b) => {
       if (localOnly && b.isChain) return false;
       if (category && b.category.slug !== category) return false;
       if (town && b.city !== town) return false;
+      if (subcategory && b.subcategory !== subcategory) return false;
       // Synonym-aware match ("haircut" -> hair salons), see lib/search.ts
       return matchesQuery(b, query);
     });
-  }, [businesses, query, category, town, localOnly]);
+  }, [businesses, query, category, town, subcategory, localOnly]);
 
-  const hasFilters = query || category || town || localOnly;
+  const hasFilters = query || category || town || subcategory || localOnly;
   const hasGold = useMemo(() => filtered.some((b) => b.qualityTier === "GOLD"), [filtered]);
 
   return (
@@ -153,6 +170,40 @@ export function BusinessExplorer({
         ) : null}
       </div>
 
+      {showSubcategoryFilter && subcategoryOptions.length > 1 ? (
+        <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter by type">
+          <button
+            type="button"
+            onClick={() => setSubcategory("")}
+            aria-pressed={subcategory === ""}
+            className={cn(
+              "rounded-pill border px-3 py-1.5 text-sm font-medium transition",
+              subcategory === ""
+                ? "border-pine bg-pine-soft text-pine-dark"
+                : "border-line bg-paper text-ink-soft hover:border-pine/50",
+            )}
+          >
+            All types
+          </button>
+          {subcategoryOptions.map((o) => (
+            <button
+              key={o.value}
+              type="button"
+              onClick={() => setSubcategory((s) => (s === o.value ? "" : o.value))}
+              aria-pressed={subcategory === o.value}
+              className={cn(
+                "rounded-pill border px-3 py-1.5 text-sm font-medium transition",
+                subcategory === o.value
+                  ? "border-pine bg-pine-soft text-pine-dark"
+                  : "border-line bg-paper text-ink-soft hover:border-pine/50",
+              )}
+            >
+              {o.value} <span className="text-ink-faint">{o.count}</span>
+            </button>
+          ))}
+        </div>
+      ) : null}
+
       <div className="mt-4 flex items-center justify-between gap-3 text-sm text-ink-soft">
         <p aria-live="polite">
           <span className="font-semibold text-ink">{filtered.length}</span>{" "}
@@ -165,6 +216,7 @@ export function BusinessExplorer({
               setQuery("");
               setCategory("");
               setTown("");
+              setSubcategory("");
               setLocalOnly(false);
             }}
             className="inline-flex items-center gap-1 rounded-pill px-2.5 py-1 text-ink-soft transition hover:bg-paper-2 hover:text-ink"

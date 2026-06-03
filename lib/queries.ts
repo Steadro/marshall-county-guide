@@ -20,9 +20,11 @@ export const businessCardSelect = {
   priceRange: true, // used by the detail select (spread below)
   isChain: true,
   qualityTier: true, // drives the gold-standard card treatment
+  subcategory: true, // venue/primary type — the second browse axis (see TAXONOMY.md)
   latitude: true, // used by category/business maps
   longitude: true,
   category: { select: { name: true, slug: true } },
+  tags: { select: { name: true, slug: true } }, // cross-cutting facets (cuisine, attributes)
 } satisfies Prisma.BusinessSelect;
 
 export type BusinessCard = Prisma.BusinessGetPayload<{ select: typeof businessCardSelect }>;
@@ -49,7 +51,6 @@ const businessDetailSelect = {
   metaTitle: true,
   metaDescription: true,
   lastVerifiedAt: true,
-  tags: { select: { name: true, slug: true } },
   hours: {
     select: { dayOfWeek: true, opens: true, closes: true, isClosed: true },
     orderBy: { dayOfWeek: "asc" },

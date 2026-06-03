@@ -107,7 +107,12 @@ export default async function CategoryPage({
 
       <div className="mt-8">
         <Suspense fallback={<div className="h-24" />}>
-          <BusinessExplorer businesses={businesses} showCategoryFilter={false} defaultLocalOnly />
+          <BusinessExplorer
+            businesses={businesses}
+            showCategoryFilter={false}
+            showSubcategoryFilter
+            defaultLocalOnly
+          />
         </Suspense>
       </div>
     </div>

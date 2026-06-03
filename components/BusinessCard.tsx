@@ -33,8 +33,11 @@ export function BusinessCard({
         className,
       )}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <CategoryTag name={business.category.name} slug={business.category.slug} />
+        {business.subcategory ? (
+          <span className="text-xs font-medium text-ink-faint">{business.subcategory}</span>
+        ) : null}
       </div>
 
       <h3 className="flex items-start justify-between gap-2 font-serif text-lg font-semibold leading-snug text-ink">

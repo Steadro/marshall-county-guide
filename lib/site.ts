@@ -33,6 +33,23 @@ export function ownerMailto(subject: string, business?: { name: string; slug: st
   return `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
+/**
+ * Prefilled mailto for suggesting a business, service, or office that isn't
+ * listed yet. Open to anyone, not just owners.
+ */
+export function suggestMailto(): string {
+  const body = [
+    "Name of the business or service:",
+    "Town:",
+    "Category (restaurant, shop, trade, office, etc.):",
+    "Website or phone, if you have it:",
+    "",
+    "Anything else we should know:",
+    "",
+  ].join("\n");
+  return `mailto:${contactEmail}?subject=${encodeURIComponent("New listing suggestion")}&body=${encodeURIComponent(body)}`;
+}
+
 // Towns covered (Lewisburg + ~15-mile radius). `slug` powers /[town] pages;
 // lat/lng are town centroids used as a map fallback when a business has no
 // street address of its own.

@@ -8,7 +8,7 @@ import {
   getRestaurantsForPicker,
   getAllBusinesses,
 } from "@/lib/queries";
-import { siteConfig, TOWNS } from "@/lib/site";
+import { siteConfig, suggestMailto, TOWNS } from "@/lib/site";
 import { buildBrowseGroups } from "@/lib/category-groups";
 import { BusinessCard } from "@/components/BusinessCard";
 import { GoldNote } from "@/components/GoldNote";
@@ -177,23 +177,34 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* For business owners & governments */}
       <section className="container-page pb-8">
         <div className="overflow-hidden rounded-card bg-ink px-8 py-12 text-center text-paper sm:py-16">
-          <h2 className="mx-auto max-w-2xl text-balance text-2xl text-paper sm:text-3xl">
-            Know a local business we’re missing?
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-paper/55">
+            For business owners &amp; governments
+          </p>
+          <h2 className="mx-auto mt-3 max-w-2xl text-balance text-2xl text-paper sm:text-3xl">
+            Is one of these places yours?
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-pretty leading-relaxed text-paper/70">
-            This guide is always growing. The more complete it is, the more it helps our community
-            thrive.
+            Listings are built from public information and free to everyone. If a business, service,
+            or local office is yours, you’re in control of it — no account needed.
           </p>
-          <Link
-            href="/about"
-            className="mt-7 inline-flex items-center gap-1.5 rounded-pill bg-pine px-6 py-3 text-sm font-semibold text-white transition hover:bg-pine-dark"
-          >
-            About this project
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </Link>
+          <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/for-owners"
+              className="inline-flex items-center gap-1.5 rounded-pill bg-pine px-6 py-3 text-sm font-semibold text-white transition hover:bg-pine-dark"
+            >
+              Update place info
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+            <a
+              href={suggestMailto()}
+              className="inline-flex items-center gap-1.5 rounded-pill border border-paper/30 px-6 py-3 text-sm font-semibold text-paper transition hover:border-paper/60 hover:bg-paper/10"
+            >
+              Add a missing business or service
+            </a>
+          </div>
         </div>
       </section>
     </>

@@ -27,11 +27,19 @@ export interface CategoryGroupDef {
 }
 
 // Runtime shapes passed to the client layouts (plain, serializable).
+export interface SubcategoryCount {
+  name: string;
+  count: number;
+}
+
 export interface BrowseCat {
   slug: string;
   name: string;
   count: number;
   samples: string[];
+  // The category's subcategories (venue/type axis) with counts, most-common
+  // first. Drives the type chips in the browse pane. Empty if none classified.
+  subcategories: SubcategoryCount[];
 }
 
 export interface BrowseGroup {
@@ -132,6 +140,7 @@ export interface BrowseCatInput {
 export function buildBrowseGroups(
   categories: BrowseCatInput[],
   samples?: Map<string, string[]>,
+  subs?: Map<string, SubcategoryCount[]>,
 ): { commercial: BrowseGroup[]; civic: BrowseGroup; total: number } {
   const bySlug = new Map(categories.map((c) => [c.slug, c]));
   const used = new Set<string>();
@@ -144,6 +153,7 @@ export function buildBrowseGroups(
       name: c.name,
       count: c.count,
       samples: (samples?.get(slug) ?? []).slice(0, 2),
+      subcategories: subs?.get(slug) ?? [],
     };
   };
 

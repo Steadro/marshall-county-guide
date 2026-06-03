@@ -36,7 +36,9 @@ export function BusinessExplorer({
   const [query, setQuery] = useState(searchParams.get("q") ?? "");
   const [category, setCategory] = useState(initialCategory ?? "");
   const [town, setTown] = useState(initialTown ?? "");
-  const [subcategory, setSubcategory] = useState("");
+  // Seed from `?type=` so the homepage browse chips can deep-link to a
+  // pre-filtered subcategory (e.g. /category/restaurant-and-food?type=Cafe).
+  const [subcategory, setSubcategory] = useState(searchParams.get("type") ?? "");
   const [localOnly, setLocalOnly] = useState(defaultLocalOnly);
 
   const hasChains = useMemo(() => businesses.some((b) => b.isChain), [businesses]);

@@ -3,7 +3,16 @@
 import { useState } from "react";
 import Link from "next/link";
 import { CategoryIcon } from "@/components/CategoryIcon";
+import { DinnerPicker } from "@/components/DinnerPicker";
 import type { BrowseCat, BrowseGroup, GroupAccent } from "@/lib/category-groups";
+import type { RestaurantPick } from "@/lib/queries";
+
+interface Town {
+  slug: string;
+  name: string;
+}
+
+const FOOD_CATEGORY_SLUG = "restaurant-and-food";
 
 // Per-group accent classes, written as literal strings so Tailwind's scanner
 // generates them. Brand tokens plus a few arbitrary oklch hues for variety.
@@ -32,13 +41,18 @@ const ACCENTS: Record<GroupAccent, { dot: string; iconWrap: string }> = {
 export function BrowseDirectory({
   groups,
   civic,
+  restaurants,
+  towns,
 }: {
   groups: BrowseGroup[];
   civic: BrowseGroup;
+  restaurants?: RestaurantPick[];
+  towns?: Town[];
 }) {
   const all = [...groups, civic];
   const [active, setActive] = useState(all[0]?.key ?? "");
   const activeGroup = all.find((g) => g.key === active) ?? all[0];
+  const isFoodGroup = activeGroup?.categories.some((c) => c.slug === FOOD_CATEGORY_SLUG);
 
   return (
     <div className="grid gap-4 md:grid-cols-[19rem_1fr]">
@@ -76,10 +90,17 @@ export function BrowseDirectory({
               </h3>
               <span className="text-sm text-ink-faint">{activeGroup.count}</span>
             </div>
-            <p className="mb-4 mt-1 text-sm text-ink-soft">{activeGroup.blurb}</p>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <p className="mt-1 text-sm text-ink-soft">{activeGroup.blurb}</p>
+
+            {isFoodGroup && restaurants && restaurants.length > 0 ? (
+              <div className="mt-4">
+                <DinnerPicker restaurants={restaurants} towns={towns ?? []} />
+              </div>
+            ) : null}
+
+            <div className="mt-4 flex flex-col gap-4">
               {activeGroup.categories.map((c) => (
-                <CategoryTile key={c.slug} cat={c} accent={activeGroup.accent} />
+                <CategoryBlock key={c.slug} cat={c} accent={activeGroup.accent} />
               ))}
             </div>
           </>
@@ -117,31 +138,46 @@ function PaneItem({
   );
 }
 
-function CategoryTile({ cat, accent }: { cat: BrowseCat; accent: GroupAccent }) {
+// A category in the active group: a header row (links to the category page) with
+// its subcategory "type" chips beneath, each deep-linking to the pre-filtered
+// category page. Falls back to sample business names when a category has no
+// subcategories classified yet.
+function CategoryBlock({ cat, accent }: { cat: BrowseCat; accent: GroupAccent }) {
   const a = ACCENTS[accent];
   return (
-    <Link
-      href={`/category/${cat.slug}`}
-      className="group flex items-start gap-3 rounded-card bg-card p-4 shadow-soft ring-1 ring-line/70 transition duration-300 hover:-translate-y-0.5 hover:shadow-lift"
-    >
-      <span
-        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${a.iconWrap}`}
+    <div>
+      <Link
+        href={`/category/${cat.slug}`}
+        className="group flex items-center gap-3 rounded-card bg-card p-3 shadow-soft ring-1 ring-line/70 transition duration-300 hover:-translate-y-0.5 hover:shadow-lift"
       >
-        <CategoryIcon slug={cat.slug} className="h-5 w-5" />
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="flex items-baseline justify-between gap-2">
-          <span className="truncate font-serif text-sm font-semibold text-ink">
+        <span
+          className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${a.iconWrap}`}
+        >
+          <CategoryIcon slug={cat.slug} className="h-5 w-5" />
+        </span>
+        <span className="flex flex-1 items-baseline justify-between gap-2">
+          <span className="truncate font-serif text-sm font-semibold text-ink group-hover:text-pine-dark">
             {cat.name}
           </span>
           <span className="shrink-0 text-xs text-ink-faint">{cat.count}</span>
         </span>
-        {cat.samples.length > 0 && (
-          <span className="mt-0.5 block truncate text-xs text-ink-faint">
-            {cat.samples.join(" · ")}
-          </span>
-        )}
-      </span>
-    </Link>
+      </Link>
+
+      {cat.subcategories.length > 0 ? (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {cat.subcategories.map((s) => (
+            <Link
+              key={s.name}
+              href={`/category/${cat.slug}?type=${encodeURIComponent(s.name)}`}
+              className="inline-flex items-center gap-1 rounded-pill border border-line bg-paper px-2.5 py-1 text-xs font-medium text-ink-soft transition hover:border-pine/50 hover:text-pine-dark"
+            >
+              {s.name} <span className="text-ink-faint">{s.count}</span>
+            </Link>
+          ))}
+        </div>
+      ) : cat.samples.length > 0 ? (
+        <p className="mt-1.5 truncate pl-1 text-xs text-ink-faint">{cat.samples.join(" · ")}</p>
+      ) : null}
+    </div>
   );
 }

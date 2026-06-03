@@ -5,6 +5,7 @@ import Link from "next/link";
 import { LayoutGrid, MapPin } from "lucide-react";
 import { BrowseDirectory } from "@/components/BrowseDirectory";
 import type { BrowseGroup } from "@/lib/category-groups";
+import type { RestaurantPick } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 
 interface TownCount {
@@ -17,10 +18,12 @@ export function BrowseTabs({
   groups,
   civic,
   towns,
+  restaurants,
 }: {
   groups: BrowseGroup[];
   civic: BrowseGroup;
   towns: TownCount[];
+  restaurants?: RestaurantPick[];
 }) {
   const [tab, setTab] = useState<"category" | "community">("category");
 
@@ -49,7 +52,12 @@ export function BrowseTabs({
 
       <div className="mt-8">
         {tab === "category" ? (
-          <BrowseDirectory groups={groups} civic={civic} />
+          <BrowseDirectory
+            groups={groups}
+            civic={civic}
+            restaurants={restaurants}
+            towns={towns.map((t) => ({ slug: t.slug, name: t.name }))}
+          />
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {towns.map((t) => (

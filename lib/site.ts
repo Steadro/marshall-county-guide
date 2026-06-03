@@ -18,36 +18,29 @@ export const maintainer = {
   note: "a Lewisburg business",
 } as const;
 
-// Where owner messages go (mailto on the /for-owners page).
+// Maintainer inbox. Messages from the on-site form route here via the n8n
+// webhook → Resend pipeline (see app/api/contact/route.ts).
 export const contactEmail = "kyle@steadro.com";
 
-/** Build a prefilled mailto link for owner requests. */
-export function ownerMailto(subject: string, business?: { name: string; slug: string }): string {
-  const body = [
-    `Business name: ${business?.name ?? ""}`,
-    `Listing: ${business ? `${siteConfig.url}/business/${business.slug}` : ""}`,
-    "",
-    "What you'd like to change:",
-    "",
-  ].join("\n");
-  return `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-}
+export type ContactTopic = "update" | "add" | "remove" | "other";
 
 /**
- * Prefilled mailto for suggesting a business, service, or office that isn't
- * listed yet. Open to anyone, not just owners.
+ * Build a link to the on-site contact form, optionally preset with a topic and
+ * the business it concerns (used by per-listing "is this yours?" links). The
+ * form posts to /api/contact, which forwards to n8n — no mailto, no account.
  */
-export function suggestMailto(): string {
-  const body = [
-    "Name of the business or service:",
-    "Town:",
-    "Category (restaurant, shop, trade, office, etc.):",
-    "Website or phone, if you have it:",
-    "",
-    "Anything else we should know:",
-    "",
-  ].join("\n");
-  return `mailto:${contactEmail}?subject=${encodeURIComponent("New listing suggestion")}&body=${encodeURIComponent(body)}`;
+export function contactHref(opts?: {
+  topic?: ContactTopic;
+  business?: { name: string; slug: string };
+}): string {
+  const params = new URLSearchParams();
+  if (opts?.topic) params.set("topic", opts.topic);
+  if (opts?.business) {
+    params.set("business", opts.business.name);
+    params.set("listing", `${siteConfig.url}/business/${opts.business.slug}`);
+  }
+  const qs = params.toString();
+  return qs ? `/contact?${qs}` : "/contact";
 }
 
 // Towns covered (Lewisburg + ~15-mile radius). `slug` powers /[town] pages;

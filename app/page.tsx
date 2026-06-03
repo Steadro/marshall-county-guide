@@ -8,7 +8,7 @@ import {
   getRestaurantsForPicker,
   getAllBusinesses,
 } from "@/lib/queries";
-import { siteConfig, suggestMailto, TOWNS } from "@/lib/site";
+import { siteConfig, contactHref, TOWNS } from "@/lib/site";
 import { buildBrowseGroups } from "@/lib/category-groups";
 import { BusinessCard } from "@/components/BusinessCard";
 import { GoldNote } from "@/components/GoldNote";
@@ -17,7 +17,6 @@ import { HomeSearch } from "@/components/HomeSearch";
 import { RotatingPlace } from "@/components/RotatingPlace";
 import { VisitorBand } from "@/components/VisitorBand";
 import { BrowseTabs } from "@/components/BrowseTabs";
-import { DinnerPicker } from "@/components/DinnerPicker";
 import { JsonLd } from "@/components/JsonLd";
 import { buildSiteJsonLd } from "@/lib/schema-org";
 
@@ -43,8 +42,10 @@ export default async function HomePage() {
     count: cityCounts.get(t.name.toLowerCase()) ?? 0,
   }));
 
-  // Up to 3 sample business names per category for the browse tiles.
+  // Up to 3 sample business names per category for the browse tiles, plus the
+  // subcategory (venue/type) breakdown per category for the browse-pane chips.
   const samples = new Map<string, string[]>();
+  const subAgg = new Map<string, Map<string, number>>();
   for (const b of allBiz) {
     const slug = b.category?.slug;
     if (!slug) continue;
@@ -53,10 +54,25 @@ export default async function HomePage() {
       arr.push(b.name);
       samples.set(slug, arr);
     }
+    if (b.subcategory) {
+      const m = subAgg.get(slug) ?? new Map<string, number>();
+      m.set(b.subcategory, (m.get(b.subcategory) ?? 0) + 1);
+      subAgg.set(slug, m);
+    }
+  }
+  const subcategories = new Map<string, { name: string; count: number }[]>();
+  for (const [slug, m] of subAgg) {
+    subcategories.set(
+      slug,
+      [...m.entries()]
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
+    );
   }
   const { commercial: browseGroups, civic: browseCivic } = buildBrowseGroups(
     categories,
     samples,
+    subcategories,
   );
 
   return (
@@ -152,33 +168,28 @@ export default async function HomePage() {
       {/* Categories */}
       <section id="categories" className="scroll-mt-20 bg-paper-2 py-16">
         <div className="container-page">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <div className="max-w-xl">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-creek-dark">
-                Browse
-              </p>
-              <h2 className="text-balance text-2xl sm:text-3xl">Find a local business or service</h2>
-              <p className="mt-2 text-pretty leading-relaxed text-ink-soft">
-                Look by category, or by the community it’s in.
-              </p>
-            </div>
-            <DinnerPicker
-              restaurants={restaurants}
-              towns={TOWNS.map((t) => ({ slug: t.slug, name: t.name }))}
-            />
+          <div className="max-w-xl">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-creek-dark">
+              Browse
+            </p>
+            <h2 className="text-balance text-2xl sm:text-3xl">Find a local business or service</h2>
+            <p className="mt-2 text-pretty leading-relaxed text-ink-soft">
+              Look by category, or by the community it’s in.
+            </p>
           </div>
           <div className="mt-8">
             <BrowseTabs
               groups={browseGroups}
               civic={browseCivic}
               towns={townsWithCount}
+              restaurants={restaurants}
             />
           </div>
         </div>
       </section>
 
       {/* For business owners & governments */}
-      <section className="container-page pb-8">
+      <section className="container-page pt-12 pb-12">
         <div className="overflow-hidden rounded-card bg-ink px-8 py-12 text-center text-paper sm:py-16">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-paper/55">
             For business owners &amp; governments
@@ -188,7 +199,7 @@ export default async function HomePage() {
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-pretty leading-relaxed text-paper/70">
             Listings are built from public information and free to everyone. If a business, service,
-            or local office is yours, you’re in control of it — no account needed.
+            or local office is yours, you’re in control of it, no account needed.
           </p>
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
@@ -198,12 +209,12 @@ export default async function HomePage() {
               Update place info
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
-            <a
-              href={suggestMailto()}
+            <Link
+              href={contactHref({ topic: "add" })}
               className="inline-flex items-center gap-1.5 rounded-pill border border-paper/30 px-6 py-3 text-sm font-semibold text-paper transition hover:border-paper/60 hover:bg-paper/10"
             >
               Add a missing business or service
-            </a>
+            </Link>
           </div>
         </div>
       </section>

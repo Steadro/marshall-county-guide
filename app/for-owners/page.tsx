@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { FileText, Trash2, MessageCircle, Plus, Mail } from "lucide-react";
-import { siteConfig, ownerMailto, suggestMailto } from "@/lib/site";
+import Link from "next/link";
+import { FileText, Trash2, MessageCircle, Plus, ArrowRight } from "lucide-react";
+import { siteConfig, contactHref, type ContactTopic } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "For Business Owners & Governments",
@@ -8,36 +9,42 @@ export const metadata: Metadata = {
   alternates: { canonical: "/for-owners" },
 };
 
-const ACTIONS = [
+const ACTIONS: {
+  Icon: typeof FileText;
+  title: string;
+  body: string;
+  topic: ContactTopic;
+  cta: string;
+}[] = [
   {
     Icon: FileText,
     title: "Update my information",
-    body: "Hours, phone, address, website, description — tell us what's changed.",
-    href: ownerMailto("Listing information update"),
-    cta: "Email us",
+    body: "Hours, phone, address, website, description. Tell us what's changed.",
+    topic: "update",
+    cta: "Open the form",
   },
   {
     Icon: Plus,
     title: "Add a missing listing",
     body: "A business, service, or office that isn't here yet? Send us the details.",
-    href: suggestMailto(),
-    cta: "Suggest a listing",
+    topic: "add",
+    cta: "Open the form",
   },
   {
     Icon: Trash2,
     title: "Remove my listing",
     body: "Prefer not to be listed? We'll take your listing down, no questions asked.",
-    href: ownerMailto("Listing removal request"),
-    cta: "Email us",
+    topic: "remove",
+    cta: "Open the form",
   },
   {
     Icon: MessageCircle,
     title: "Something else",
     body: "A correction, a question, or anything we didn't cover here.",
-    href: ownerMailto("Question about my listing"),
-    cta: "Email us",
+    topic: "other",
+    cta: "Open the form",
   },
-] as const;
+];
 
 export default function ForOwnersPage() {
   return (
@@ -50,14 +57,14 @@ export default function ForOwnersPage() {
         {siteConfig.name} is a free community guide. We build listings from publicly available
         information to help neighbors find local businesses, services, and offices. If one of these
         is yours, you’re in control of it, no account required. Pick what you need below and it opens
-        a prefilled email to us. We read every message and act on it quickly.
+        a short form. We read every message and act on it quickly.
       </p>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2">
-        {ACTIONS.map(({ Icon, title, body, href, cta }) => (
-          <a
+        {ACTIONS.map(({ Icon, title, body, topic, cta }) => (
+          <Link
             key={title}
-            href={href}
+            href={contactHref({ topic })}
             className="group flex flex-col gap-3 rounded-card bg-card p-6 shadow-soft ring-1 ring-line/70 transition duration-300 hover:-translate-y-0.5 hover:shadow-lift"
           >
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-pine-soft text-pine-dark transition-colors group-hover:bg-pine group-hover:text-white">
@@ -66,16 +73,16 @@ export default function ForOwnersPage() {
             <span className="font-serif text-lg font-semibold text-ink">{title}</span>
             <span className="text-sm leading-relaxed text-ink-soft">{body}</span>
             <span className="mt-auto inline-flex items-center gap-1.5 pt-2 text-sm font-medium text-pine group-hover:text-pine-dark">
-              <Mail className="h-4 w-4" aria-hidden="true" /> {cta}
+              {cta} <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </span>
-          </a>
+          </Link>
         ))}
       </div>
 
       <div className="mt-12 rounded-card border border-line bg-paper-2/60 p-6 text-sm leading-relaxed text-ink-soft">
         <p>
           <span className="font-semibold text-ink">How this works:</span> there’s no login or signup.
-          Every option above just opens an email to us with the details we need. Removal requests are
+          Every option above opens a short form that comes straight to us. Removal requests are
           honored promptly, and we’re always glad to feature a better photo or fresh information you
           send our way.
         </p>

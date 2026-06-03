@@ -8,7 +8,7 @@ import { CategoryTag } from "@/components/CategoryTag";
 import { LocationMap } from "@/components/LocationMap";
 import { JsonLd } from "@/components/JsonLd";
 import { buildBusinessJsonLd, buildBreadcrumbJsonLd, businessUrl } from "@/lib/schema-org";
-import { siteConfig, townNameToSlug, townCentroidByName, ownerMailto } from "@/lib/site";
+import { siteConfig, townNameToSlug, townCentroidByName, contactHref } from "@/lib/site";
 import { formatPhone, telHref, prettyUrl, ensureHttp } from "@/lib/utils";
 
 export const revalidate = 3600;
@@ -332,12 +332,12 @@ export default async function BusinessPage({
             <p className="text-ink-faint">
               Details can change, so please confirm with the business before you visit. Is this your
               business?{" "}
-              <a
-                href={ownerMailto("Update or remove my listing", { name: b.name, slug: b.slug })}
+              <Link
+                href={contactHref({ topic: "update", business: { name: b.name, slug: b.slug } })}
                 className="font-medium text-pine hover:text-pine-dark"
               >
                 Update or remove this listing.
-              </a>
+              </Link>
             </p>
           </div>
         </div>

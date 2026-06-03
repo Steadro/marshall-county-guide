@@ -43,7 +43,8 @@ interface EnrichmentRecord {
   // --- verified fields (all optional; only present ones are written) ---
   verifiedName?: string; // overrides display name if branding differs
   categoryName?: string; // must be an existing Category name
-  subcategory?: string;
+  subcategory?: string; // primary axis: one closed value per category (see TAXONOMY.md)
+  tags?: string[]; // cross-cutting facets (cuisine, attributes); connect-or-create by name
   tagline?: string; // card one-liner; word-boundary truncated to CARD_TAGLINE_MAX
   shortDescription?: string; // the 1–2 sentence page lead (also meta fallback)
   internalContext?: string; // internal-only brief
@@ -125,9 +126,17 @@ async function resolveBusiness(r: EnrichmentRecord) {
 }
 
 async function applyRecord(r: EnrichmentRecord) {
-  const matches = await resolveBusiness(r);
   const label = r.slug ?? `${r.name ?? "?"}${r.city ? ` (${r.city})` : ""}`;
 
+  // Enrichment-intent guard: a real record always declares qualityTier and/or
+  // verifiedBy. Files that merely carry match keys + current values (e.g. a
+  // scratch export/work-list accidentally dropped here) have neither, and must
+  // never be applied — doing so silently rewrites tier/provenance on every row.
+  if (!present(r.qualityTier) && !present(r.verifiedBy)) {
+    return { label, outcome: "SKIPPED (no enrichment intent: missing qualityTier/verifiedBy)" as const };
+  }
+
+  const matches = await resolveBusiness(r);
   if (matches.length === 0) return { label, outcome: "NO MATCH" as const };
   if (matches.length > 1)
     return { label, outcome: `AMBIGUOUS (${matches.length} matches)` as const };
@@ -169,6 +178,23 @@ async function applyRecord(r: EnrichmentRecord) {
   if (present(r.verifiedName)) data.name = r.verifiedName;
   if (present(categoryId)) data.categoryId = categoryId;
   if (present(r.subcategory)) data.subcategory = r.subcategory;
+  if (present(r.tags)) {
+    // Tags are owned by enrichment: replace the full set (set:[] then add), and
+    // connect-or-create each by slug so the vocab self-populates. Dedupe by slug
+    // so a repeated name can't double-create.
+    const bySlug = new Map<string, string>();
+    for (const t of r.tags) {
+      const name = t.trim();
+      if (name) bySlug.set(slugify(name), name);
+    }
+    data.tags = {
+      set: [],
+      connectOrCreate: [...bySlug].map(([slug, name]) => ({
+        where: { slug },
+        create: { slug, name },
+      })),
+    };
+  }
   if (present(r.tagline)) {
     const capped = capTagline(r.tagline);
     data.tagline = capped.value;
@@ -213,9 +239,15 @@ async function applyRecord(r: EnrichmentRecord) {
 }
 
 async function main() {
+  // Directory scan (the watcher path) only picks up real batch files. Names
+  // starting with "_" or "." are scratch/working files and are skipped, so a
+  // stray export dropped in this dir is never auto-applied. Explicit file args
+  // bypass this (an operator naming a file knows what they're doing).
   let files = fileArgs.length
     ? fileArgs
-    : readdirSync(ENRICH_DIR).filter((f) => f.endsWith(".json"));
+    : readdirSync(ENRICH_DIR).filter(
+        (f) => f.endsWith(".json") && !f.startsWith("_") && !f.startsWith("."),
+      );
   if (files.length === 0) {
     console.log(`No enrichment files in ${ENRICH_DIR}.`);
     return;

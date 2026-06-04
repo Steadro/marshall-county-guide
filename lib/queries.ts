@@ -82,11 +82,26 @@ export function getAllBusinesses(): Promise<BusinessCard[]> {
 // Categories never surfaced in the homepage spotlight (slugs). Manufacturers are
 // employers, not places residents visit, so they don't belong in a "go take a
 // look" strip. National chains are excluded separately (see below).
-const SPOTLIGHT_EXCLUDED_CATEGORY_SLUGS = new Set(["manufacturing"]);
+// Opt-IN allowlist: the spotlight reads as "go support a local business," so it
+// only features destination/consumer categories. Everything else — civic,
+// government, schools, worship, nonprofits, manufacturing, public parks/rec, and
+// the "Other" grab-bag — is excluded by omission (new categories don't leak in).
+const SPOTLIGHT_CATEGORY_SLUGS = new Set([
+  "restaurant-and-food",
+  "retail-and-shopping",
+  "beauty-and-personal-care",
+  "home-and-trades",
+  "automotive",
+  "pets-and-animals",
+  "agriculture",
+  "arts-and-entertainment",
+  "wedding-and-event-venues",
+]);
 
 /**
  * Rotating cast for the homepage spotlight. Local-only (no national chains) and
- * no Manufacturing. Picked deterministically per UTC day: once assigned for the
+ * limited to the consumer "local business" categories in SPOTLIGHT_CATEGORY_SLUGS.
+ * Picked deterministically per UTC day: once assigned for the
  * day it stays for the day (stable across redeploys, caches cleanly under ISR),
  * and rotates the next day. Each business gets a fresh day-seeded score and we
  * take the top `count`, so adding/removing a business only shifts the boundary
@@ -95,7 +110,7 @@ const SPOTLIGHT_EXCLUDED_CATEGORY_SLUGS = new Set(["manufacturing"]);
  */
 export async function getSpotlightBusinesses(count = 8): Promise<BusinessCard[]> {
   const pool = (await getAllBusinesses()).filter(
-    (b) => !b.isChain && !SPOTLIGHT_EXCLUDED_CATEGORY_SLUGS.has(b.category.slug),
+    (b) => !b.isChain && SPOTLIGHT_CATEGORY_SLUGS.has(b.category.slug),
   );
   if (pool.length <= count) return pool;
 

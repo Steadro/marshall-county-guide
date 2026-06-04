@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MapPin } from "lucide-react";
+import Image from "next/image";
 import { siteConfig, mainNav } from "@/lib/site";
 import { MobileNav } from "@/components/MobileNav";
 
@@ -8,9 +8,14 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-line/70 bg-paper/85 backdrop-blur-md">
       <div className="container-page flex h-16 items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-2.5 rounded-md">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-pine text-white shadow-soft">
-            <MapPin className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
-          </span>
+          <Image
+            src="/logo.svg"
+            alt=""
+            width={36}
+            height={36}
+            priority
+            className="h-9 w-9 shrink-0"
+          />
           <span className="flex flex-col leading-none">
             <span className="font-serif text-lg font-semibold text-ink">{siteConfig.name}</span>
             <span className="text-[11px] uppercase tracking-wider text-ink-faint">

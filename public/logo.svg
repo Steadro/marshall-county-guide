@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="512" height="512" role="img" aria-label="Marshall County Guide">
+  <title>Marshall County Guide</title>
+  <circle cx="50" cy="50" r="47" fill="none" stroke="#36694d" stroke-width="2.5"></circle>
+  <g transform="translate(0 -1.6)">
+    <g fill="#36694d">
+      
+      <rect x="16" y="76" width="68" height="3"></rect>
+      <rect x="37" y="79" width="26" height="2.4"></rect>
+      
+      <rect x="16" y="41" width="22" height="3"></rect>
+      <rect x="18" y="44" width="18" height="32"></rect>
+      <rect x="62" y="41" width="22" height="3"></rect>
+      <rect x="64" y="44" width="18" height="32"></rect>
+      
+      <rect x="34" y="70" width="32" height="6"></rect>
+      <rect x="38.88" y="50" width="3.4" height="20"></rect>
+      <rect x="45.16" y="50" width="3.4" height="20"></rect>
+      <rect x="51.44" y="50" width="3.4" height="20"></rect>
+      <rect x="57.72" y="50" width="3.4" height="20"></rect>
+      
+      <rect x="33" y="44" width="34" height="6"></rect>
+      
+      <rect x="36" y="36" width="28" height="8"></rect>
+      
+      <rect x="43" y="27" width="14" height="9"></rect>
+      <path d="M42,27 Q50,16 58,27 Z"></path>
+    </g>
+    
+    <g fill="#1c3f2e">
+      <rect x="22" y="49" width="4" height="6"></rect>
+      <rect x="29" y="49" width="4" height="6"></rect>
+      <rect x="22" y="60" width="4" height="6"></rect>
+      <rect x="29" y="60" width="4" height="6"></rect>
+      <rect x="68" y="49" width="4" height="6"></rect>
+      <rect x="75" y="49" width="4" height="6"></rect>
+      <rect x="68" y="60" width="4" height="6"></rect>
+      <rect x="75" y="60" width="4" height="6"></rect>
+    </g>
+    
+    <rect x="35" y="46.4" width="30" height="0.9" fill="#e4b65f" opacity="0.9"></rect>
+    
+    <circle cx="50" cy="31.6" r="4.2" fill="#e4b65f"></circle>
+    <line x1="50" y1="31.6" x2="50" y2="28.7" stroke="#1c3f2e" stroke-width="1" stroke-linecap="round"></line>
+    <line x1="50" y1="31.6" x2="52" y2="31.6" stroke="#1c3f2e" stroke-width="1" stroke-linecap="round"></line>
+  </g>
+</svg>

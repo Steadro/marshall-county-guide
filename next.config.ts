@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
     // fallback for browsers without AVIF. Long cache since photos are static.
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 31536000,
+    // Next requires an explicit allowlist of optimizer qualities. 60 for the
+    // hero (invisible behind the scrim, smaller LCP); 75 is the default for the
+    // rest. Keep this in sync with any quality={…} overrides in components.
+    qualities: [60, 75],
   },
   outputFileTracingExcludes: {
     "*": ["./app/generated/**/*"],

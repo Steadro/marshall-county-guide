@@ -36,6 +36,32 @@ Adding a category is a deliberate schema/seed act by the maintainer — it is NO
 something an enrichment pass does. If a location doesn't fit any category, see the
 flag protocol below.
 
+## Browse categories (the 9 a visitor actually picks)
+
+The 22 above are the **schema/type tier** (`Business.category`, closed + enforced
+by `apply-enrichment.ts`). On top of them sits a **presentation layer of 9
+consumer categories** — the browse top level, organized by intent — defined in
+[`lib/category-groups.ts`](../lib/category-groups.ts). These are what a
+resident/visitor picks; the 22 fold underneath. Names mirror the "Just visiting?"
+hero cards (`VisitorBand`) so the hero and the browse reinforce instead of compete.
+
+| Browse category | DB categories it contains |
+|---|---|
+| **Eat & Drink** | Restaurant & Food |
+| **Shop** | Retail & Shopping |
+| **Outdoors & Recreation** | Fitness & Recreation |
+| **Arts, History & Culture** | Arts & Entertainment, Wedding & Event Venues |
+| **Home, Auto & Services** | Automotive, Home & Trades |
+| **Professional & Financial** | Financial, Professional Services, Real Estate |
+| **Health & Beauty** | Health & Medical, Beauty & Personal Care |
+| **Pets, Kids & Farm** | Pets & Animals, Childcare & Education, Agriculture |
+| **Industry & Employers** | Manufacturing |
+| **Community & Government** | Government & Civic, Schools, Public Safety, Community & Nonprofit, Places of Worship |
+
+`Other` (storage / lodging / laundromat) sweeps into "Everything Else" until those
+get a home (open decision below). This grouping is a one-file edit in
+`category-groups.ts` — **no DB migration, no slug/URL change, fully reversible.**
+
 ## Fit-or-flag protocol
 
 The category list is closed; the subcategory lists below are **closed but
@@ -91,15 +117,16 @@ extendable by the maintainer**. The pass does not get to expand them silently.
 The motivating case. **Subcategory = venue type (one). Cuisine goes in tags.**
 
 ### Subcategory — venue type (pick one)
-`Restaurant` · `Cafe` · `Coffee Shop` · `Bakery` · `Bar & Grill` · `Pub & Bar` ·
-`Diner` · `Fast Food` · `Food Truck` · `Deli` · `Caterer` ·
-`Dessert & Ice Cream` · `Brewery` · `Winery` · `Juice & Smoothie Bar`
+`Restaurant` · `Cafe` · `Bakery` · `Bar & Grill` · `Fast Food` · `Food Truck` ·
+`Dessert & Ice Cream` · `Juice & Smoothie Bar`
 
-Notes:
-- `Restaurant` is the default full-service sit-down venue; the cuisine tag carries
-  the specificity.
-- `Cafe` = casual all-day food + coffee; `Coffee Shop` = coffee-forward, little/no
-  kitchen. When unsure, `Cafe`.
+Notes (v2, tightened 2026-06-04 — the splits that don't change a choice were dropped):
+- `Restaurant` = the default sit-down venue. **Diner folds in here** — a diner is
+  the same kind of place to a consumer; the character goes in a tag (`Southern`).
+- `Fast Food` = counter/drive-thru/quick service. **Deli folds in here** (Subway
+  is fast food) with a `Sandwiches` tag. Counter-service BBQ joints belong here too.
+- `Cafe` = casual all-day food + coffee. **Coffee Shop / Pub & Bar fold into
+  `Cafe` / `Bar & Grill`** respectively. Cuisine always goes in tags.
 - Grocery stores, markets, and travel-stop convenience retail belong in
   **Retail & Shopping**, not here, even if they sell prepared food.
 
@@ -123,7 +150,9 @@ Notes:
 | `Italian` | `Restaurant` | `Italian` |
 | `Southern/American` | `Restaurant` | `Southern`, `American` |
 | `Bar & Grill` | `Bar & Grill` | — |
-| `Deli & Sandwiches` | `Deli` | `Sandwiches` |
+| `Deli` / `Deli & Sandwiches` | `Fast Food` | `Sandwiches` |
+| `Diner` / `Country Diner` | `Restaurant` | `Southern` (if applicable) |
+| `Coffee Shop` / `Cafe & Coffee` | `Cafe` | — |
 | `Nutrition & Smoothies` | `Juice & Smoothie Bar` | — |
 | `Travel Stop & Southern BBQ` | move to **Retail & Shopping** → `Convenience & Travel Stop` | `BBQ` (food served) |
 
@@ -197,9 +226,9 @@ Preschool`.)*
 **Arts & Entertainment:** `Museum` · `Theatre` · `Gallery` · `Cinema` ·
 `Live Music Venue`
 
-**Wedding & Event Venues:** `Wedding & Event Venue` · `Barn Venue` ·
-`Outdoor Venue` *(collapse the 5 current variants into these; barn/outdoor as
-modifiers → tags.)*
+**Wedding & Event Venues:** `Event Venue` *(v2: collapsed to one venue type;
+`barn`, `outdoor`, `farm` are tags, not separate subcategories. This category
+displays under the **Arts, History & Culture** browse category.)*
 
 ### Civic categories (Community & Government group)
 
@@ -244,6 +273,7 @@ change (not subcategory) and a schema/seed touch — hold until the gold pass is
   subcategory should update this doc in the same change.
 - The enrichment pass should be handed this file (or its relevant section) so it
   emits canonical values, not invented ones.
-- A one-time normalization script can map the drifted values above to canonical
-  ones once the in-flight gold run completes — do not run it concurrently with
-  the pass.
+- `scripts/normalize-taxonomy.ts` encodes the closed lists + drift map and was
+  **applied to Neon on 2026-06-04** (229 updates, 0 flags, 7 `Other` rows held).
+  It's idempotent (canonical values map to themselves), so it's safe to re-run
+  after editing the map. DB snapshot before the run: `data/businesses-export-2026-06-04.csv`.

@@ -36,7 +36,10 @@ type Rule = { sub: string; tags?: string[]; cat?: string; flag?: string };
 // Closed canonical subcategory lists per category slug (TAXONOMY.md). Used for
 // identity matches + idempotency (a canonical value maps to itself, no tag touch).
 const CANON: Record<string, string[]> = {
-  "restaurant-and-food": ["Restaurant","Cafe","Coffee Shop","Bakery","Bar & Grill","Pub & Bar","Diner","Fast Food","Food Truck","Deli","Caterer","Dessert & Ice Cream","Brewery","Winery","Juice & Smoothie Bar"],
+  // v2: tightened to consumer-meaningful venue types. Diner folds into Restaurant,
+  // Deli into Fast Food, Coffee Shop into Cafe, Pub & Bar into Bar & Grill —
+  // the splits a diner-goes-here vs restaurant-goes-there don't change a choice.
+  "restaurant-and-food": ["Restaurant","Cafe","Bakery","Bar & Grill","Fast Food","Food Truck","Dessert & Ice Cream","Juice & Smoothie Bar"],
   "automotive": ["Auto Repair","Tire & Auto Repair","Auto Repair & Towing","Auto Parts & Accessories","Car Wash","Body Shop","Dealership"],
   "retail-and-shopping": ["Dollar & Variety","Supercenter","Grocery","Convenience & Travel Stop","Hardware Store","Farm & Feed","Florist","Boutique","Antiques & Vintage","Home Decor","Smoke & Vape Shop","Liquidation & Discount","Jewelry"],
   "financial": ["Bank","Credit Union","CPA & Accounting","Tax Preparation","Investment & Advisory","Insurance"],
@@ -51,7 +54,8 @@ const CANON: Record<string, string[]> = {
   "agriculture": ["Farm & Ranch Supply","Livestock & Breeding","Crop & Produce","Winery & Vineyard"],
   "childcare-and-education": ["Childcare & Preschool","Tutoring & Enrichment","Early Intervention Services"],
   "arts-and-entertainment": ["Museum","Theatre","Gallery","Cinema","Live Music Venue"],
-  "wedding-and-event-venues": ["Wedding & Event Venue","Barn Venue","Outdoor Venue"],
+  // v2: one venue type; barn/outdoor/farm become tags, not separate subcategories.
+  "wedding-and-event-venues": ["Event Venue"],
   "government-and-civic": ["City Hall","County Government Office","Court & Clerk","Post Office","Public Library","Public Works","Cemetery"],
   "schools": ["Elementary School","Intermediate School","Middle School","High School","Middle & High School","District Administration","Career & Technical"],
   "public-safety": ["Fire Department","Police Department","Sheriff's Office","EMS","Animal Control","Detention Facility"],
@@ -71,11 +75,15 @@ const MAP: Record<string, Record<string, Rule>> = {
     "southern/american": { sub: "Restaurant", tags: ["Southern", "American"] },
     "burgers & american": { sub: "Restaurant", tags: ["Burgers", "American"] },
     "cafe & coffee": { sub: "Cafe" },
+    "coffee shop": { sub: "Cafe" },
     "ice cream & dessert": { sub: "Dessert & Ice Cream" },
-    "deli & sandwiches": { sub: "Deli", tags: ["Sandwiches"] },
+    "deli & sandwiches": { sub: "Fast Food", tags: ["Sandwiches"] },
+    "deli": { sub: "Fast Food", tags: ["Sandwiches"] },
     "mexican fast food": { sub: "Fast Food", tags: ["Mexican"] },
     "fast food seafood": { sub: "Fast Food", tags: ["Seafood"] },
-    "country diner": { sub: "Diner", tags: ["Southern"] },
+    "country diner": { sub: "Restaurant", tags: ["Southern"] },
+    "diner": { sub: "Restaurant" },
+    "pub & bar": { sub: "Bar & Grill" },
     "nutrition & smoothies": { sub: "Juice & Smoothie Bar" },
     "travel stop & southern bbq": { sub: "Convenience & Travel Stop", cat: "Retail & Shopping", tags: ["BBQ"] },
     "country store & burgers": { sub: "Restaurant", tags: ["Burgers"], flag: "subcategory: General Store w/ grill -- old country store that also served burgers (now closed); confirm whether this is Retail (general store) or Restaurant" },
@@ -176,10 +184,13 @@ const MAP: Record<string, Record<string, Rule>> = {
     "real estate & auction": { sub: "Realty & Auction" },
   },
   "wedding-and-event-venues": {
-    "barn wedding venue": { sub: "Barn Venue" },
-    "farm & barn venue": { sub: "Barn Venue", tags: ["farm"] },
-    "wedding venue": { sub: "Wedding & Event Venue" },
-    "outdoor wedding & event venue": { sub: "Outdoor Venue" },
+    "barn wedding venue": { sub: "Event Venue", tags: ["barn"] },
+    "barn venue": { sub: "Event Venue", tags: ["barn"] },
+    "farm & barn venue": { sub: "Event Venue", tags: ["barn", "farm"] },
+    "wedding venue": { sub: "Event Venue" },
+    "wedding & event venue": { sub: "Event Venue" },
+    "outdoor wedding & event venue": { sub: "Event Venue", tags: ["outdoor"] },
+    "outdoor venue": { sub: "Event Venue", tags: ["outdoor"] },
   },
   "public-safety": {
     "emergency medical services": { sub: "EMS" },

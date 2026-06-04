@@ -2,7 +2,7 @@
 
 A polished, public directory of local businesses across **Marshall County, Tennessee** — the county
 seat **Lewisburg** plus Chapel Hill, Cornersville, Petersburg, and Belfast. Curated and
-design-forward, with strong local SEO baked in. **150+ businesses across more than a dozen categories at launch.**
+design-forward, with strong local SEO baked in. **230+ businesses across 20+ categories.**
 
 Live at **[marshallcountyguide.com](https://marshallcountyguide.com)**. A community project — no ads,
 no paid placement, no sponsored listings.
@@ -23,8 +23,8 @@ Deploys on Vercel.
 | Icons     | lucide-react                                        |
 | Hosting   | Vercel + a hosted Postgres (Neon recommended)       |
 
-Design system, "warm & local-craft": Fraunces (serif headlines) + Inter (body), a cream/paper
-base, deep ink text, and a clay/terracotta accent. All tokens live in
+Design system, "Courthouse Green": Fraunces (serif headlines) + Inter (body), a limestone/paper
+base, deep green-ink text, a rolling-hills pine primary, and a goldenrod accent. All tokens live in
 [`app/globals.css`](app/globals.css) under `@theme`, so the whole look can be retuned in one place.
 
 ---
@@ -117,7 +117,10 @@ app/
   category/[slug]/         Category landing pages
   [town]/page.tsx          Per-town pages (local SEO)
   about/page.tsx           Mission / about page
-  for-owners/page.tsx      Info for business owners
+  history/page.tsx         Local history of the county + towns
+  for-owners/page.tsx      Info for business owners & local governments
+  contact/page.tsx         Contact form (update/add/remove a listing)
+  api/contact/route.ts     Contact handler: honeypot + rate limit -> n8n webhook -> Resend
   sitemap.ts, robots.ts    Generated sitemap.xml + robots.txt
   generated/prisma/        Prisma client (generated; git-ignored)
 components/                UI: cards, placeholder art, explorer, map, badges…
@@ -131,6 +134,7 @@ prisma/
   seed.ts                  CSV → DB seeder (enrichment-safe; see below)
 schema/
   schema.prisma            Annotated reference copy of the data model
+  TAXONOMY.md              Closed category / subcategory / tag vocabulary (classification)
 scripts/
   geocode.ts               Standalone geocoding pass
   apply-enrichment.ts      Apply data-quality enrichment batches (npm run enrich:apply)
@@ -157,6 +161,12 @@ data/
   [`scripts/apply-enrichment.ts`](scripts/apply-enrichment.ts), which only promotes a record to
   `GOLD` when every criterion is met and otherwise holds it at `STANDARD`. GOLD listings get a subtle
   gold tint on their cards.
+- **Classification:** every business has one `category` and one primary `subcategory` (venue/type),
+  plus `tags` (cuisine, attributes, and secondary types). The closed vocabulary lives in
+  [`schema/TAXONOMY.md`](schema/TAXONOMY.md): 9 consumer browse categories over the 22 DB categories,
+  per-category subcategory lists, and a fit-or-flag rule. The browse also supports **multi-type** —
+  a place can show under more than one type chip via a type-tag (e.g. a donut shop in both Bakery and
+  Restaurant). `scripts/normalize-taxonomy.ts` enforces the closed lists.
 - **Enrichment pipeline:** batches are drafted as `data/enrichment/*.json` (gitignored — they hold
   the maintainer's local research notes, so they stay off GitHub). A local watcher
   ([`scripts/auto-enrich-push.ps1`](scripts/auto-enrich-push.ps1)) applies new batches to Neon via

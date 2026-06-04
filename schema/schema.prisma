@@ -1,5 +1,5 @@
-// Lewisburg Local Business Directory — Prisma schema
-// Target: PostgreSQL (works cleanly with Next.js or Astro)
+// Marshall County Guide — Prisma schema (annotated reference; keep in sync with prisma/schema.prisma)
+// Target: PostgreSQL. See DATA.md for the schema.org mapping rationale.
 //
 // Design notes:
 // - Starts CURATED (you/an editor own the data) but every piece needed for
@@ -38,8 +38,8 @@ model Business {
   // Classification
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
-  subcategory String? // controlled-vocab refinement within a category (e.g. "BBQ", "Pharmacy"); see GOLD_STANDARD.md
-  tags       Tag[] // many-to-many secondary descriptors ("dog-friendly", "family-owned")
+  subcategory String? // venue/type within a category (e.g. "Cafe", "Pharmacy"); closed vocab in schema/TAXONOMY.md
+  tags       Tag[] // many-to-many facets: cuisine, attributes, and secondary types (TAXONOMY.md multi-type)
 
   // Contact
   email   String?
@@ -86,7 +86,7 @@ model Business {
   lastVerifiedAt DateTime?
   verifiedBy     String?
 
-  // Quality / gold-standard pipeline (see GOLD_STANDARD.md)
+  // Quality / gold-standard pipeline (see DATA.md)
   qualityTier    QualityTier @default(UNREVIEWED) // data depth/trust, distinct from publish `status`
   internalContext String?    @db.Text // internal-only brief; NEVER rendered publicly
   reviewFlag     String?     // set when auto-enrichment can't safely promote (conflict, rebrand, no source)
@@ -123,7 +123,7 @@ model Business {
 
 model Category {
   id          String     @id @default(cuid())
-  slug        String     @unique // /category/restaurants
+  slug        String     @unique // /category/restaurant-and-food
   name        String // "Restaurant & Food"
   description String?
   icon        String? // lucide icon name or asset key
@@ -220,7 +220,7 @@ enum ClaimStatus {
 enum QualityTier {
   UNREVIEWED // seed data as imported; unconfirmed
   STANDARD // name/category/contact confirmed against a primary source
-  GOLD // meets every criterion in GOLD_STANDARD.md, dated + sourced
+  GOLD // meets every criterion in DATA.md, dated + sourced
 }
 
 enum UserRole {

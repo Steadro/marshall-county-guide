@@ -1,5 +1,5 @@
 // schema.org structured-data builders. The LocalBusiness JSON-LD on each
-// listing page is the directory's single biggest SEO lever (see schema/SCHEMA.md).
+// listing page is the directory's single biggest SEO lever (see DATA.md).
 
 import type { BusinessDetail } from "@/lib/queries";
 import { siteConfig } from "@/lib/site";

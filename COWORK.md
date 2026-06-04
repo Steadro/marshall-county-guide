@@ -83,7 +83,11 @@ the file. There is no CI and no review gate: a valid batch goes live on its own.
    **six** criteria are met (verified name, hours, internal context, two-line public copy,
    category, subcategory — see DATA.md §2). The apply script re-checks and downgrades if a
    criterion is missing. **Activity-recency is NOT a criterion** (it was dropped 2026-05-31).
-5. **When unsure, flag — don't force.** On a conflict, rebrand, possible closure, or low
+5. **Classification uses the closed vocabulary in `schema/TAXONOMY.md` (committed).** `categoryName`
+   and `subcategory` must be values from its lists, verbatim. Cuisine and attributes go in `tags`
+   (a `string[]`), **not** in `subcategory` (e.g. subcategory `Restaurant` + tags `["Italian"]`). If
+   nothing fits, set `reviewFlag` rather than inventing a value — it'll hold at STANDARD for review.
+6. **When unsure, flag — don't force.** On a conflict, rebrand, possible closure, or low
    confidence on hours/identity, set `"reviewFlag": "...short note..."` and leave it STANDARD.
    Because applies are now automatic, a flagged record still goes live — but as STANDARD,
    never GOLD, and its note shows in the apply log for the maintainer to revisit. So
@@ -110,4 +114,5 @@ the file. There is no CI and no review gate: a valid batch goes live on its own.
 - **Apply (run by the watcher or Claude Code, not you):** `npm run enrich:apply <file>` / `npm run enrich:dry`.
 - **Pipeline:** local — `scripts/auto-enrich-push.ps1` (Task Scheduler) applies new batches to Neon and archives them to `data/enrichment/.applied/`. No CI.
 - **Spec:** `DATA.md` §2 (Gold bar) + §3 (batch loop, record format, source-tiering).
+- **Classification vocab:** `schema/TAXONOMY.md` (committed) — closed category / subcategory / tag lists.
 - **State / runbooks:** `PROJECT.md`.

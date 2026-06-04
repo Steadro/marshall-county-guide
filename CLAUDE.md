@@ -13,13 +13,14 @@ Public, curated directory of businesses across Marshall County, TN — the count
 - **Data model:** `prisma/schema.prisma` is the operative schema Prisma migrates/generates from; `schema/schema.prisma` is the annotated reference (keep both `.prisma` files in sync). The model + schema.org mapping is documented in `DATA.md`. Don't redesign the model; extend only with clear reason.
 - **Seed data:** `data/businesses-seed.csv` (LF line endings — see `.gitattributes`). Don't hand-edit it to fix code problems — fix the seed script instead.
 - **Data quality + enrichment:** `DATA.md` defines the `qualityTier` bar (UNREVIEWED → STANDARD → GOLD) and the workflow; `scripts/apply-enrichment.ts` raises records to it.
+- **Classification (committed):** `schema/TAXONOMY.md` is the closed vocabulary for category, subcategory, and tags — the 9 consumer browse categories over the 22 DB categories, the per-category subcategory lists, the tag axis, the fit-or-flag protocol, and multi-type (a place showing under more than one type chip via tags). `lib/category-groups.ts` is the presentation grouping; `scripts/normalize-taxonomy.ts` enforces the closed lists.
 - **State, decisions, runbooks:** `PROJECT.md`.
 
 ## Conventions
 
 - TypeScript strict mode. Prefer Server Components; use Client Components only where interactivity needs it (search/filter).
 - Listing pages must be statically generated (SSG/ISR) for SEO — no client-only data fetching for primary content.
-- Styling via Tailwind + a small set of design tokens (warm/local-craft theme in §5 of the spec). Keep the theme centralized so it can be retuned.
+- Styling via Tailwind + design tokens (the "Courthouse Green" theme: pine primary, goldenrod accent, limestone/paper surfaces). All tokens live in `app/globals.css` under `@theme` so the whole look retunes in one place.
 - Keep dependencies minimal. Don't add a CMS, auth lib, or state manager for v1.
 - Generated placeholder images must be deterministic per business (hash id/slug) so they're stable across builds.
 

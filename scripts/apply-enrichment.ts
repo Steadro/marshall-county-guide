@@ -1,7 +1,7 @@
 /**
  * Apply enrichment batches to the database.
  *
- * The enrichment workflow (see ENRICHMENT.md) researches businesses and writes
+ * The enrichment workflow (see DATA.md) researches businesses and writes
  * structured records to data/enrichment/*.json. This script applies those
  * records to the live DB. It is the WRITE half of "automated batches" — the
  * research half happens via web/browser tooling and produces the JSON.
@@ -18,7 +18,8 @@
  * - Idempotent: re-running the same batch converges to the same state.
  * - Only fields present in a record are written; absent fields are left untouched.
  * - Enforces the gold bar: a record may only reach GOLD if every criterion in
- *   GOLD_STANDARD.md is satisfied; otherwise it is written as STANDARD with a note.
+ *   DATA.md is satisfied; otherwise it is written as STANDARD with a note.
+ * - Classification (categoryName, subcategory, tags) follows schema/TAXONOMY.md.
  */
 import "dotenv/config";
 import { readFileSync, readdirSync } from "node:fs";

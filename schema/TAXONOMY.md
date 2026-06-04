@@ -110,6 +110,18 @@ extendable by the maintainer**. The pass does not get to expand them silently.
 **Formatting:** Title Case, ampersand not "and" (`Tire & Auto Repair`, not
 `tire and auto repair`). No trailing qualifiers like "branch".
 
+### Multi-type (one place, more than one type chip)
+
+A business has **one** primary `subcategory`, but a genuinely multi-type place can
+show under additional type chips via a **type-tag**: a tag whose name matches a
+known subcategory. Example: Lewisburg Donut Shop is `subcategory: Bakery` + tag
+`Restaurant`, so it appears under both the Bakery and Restaurant chips. A tag only
+counts as a type if it matches a subcategory that exists, so cuisine/attribute tags
+(`BBQ`, `dog-friendly`) never become type chips. Implemented with no schema change
+in `typesOf`/`knownTypeNames` (`lib/category-groups.ts`); the browse pane and the
+category-page type filter both union subcategory + type-tags. To make a place
+multi-type, just add a tag named after the other subcategory.
+
 ---
 
 ## Restaurant & Food

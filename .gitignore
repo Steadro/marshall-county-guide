@@ -55,3 +55,13 @@ yarn-error.log*
 
 # redundant binary seed (the CSV is authoritative)
 *.xlsx
+
+# Local-only scratch (kept off the public repo by convention; never the running app)
+# Underscore-prefixed scripts are one-off research/ops tools — their effects land
+# in Neon, the scripts themselves stay local.
+/scripts/_*.ts
+# Working data dirs: gold staging + per-business enrichment research records.
+/data/_gold-staging/
+/data/enrichment/_records/
+# Root-level logo/favicon SOURCE files. The SERVED assets live in /public.
+/images/

@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { signOut as signOutAction } from "@/app/admin/actions";
 import { SESSION_HINT_COOKIE } from "@/lib/auth/constants";
 
@@ -29,12 +30,20 @@ function hasHintCookie(): boolean {
  *     verifies the real httpOnly signed session server-side)
  * Initial state is always non-admin so server HTML and first client render match
  * (no hydration mismatch); the effect flips it on for real admins a beat later.
+ *
+ * The check re-runs on every client navigation (usePathname), not just on mount.
+ * This matters because login redirects via client-side navigation — the root
+ * layout (and this provider) never remounts — so a mount-only check would stay
+ * stale until a full refresh. Once admin is confirmed we stop re-checking (status
+ * only drops on logout, which hard-reloads the page).
  */
 export function AdminProvider({ children }: { children: React.ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [ready, setReady] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
+    if (isAdmin) return; // already confirmed; nothing drops admin without a reload
     if (!hasHintCookie()) {
       setReady(true);
       return;
@@ -53,7 +62,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     return () => {
       active = false;
     };
-  }, []);
+  }, [pathname, isAdmin]);
 
   const signOut = useCallback(async () => {
     await signOutAction();

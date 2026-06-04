@@ -1,5 +1,13 @@
 # Marshall County Guide
 
+[![License](https://img.shields.io/github/license/Steadro/marshall-county-guide)](LICENSE)
+[![Last commit](https://img.shields.io/github/last-commit/Steadro/marshall-county-guide)](https://github.com/Steadro/marshall-county-guide/commits/main)
+
+![Next.js](https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwindcss&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
+
 A polished, public directory of local businesses across **Marshall County, Tennessee** — the county
 seat **Lewisburg** plus Chapel Hill, Cornersville, Petersburg, and Belfast. Curated and
 design-forward, with strong local SEO baked in. **230+ businesses across 20+ categories.**

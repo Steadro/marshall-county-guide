@@ -1,7 +1,6 @@
 # Marshall County Guide
 
-[![License](https://img.shields.io/github/license/Steadro/marshall-county-guide)](LICENSE)
-[![Last commit](https://img.shields.io/github/last-commit/Steadro/marshall-county-guide)](https://github.com/Steadro/marshall-county-guide/commits/main)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ![Next.js](https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)

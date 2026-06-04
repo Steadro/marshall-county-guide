@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { LayoutGrid, MapPin } from "lucide-react";
 import { BrowseDirectory } from "@/components/BrowseDirectory";
 import type { BrowseGroup } from "@/lib/category-groups";
 import type { RestaurantPick } from "@/lib/queries";
 import { cn } from "@/lib/utils";
+import { useSessionState } from "@/lib/useSessionState";
 
 interface TownCount {
   slug: string;
@@ -25,7 +25,11 @@ export function BrowseTabs({
   towns: TownCount[];
   restaurants?: RestaurantPick[];
 }) {
-  const [tab, setTab] = useState<"category" | "community">("category");
+  const [tab, setTab] = useSessionState<"category" | "community">(
+    "mcg-browse-tab",
+    "category",
+    (v) => v === "category" || v === "community",
+  );
 
   return (
     <div>

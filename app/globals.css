@@ -70,9 +70,10 @@
    Base layer
    ========================================================================= */
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
+  /* No `scroll-behavior: smooth` on html: it hijacks the browser's back/forward
+     scroll restoration, turning an instant jump into a slow multi-thousand-pixel
+     animation that lands "before the section" the user left from. Anchor links
+     jump instantly instead. */
 
   body {
     background-color: var(--color-paper);

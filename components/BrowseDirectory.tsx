@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { DinnerPicker } from "@/components/DinnerPicker";
 import type { BrowseCat, BrowseGroup, GroupAccent } from "@/lib/category-groups";
 import type { RestaurantPick } from "@/lib/queries";
+import { useSessionState } from "@/lib/useSessionState";
 
 interface Town {
   slug: string;
@@ -50,7 +50,13 @@ export function BrowseDirectory({
   towns?: Town[];
 }) {
   const all = [...groups, civic];
-  const [active, setActive] = useState(all[0]?.key ?? "");
+  // Persisted so a back-navigation re-mounts on the same group (stable layout →
+  // scroll restoration lands where the user left off). See useSessionState.
+  const [active, setActive] = useSessionState(
+    "mcg-browse-group",
+    all[0]?.key ?? "",
+    (v) => all.some((g) => g.key === v),
+  );
   const activeGroup = all.find((g) => g.key === active) ?? all[0];
   const isFoodGroup = activeGroup?.categories.some((c) => c.slug === FOOD_CATEGORY_SLUG);
 

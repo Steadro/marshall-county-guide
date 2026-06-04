@@ -81,22 +81,21 @@ export function BrowseDirectory({
       <div className="rounded-card bg-card p-5 shadow-soft ring-1 ring-line/70">
         {activeGroup && (
           <>
-            <div className="flex items-baseline gap-2">
-              <span
-                className={`h-2.5 w-2.5 shrink-0 translate-y-[-1px] rounded-full ${ACCENTS[activeGroup.accent].dot}`}
-              />
-              <h3 className="font-serif text-lg font-semibold text-ink">
-                {activeGroup.title}
-              </h3>
-              <span className="text-sm text-ink-faint">{activeGroup.count}</span>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-baseline gap-2">
+                <span
+                  className={`h-2.5 w-2.5 shrink-0 translate-y-[-1px] rounded-full ${ACCENTS[activeGroup.accent].dot}`}
+                />
+                <h3 className="font-serif text-lg font-semibold text-ink">
+                  {activeGroup.title}
+                </h3>
+                <span className="text-sm text-ink-faint">{activeGroup.count}</span>
+              </div>
+              {isFoodGroup && restaurants && restaurants.length > 0 ? (
+                <DinnerPicker restaurants={restaurants} towns={towns ?? []} />
+              ) : null}
             </div>
             <p className="mt-1 text-sm text-ink-soft">{activeGroup.blurb}</p>
-
-            {isFoodGroup && restaurants && restaurants.length > 0 ? (
-              <div className="mt-4">
-                <DinnerPicker restaurants={restaurants} towns={towns ?? []} />
-              </div>
-            ) : null}
 
             <div className="mt-4 flex flex-col gap-4">
               {activeGroup.categories.map((c) => (

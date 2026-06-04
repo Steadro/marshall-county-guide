@@ -51,6 +51,34 @@ export interface BrowseGroup {
   count: number;
 }
 
+// --- Multi-type support -----------------------------------------------------
+// A business has one primary `subcategory`, but can carry secondary "types" as
+// tags whose name matches a known subcategory — e.g. a donut shop that's a
+// `Bakery` and also serves meals gets a `Restaurant` tag, so it shows under both
+// type chips without a schema change. A tag only counts as a type if it matches
+// a subcategory that actually exists in the set, so cuisine/attribute tags (BBQ,
+// dog-friendly) never become type chips.
+
+export interface TypedBusiness {
+  subcategory: string | null;
+  tags: { name: string }[];
+}
+
+/** Distinct primary subcategory names present — the valid "type" names. */
+export function knownTypeNames(items: TypedBusiness[]): Set<string> {
+  const names = new Set<string>();
+  for (const b of items) if (b.subcategory) names.add(b.subcategory);
+  return names;
+}
+
+/** Every type chip a business belongs to: its subcategory + matching type-tags. */
+export function typesOf(b: TypedBusiness, known: Set<string>): string[] {
+  const types = new Set<string>();
+  if (b.subcategory) types.add(b.subcategory);
+  for (const t of b.tags) if (known.has(t.name)) types.add(t.name);
+  return [...types];
+}
+
 // Consumer categories — the browse top level, by visitor/resident intent. These
 // are the "promote groups to categories" buckets: broad and obvious, named to
 // match the "Just visiting?" cards (Eat & Drink, Outdoors & Rec, History &

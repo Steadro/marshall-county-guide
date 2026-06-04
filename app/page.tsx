@@ -9,7 +9,7 @@ import {
   getAllBusinesses,
 } from "@/lib/queries";
 import { siteConfig, contactHref, TOWNS } from "@/lib/site";
-import { buildBrowseGroups } from "@/lib/category-groups";
+import { buildBrowseGroups, knownTypeNames, typesOf } from "@/lib/category-groups";
 import { BusinessCard } from "@/components/BusinessCard";
 import { GoldNote } from "@/components/GoldNote";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -44,8 +44,10 @@ export default async function HomePage() {
 
   // Up to 3 sample business names per category for the browse tiles, plus the
   // subcategory (venue/type) breakdown per category for the browse-pane chips.
+  // Chips count a business under its primary subcategory AND any secondary
+  // type-tags (see typesOf), so a multi-type place shows under more than one chip.
   const samples = new Map<string, string[]>();
-  const subAgg = new Map<string, Map<string, number>>();
+  const byCat = new Map<string, typeof allBiz>();
   for (const b of allBiz) {
     const slug = b.category?.slug;
     if (!slug) continue;
@@ -54,20 +56,21 @@ export default async function HomePage() {
       arr.push(b.name);
       samples.set(slug, arr);
     }
-    if (b.subcategory) {
-      const m = subAgg.get(slug) ?? new Map<string, number>();
-      m.set(b.subcategory, (m.get(b.subcategory) ?? 0) + 1);
-      subAgg.set(slug, m);
-    }
+    (byCat.get(slug) ?? byCat.set(slug, []).get(slug)!).push(b);
   }
   const subcategories = new Map<string, { name: string; count: number }[]>();
-  for (const [slug, m] of subAgg) {
-    subcategories.set(
-      slug,
-      [...m.entries()]
-        .map(([name, count]) => ({ name, count }))
-        .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
-    );
+  for (const [slug, items] of byCat) {
+    const known = knownTypeNames(items);
+    const counts = new Map<string, number>();
+    for (const b of items) for (const t of typesOf(b, known)) counts.set(t, (counts.get(t) ?? 0) + 1);
+    if (counts.size > 0) {
+      subcategories.set(
+        slug,
+        [...counts.entries()]
+          .map(([name, count]) => ({ name, count }))
+          .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)),
+      );
+    }
   }
   const { commercial: browseGroups, civic: browseCivic } = buildBrowseGroups(
     categories,

@@ -7,6 +7,7 @@ import type { BusinessCard as BusinessCardData } from "@/lib/queries";
 import { BusinessCard } from "@/components/BusinessCard";
 import { GoldNote } from "@/components/GoldNote";
 import { matchesQuery } from "@/lib/search";
+import { knownTypeNames, typesOf } from "@/lib/category-groups";
 import { cn } from "@/lib/utils";
 
 interface FilterOption {
@@ -60,26 +61,28 @@ export function BusinessExplorer({
   // Subcategory facet (the "what kind of place" axis) — counts reflect the
   // currently-applicable set, sorted most-common first. Only meaningful when the
   // list shares a category (e.g. a category page), so it's opt-in.
+  const knownTypes = useMemo(() => knownTypeNames(businesses), [businesses]);
   const subcategoryOptions = useMemo(() => {
     const map = new Map<string, number>();
     for (const b of businesses) {
-      if (b.subcategory) map.set(b.subcategory, (map.get(b.subcategory) ?? 0) + 1);
+      for (const t of typesOf(b, knownTypes)) map.set(t, (map.get(t) ?? 0) + 1);
     }
     return [...map.entries()]
       .map(([value, count]) => ({ value, count }))
       .sort((a, b) => b.count - a.count || a.value.localeCompare(b.value));
-  }, [businesses]);
+  }, [businesses, knownTypes]);
 
   const filtered = useMemo(() => {
     return businesses.filter((b) => {
       if (localOnly && b.isChain) return false;
       if (category && b.category.slug !== category) return false;
       if (town && b.city !== town) return false;
-      if (subcategory && b.subcategory !== subcategory) return false;
+      // Type filter matches the primary subcategory OR a secondary type-tag.
+      if (subcategory && !typesOf(b, knownTypes).includes(subcategory)) return false;
       // Synonym-aware match ("haircut" -> hair salons), see lib/search.ts
       return matchesQuery(b, query);
     });
-  }, [businesses, query, category, town, subcategory, localOnly]);
+  }, [businesses, query, category, town, subcategory, localOnly, knownTypes]);
 
   const hasFilters = query || category || town || subcategory || localOnly;
   const hasGold = useMemo(() => filtered.some((b) => b.qualityTier === "GOLD"), [filtered]);

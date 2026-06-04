@@ -8,12 +8,35 @@
 // check). Next.js explicitly recommends this two-layer split.
 
 import { NextResponse, type NextRequest } from "next/server";
-import { SESSION_COOKIE, verifySessionToken } from "@/lib/auth/session";
+import {
+  SESSION_COOKIE,
+  SESSION_HINT_COOKIE,
+  SESSION_MAX_AGE_SECONDS,
+  verifySessionToken,
+} from "@/lib/auth/session";
 
 export const config = {
   // Only run on the admin area. Public pages pay no cost.
   matcher: ["/admin/:path*"],
 };
+
+// Re-issue the client-readable hint cookie whenever an authenticated admin hits
+// an /admin route without it. This self-heals sessions created before the hint
+// existed (and any cookie drift), so the public-page admin banner + edit links
+// light up without forcing a re-login. Only admins reach here (see matcher), so
+// it adds nothing to public traffic.
+function ensureHint(res: NextResponse, req: NextRequest): NextResponse {
+  if (req.cookies.get(SESSION_HINT_COOKIE)?.value !== "1") {
+    res.cookies.set(SESSION_HINT_COOKIE, "1", {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: SESSION_MAX_AGE_SECONDS,
+    });
+  }
+  return res;
+}
 
 export async function proxy(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
@@ -24,7 +47,7 @@ export async function proxy(req: NextRequest) {
 
   // Already authenticated and aiming at the login page -> send to the dashboard.
   if (isLoginRoute && session) {
-    return NextResponse.redirect(new URL("/admin", req.nextUrl));
+    return ensureHint(NextResponse.redirect(new URL("/admin", req.nextUrl)), req);
   }
 
   // Unauthenticated and aiming at a protected admin route -> send to login,
@@ -36,5 +59,6 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next();
+  // Authenticated on a protected /admin route: proceed, re-arming the hint.
+  return ensureHint(NextResponse.next(), req);
 }

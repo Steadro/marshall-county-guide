@@ -144,3 +144,9 @@ export async function logout() {
   await destroySession();
   redirect("/admin/login");
 }
+
+// Logout without a redirect — for the global banner, which clears its own UI and
+// reloads the current public page in place rather than bouncing to /admin/login.
+export async function signOut() {
+  await destroySession();
+}

@@ -21,6 +21,7 @@ import { redirect } from "next/navigation";
 import { verifyPassword } from "@/lib/auth/password";
 import {
   SESSION_COOKIE,
+  SESSION_HINT_COOKIE,
   SESSION_MAX_AGE_SECONDS,
   signSessionToken,
   verifySessionToken,
@@ -66,9 +67,19 @@ export async function createSession(subject: Subject): Promise<void> {
     nowSeconds,
   );
   const cookieStore = await cookies();
+  const secure = process.env.NODE_ENV === "production";
   cookieStore.set(SESSION_COOKIE, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure,
+    sameSite: "lax",
+    path: "/",
+    maxAge: SESSION_MAX_AGE_SECONDS,
+  });
+  // Client-readable hint so public pages can lazily reveal admin UI without
+  // making the session cookie readable. Not httpOnly by design; carries no secret.
+  cookieStore.set(SESSION_HINT_COOKIE, "1", {
+    httpOnly: false,
+    secure,
     sameSite: "lax",
     path: "/",
     maxAge: SESSION_MAX_AGE_SECONDS,
@@ -97,8 +108,9 @@ export async function requireSession(role?: Subject["role"]): Promise<Subject> {
   return session;
 }
 
-/** Clear the session cookie (logout). */
+/** Clear the session cookie + hint (logout). */
 export async function destroySession(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete(SESSION_COOKIE);
+  cookieStore.delete(SESSION_HINT_COOKIE);
 }

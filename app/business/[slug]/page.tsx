@@ -7,6 +7,7 @@ import { Badge } from "@/components/Badge";
 import { CategoryTag } from "@/components/CategoryTag";
 import { LocationMap } from "@/components/LocationMap";
 import { JsonLd } from "@/components/JsonLd";
+import { AdminEditLink } from "@/components/admin/AdminEditLink";
 import { buildBusinessJsonLd, buildBreadcrumbJsonLd, businessUrl } from "@/lib/schema-org";
 import { siteConfig, townNameToSlug, townCentroidByName, contactHref } from "@/lib/site";
 import { formatPhone, telHref, prettyUrl, ensureHttp } from "@/lib/utils";
@@ -132,6 +133,10 @@ export default async function BusinessPage({
               {b.category.name}
             </Link>
           </nav>
+
+          {/* Admin-only: jump straight to this listing's editor. Renders nothing
+              for the public (client-gated; the target is server-protected). */}
+          <AdminEditLink businessId={b.id} />
 
           {/* Header */}
           <div className="flex flex-wrap items-center gap-2">

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Fraunces, Inter, Playfair_Display } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { AdminProvider } from "@/components/admin/AdminContext";
+import { AdminBanner } from "@/components/admin/AdminBanner";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
@@ -68,11 +70,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <Header />
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <AdminProvider>
+          <Header />
+          <AdminBanner />
+          <main id="main" className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </AdminProvider>
       </body>
     </html>
   );

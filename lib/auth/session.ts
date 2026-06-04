@@ -21,7 +21,9 @@
 // shape those libraries expect, so callers of `signSessionToken` /
 // `verifySessionToken` would not change.
 
-export const SESSION_COOKIE = "mcg_admin_session";
+// Cookie names live in a dep-free module so client code can import them without
+// pulling this file's crypto into the browser bundle. Re-exported for callers.
+export { SESSION_COOKIE, SESSION_HINT_COOKIE } from "./constants";
 
 // 7 days. Short enough to bound a leaked cookie, long enough to avoid nagging a
 // single trusted admin. Re-login refreshes it.

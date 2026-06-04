@@ -51,57 +51,74 @@ export interface BrowseGroup {
   count: number;
 }
 
-// Commercial groups — the part residents "shop."
+// Consumer categories — the browse top level, by visitor/resident intent. These
+// are the "promote groups to categories" buckets: broad and obvious, named to
+// match the "Just visiting?" cards (Eat & Drink, Outdoors & Rec, History &
+// Culture) so the hero and the browse reinforce instead of compete. The DB
+// categories underneath stay as the type/subcategory tier. See schema/TAXONOMY.md.
 export const COMMERCIAL_GROUPS: CategoryGroupDef[] = [
   {
-    key: "food-and-dining",
-    title: "Food & Dining",
+    key: "eat-and-drink",
+    title: "Eat & Drink",
     blurb: "Restaurants, cafes, and everywhere to grab a bite.",
     accent: "gold",
     categorySlugs: ["restaurant-and-food"],
   },
   {
-    key: "shopping-and-goods",
-    title: "Shopping & Goods",
-    blurb: "Shops, markets, makers, and places to spend an afternoon.",
+    key: "shop",
+    title: "Shop",
+    blurb: "Shops, markets, makers, and main-street finds.",
     accent: "creek",
-    categorySlugs: [
-      "retail-and-shopping",
-      "arts-and-entertainment",
-      "wedding-and-event-venues",
-    ],
+    categorySlugs: ["retail-and-shopping"],
   },
   {
-    key: "home-auto-trades",
-    title: "Home, Auto & Trades",
-    blurb: "Builders, mechanics, makers, and the people who fix things.",
-    accent: "terracotta",
-    categorySlugs: ["automotive", "home-and-trades", "manufacturing"],
-  },
-  {
-    key: "money-property-pro",
-    title: "Money, Property & Pro Services",
-    blurb: "Banks, offices, agents, and professional help.",
+    key: "outdoors-and-recreation",
+    title: "Outdoors & Recreation",
+    blurb: "Parks, trails, ball fields, and places to get moving.",
     accent: "pine",
+    categorySlugs: ["fitness-and-recreation"],
+  },
+  {
+    key: "arts-history-and-culture",
+    title: "Arts, History & Culture",
+    blurb: "Museums, theatre, the courthouse square, and event venues.",
+    accent: "rose",
+    categorySlugs: ["arts-and-entertainment", "wedding-and-event-venues"],
+  },
+  {
+    key: "home-auto-and-services",
+    title: "Home, Auto & Services",
+    blurb: "Mechanics, builders, repairs, and the people who fix things.",
+    accent: "terracotta",
+    categorySlugs: ["automotive", "home-and-trades"],
+  },
+  {
+    key: "professional-and-financial",
+    title: "Professional & Financial",
+    blurb: "Banks, insurance, agents, lawyers, and professional help.",
+    accent: "slate",
     categorySlugs: ["financial", "professional-services", "real-estate"],
   },
   {
-    key: "health-and-wellness",
-    title: "Health & Wellness",
-    blurb: "Clinics, salons, gyms, and looking after yourself.",
-    accent: "rose",
-    categorySlugs: [
-      "health-and-medical",
-      "beauty-and-personal-care",
-      "fitness-and-recreation",
-    ],
+    key: "health-and-beauty",
+    title: "Health & Beauty",
+    blurb: "Clinics, dentists, pharmacies, salons, and self-care.",
+    accent: "violet",
+    categorySlugs: ["health-and-medical", "beauty-and-personal-care"],
   },
   {
-    key: "family-pets-farm",
-    title: "Family, Pets & Farm",
-    blurb: "Childcare, animals, and the agricultural backbone.",
-    accent: "violet",
-    categorySlugs: ["childcare-and-education", "pets-and-animals", "agriculture"],
+    key: "pets-kids-and-farm",
+    title: "Pets, Kids & Farm",
+    blurb: "Vets, childcare, and the agricultural backbone.",
+    accent: "creek",
+    categorySlugs: ["pets-and-animals", "childcare-and-education", "agriculture"],
+  },
+  {
+    key: "industry-and-employers",
+    title: "Industry & Employers",
+    blurb: "The manufacturers and plants that power the local economy.",
+    accent: "terracotta",
+    categorySlugs: ["manufacturing"],
   },
 ];
 

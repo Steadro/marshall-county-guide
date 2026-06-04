@@ -39,7 +39,7 @@ const CANON: Record<string, string[]> = {
   // v2: tightened to consumer-meaningful venue types. Diner folds into Restaurant,
   // Deli into Fast Food, Coffee Shop into Cafe, Pub & Bar into Bar & Grill —
   // the splits a diner-goes-here vs restaurant-goes-there don't change a choice.
-  "restaurant-and-food": ["Restaurant","Cafe","Bakery","Bar & Grill","Fast Food","Food Truck","Dessert & Ice Cream","Juice & Smoothie Bar"],
+  "restaurant-and-food": ["Restaurant","Cafe","Bakery","Fast Food","Food Truck","Dessert & Ice Cream","Juice & Smoothie Bar"],
   "automotive": ["Auto Repair","Tire & Auto Repair","Auto Repair & Towing","Auto Parts & Accessories","Car Wash","Body Shop","Dealership"],
   "retail-and-shopping": ["Dollar & Variety","Supercenter","Grocery","Convenience & Travel Stop","Hardware Store","Farm & Feed","Florist","Boutique","Antiques & Vintage","Home Decor","Smoke & Vape Shop","Liquidation & Discount","Jewelry"],
   "financial": ["Bank","Credit Union","CPA & Accounting","Tax Preparation","Investment & Advisory","Insurance"],
@@ -83,7 +83,8 @@ const MAP: Record<string, Record<string, Rule>> = {
     "fast food seafood": { sub: "Fast Food", tags: ["Seafood"] },
     "country diner": { sub: "Restaurant", tags: ["Southern"] },
     "diner": { sub: "Restaurant" },
-    "pub & bar": { sub: "Bar & Grill" },
+    "bar & grill": { sub: "Restaurant", tags: ["Bar & Grill"] },
+    "pub & bar": { sub: "Restaurant", tags: ["Bar & Grill"] },
     "nutrition & smoothies": { sub: "Juice & Smoothie Bar" },
     "travel stop & southern bbq": { sub: "Convenience & Travel Stop", cat: "Retail & Shopping", tags: ["BBQ"] },
     "country store & burgers": { sub: "Restaurant", tags: ["Burgers"], flag: "subcategory: General Store w/ grill -- old country store that also served burgers (now closed); confirm whether this is Retail (general store) or Restaurant" },

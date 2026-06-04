@@ -117,8 +117,12 @@ extendable by the maintainer**. The pass does not get to expand them silently.
 The motivating case. **Subcategory = venue type (one). Cuisine goes in tags.**
 
 ### Subcategory — venue type (pick one)
-`Restaurant` · `Cafe` · `Bakery` · `Bar & Grill` · `Fast Food` · `Food Truck` ·
+`Restaurant` · `Cafe` · `Bakery` · `Fast Food` · `Food Truck` ·
 `Dessert & Ice Cream` · `Juice & Smoothie Bar`
+
+Bar & grills fold into `Restaurant` (with a `Bar & Grill` tag) — a sit-down bar &
+grill is a dinner option like any other restaurant. The homepage dinner picker
+pulls only `Restaurant`.
 
 Notes (v2, tightened 2026-06-04 — the splits that don't change a choice were dropped):
 - `Restaurant` = the default sit-down venue. **Diner folds in here** — a diner is

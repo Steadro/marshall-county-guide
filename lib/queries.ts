@@ -144,7 +144,13 @@ export interface RestaurantPick {
 /** Local restaurants/food businesses for the "what's for dinner?" picker. */
 export async function getRestaurantsForPicker(): Promise<RestaurantPick[]> {
   const rows = await prisma.business.findMany({
-    where: { ...visibleWhere, isChain: false, category: { slug: "restaurant-and-food" } },
+    // Dinner picker = sit-down restaurants only (not cafes, fast food, bakeries…).
+    where: {
+      ...visibleWhere,
+      isChain: false,
+      category: { slug: "restaurant-and-food" },
+      subcategory: "Restaurant",
+    },
     select: { slug: true, name: true, city: true },
     orderBy: { name: "asc" },
   });

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Phone, Globe, MapPin, Clock, ChevronRight, ExternalLink } from "lucide-react";
 import { getBusinessBySlug, getAllBusinessSlugs } from "@/lib/queries";
-import { Badge } from "@/components/Badge";
 import { CategoryTag } from "@/components/CategoryTag";
 import { LocationMap } from "@/components/LocationMap";
 import { JsonLd } from "@/components/JsonLd";
@@ -143,7 +142,6 @@ export default async function BusinessPage({
             <Link href={`/category/${b.category.slug}`}>
               <CategoryTag name={b.category.name} slug={b.category.slug} />
             </Link>
-            {b.priceRange ? <Badge>{b.priceRange}</Badge> : null}
           </div>
 
           <h1 className="mt-3 text-3xl sm:text-4xl">{b.name}</h1>

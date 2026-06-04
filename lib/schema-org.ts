@@ -86,7 +86,6 @@ export function buildBusinessJsonLd(b: BusinessDetail): Record<string, unknown> 
   jsonLd.url = website ?? pageUrl;
 
   if (b.phone) jsonLd.telephone = b.phone;
-  if (b.priceRange) jsonLd.priceRange = b.priceRange;
   if (b.foundingYear) jsonLd.foundingDate = String(b.foundingYear);
   if (b.latitude != null && b.longitude != null) {
     jsonLd.geo = {

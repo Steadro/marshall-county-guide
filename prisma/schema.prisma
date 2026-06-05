@@ -242,6 +242,11 @@ model Submission {
   autoAnalysis Json?
   autoStatus   String? // pending | drafted | needs_human
 
+  // Content screen (lib/content-filter.ts): flags profanity/slurs for human
+  // review. Does not block — nothing auto-publishes regardless.
+  flagged    Boolean @default(false)
+  flagReason String? // matched terms, for the admin note
+
   // Provenance / anti-abuse
   sourcePage String? // path the form was submitted from
   ipHash     String? // hashed submitter IP, for rate-abuse triage (never the raw IP)

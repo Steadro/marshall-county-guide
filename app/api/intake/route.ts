@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { clean, clientIp, fireWebhook, hashIp, looksLikeEmail, rateLimited } from "@/lib/submissions";
+import { screenText } from "@/lib/content-filter";
 
 // Structured "Add your business" intake. Writes straight to the Submission table
 // (so capture never depends on n8n), then best-effort pings the intake webhook
@@ -55,6 +56,8 @@ export async function POST(req: Request) {
     );
   }
 
+  const screen = screenText([businessName, businessType, message, submitterName, streetAddress].join(" "));
+
   let id: string;
   try {
     const created = await prisma.submission.create({
@@ -72,6 +75,8 @@ export async function POST(req: Request) {
         message: message || null,
         sourcePage: sourcePage || null,
         ipHash: hashIp(ip),
+        flagged: screen.flagged,
+        flagReason: screen.flagged ? screen.terms.join(", ") : null,
       },
       select: { id: true },
     });

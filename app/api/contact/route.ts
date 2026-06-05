@@ -9,6 +9,7 @@ import {
   rateLimited,
   TOPIC_TO_KIND,
 } from "@/lib/submissions";
+import { screenText } from "@/lib/content-filter";
 
 // Server-only: the n8n webhook that fans out to Resend. Never exposed to the
 // browser (no NEXT_PUBLIC prefix). Set in .env and in Vercel.
@@ -68,6 +69,8 @@ export async function POST(req: Request) {
   // Persist first — everything lands in the Submission table so the admin Intake
   // tab is the single place to triage, and nothing depends on email. The n8n
   // ping below is best-effort on top of that.
+  const screen = screenText([name, businessName, message].join(" "));
+
   try {
     await prisma.submission.create({
       data: {
@@ -80,6 +83,8 @@ export async function POST(req: Request) {
         message,
         sourcePage: page || null,
         ipHash: hashIp(ip),
+        flagged: screen.flagged,
+        flagReason: screen.flagged ? screen.terms.join(", ") : null,
       },
     });
   } catch (err) {

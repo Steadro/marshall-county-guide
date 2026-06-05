@@ -76,6 +76,7 @@ export default async function IntakeQueue({
         submitterEmail: true,
         message: true,
         createdAt: true,
+        flagged: true,
       },
       orderBy: [{ createdAt: "desc" }],
       take: 500,
@@ -144,6 +145,14 @@ export default async function IntakeQueue({
                     <Link href={`/admin/intake/${s.id}`} className="font-medium text-pine hover:underline">
                       {subject}
                     </Link>
+                    {s.flagged ? (
+                      <span
+                        className="ml-2 inline-flex items-center gap-1 rounded-full bg-clay-soft px-1.5 py-0.5 text-xs font-semibold text-clay-dark align-middle"
+                        title="Content filter flagged this submission for review"
+                      >
+                        ⚠ flagged
+                      </span>
+                    ) : null}
                   </td>
                   <td className="px-4 py-2 text-ink-soft">{from}</td>
                   <td className="px-4 py-2 text-ink-faint">{timeAgo(s.createdAt)}</td>

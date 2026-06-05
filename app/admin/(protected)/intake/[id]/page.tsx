@@ -68,6 +68,14 @@ export default async function IntakeDetail({ params }: { params: Promise<{ id: s
         </p>
       </div>
 
+      {s.flagged ? (
+        <div className="mb-6 rounded-lg bg-clay-soft px-4 py-3 text-sm leading-relaxed text-clay-dark ring-1 ring-clay-dark/20">
+          <span className="font-semibold">⚠ Content filter flagged this submission.</span>{" "}
+          Matched: <span className="font-mono">{s.flagReason}</span>. Review the text before approving —
+          this is only a heuristic, so it may be a false positive.
+        </div>
+      ) : null}
+
       <div className="grid gap-8 lg:grid-cols-[1fr_18rem]">
         {/* Details */}
         <div className="rounded-xl border border-line bg-card p-5">

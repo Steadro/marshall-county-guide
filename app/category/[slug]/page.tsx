@@ -67,7 +67,7 @@ export default async function CategoryPage({
     }));
 
   return (
-    <div className="container-page py-10">
+    <div className="container-page pt-4 pb-10">
       <JsonLd
         data={buildBreadcrumbJsonLd([
           { name: "Home", url: siteConfig.url },
@@ -111,7 +111,6 @@ export default async function CategoryPage({
             businesses={businesses}
             showCategoryFilter={false}
             showSubcategoryFilter
-            defaultLocalOnly
           />
         </Suspense>
       </div>

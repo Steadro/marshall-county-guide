@@ -64,13 +64,13 @@ export function BrowseDirectory({
     <>
       {/* Mobile: a simple, tappable category list (no master-detail, no chips).
           Each big row deep-links to its category page, which has its own filters. */}
-      <div className="flex flex-col gap-5 md:hidden">
+      <div className="flex flex-col gap-7 md:hidden">
         {all.map((g) => (
           <div key={g.key}>
-            <div className="mb-2 flex items-baseline gap-2 px-1">
-              <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${ACCENTS[g.accent].dot}`} />
-              <h3 className="font-serif text-sm font-semibold text-ink">{g.title}</h3>
-              <span className="text-xs text-ink-faint">{g.count}</span>
+            <div className="mb-3 flex items-center gap-2.5 px-1">
+              <span className={`h-3 w-3 shrink-0 rounded-full ${ACCENTS[g.accent].dot}`} />
+              <h3 className="font-serif text-xl font-semibold text-ink">{g.title}</h3>
+              <span className="text-sm text-ink-faint">{g.count}</span>
             </div>
             <div className="flex flex-col gap-2">
               {g.categories.map((c) => (

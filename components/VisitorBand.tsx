@@ -107,7 +107,7 @@ export function VisitorBand() {
                   <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${it.dot}`} aria-hidden="true" />
                   <span className="font-serif text-xl font-semibold text-ink">{it.name}</span>
                 </span>
-                <p className="mt-2 min-h-[2.75rem] text-pretty text-sm leading-relaxed text-ink-soft">
+                <p className="mt-2 text-pretty text-sm leading-relaxed text-ink-soft sm:min-h-[2.75rem]">
                   {it.blurb}
                 </p>
                 <span

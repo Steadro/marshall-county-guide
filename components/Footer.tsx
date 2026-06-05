@@ -30,7 +30,8 @@ const PHOTO_CREDITS = [
 export function Footer() {
   return (
     <footer className="mt-24 border-t border-line/70 bg-paper">
-      <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="container-page py-14">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
         <div className="sm:col-span-2 lg:col-span-2">
           <p className="font-serif text-xl font-semibold text-ink">{siteConfig.name}</p>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink-soft">
@@ -96,10 +97,9 @@ export function Footer() {
             ))}
           </ul>
         </div>
-      </div>
+        </div>
 
-      <div className="border-t border-line/70">
-        <div className="container-page py-6 text-xs text-ink-faint">
+        <div className="mt-12 border-t border-line/60 pt-6 text-xs text-ink-faint">
           <div className="flex flex-col items-center justify-between gap-2 sm:flex-row">
             <p>
               &copy; {new Date().getFullYear()} {siteConfig.name}. A community directory for{" "}

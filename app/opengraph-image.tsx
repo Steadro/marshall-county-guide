@@ -52,15 +52,11 @@ export default async function OgImage() {
             fontFamily: "serif",
           }}
         >
-          <div style={{ display: "flex", fontSize: 26, letterSpacing: 4, textTransform: "uppercase", color: "#7a8a7f" }}>
+          <div style={{ display: "flex", fontSize: 26, letterSpacing: 4, textTransform: "uppercase", color: "#3f6b54", fontWeight: 600 }}>
             {siteConfig.name}
           </div>
-          <div style={{ display: "flex", fontSize: 62, fontWeight: 700, lineHeight: 1.06, color: "#1f2a23", marginTop: 18 }}>
-            Discover the places that make
-          </div>
-          <div style={{ display: "flex", fontSize: 62, fontWeight: 700, lineHeight: 1.06 }}>
-            <span style={{ display: "flex", color: "#3f6b54" }}>Marshall County</span>
-            <span style={{ display: "flex", color: "#1f2a23", marginLeft: 18 }}>home.</span>
+          <div style={{ display: "flex", fontSize: 60, fontWeight: 700, lineHeight: 1.08, color: "#1f2a23", marginTop: 18, maxWidth: 580 }}>
+            Discover the places that make Marshall County home.
           </div>
           <div style={{ display: "flex", fontSize: 26, lineHeight: 1.4, color: "#4b554f", marginTop: 26, maxWidth: 540 }}>
             Local restaurants, shops, makers, and services across the county.

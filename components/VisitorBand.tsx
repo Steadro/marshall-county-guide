@@ -20,7 +20,7 @@ interface Interest {
 const INTERESTS: Interest[] = [
   {
     name: "Eat & Drink",
-    blurb: "From meat-and-three diners to coffee shops and homemade pie, the local spots neighbors love.",
+    blurb: "From meat-and-three diners to coffee shops and homemade pie, the local spots we love.",
     href: "/category/restaurant-and-food",
     src: "/images/eat-drink-pie.jpg",
     alt: "A slice of apple pie topped with a scoop of vanilla ice cream",

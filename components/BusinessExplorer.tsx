@@ -16,6 +16,12 @@ interface FilterOption {
 
 type SortKey = "name" | "city" | "type";
 
+// Town filter pills — deliberately bigger + a warm gold accent so the "where"
+// row reads as distinct from the pine "type" pills below it.
+const townButtonClass = "rounded-pill border px-4 py-2 text-sm font-semibold transition";
+const townButtonActive = "border-gold-dark/40 bg-gold-soft text-gold-dark";
+const townButtonResting = "border-line bg-card text-ink-soft hover:border-gold-dark/40 hover:text-ink";
+
 export function BusinessExplorer({
   businesses,
   initialCategory,
@@ -183,17 +189,12 @@ export function BusinessExplorer({
       </div>
 
       {showTownFilter && townOptions.length > 1 ? (
-        <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter by town">
+        <div className="mt-5 flex flex-wrap gap-2.5" role="group" aria-label="Filter by town">
           <button
             type="button"
             onClick={() => setTown("")}
             aria-pressed={town === ""}
-            className={cn(
-              "rounded-pill border px-3 py-1.5 text-sm font-medium transition",
-              town === ""
-                ? "border-pine bg-pine-soft text-pine-dark"
-                : "border-line bg-paper text-ink-soft hover:border-pine/50",
-            )}
+            className={cn(townButtonClass, town === "" ? townButtonActive : townButtonResting)}
           >
             All towns
           </button>
@@ -203,12 +204,7 @@ export function BusinessExplorer({
               type="button"
               onClick={() => setTown((t) => (t === o.value ? "" : o.value))}
               aria-pressed={town === o.value}
-              className={cn(
-                "rounded-pill border px-3 py-1.5 text-sm font-medium transition",
-                town === o.value
-                  ? "border-pine bg-pine-soft text-pine-dark"
-                  : "border-line bg-paper text-ink-soft hover:border-pine/50",
-              )}
+              className={cn(townButtonClass, town === o.value ? townButtonActive : townButtonResting)}
             >
               {o.label}
             </button>
@@ -217,7 +213,7 @@ export function BusinessExplorer({
       ) : null}
 
       {showSubcategoryFilter && subcategoryOptions.length > 1 ? (
-        <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter by type">
+        <div className="mt-5 flex flex-wrap gap-2" role="group" aria-label="Filter by type">
           <button
             type="button"
             onClick={() => setSubcategory("")}

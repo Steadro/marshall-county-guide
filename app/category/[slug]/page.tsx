@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { getCategoryBySlug, getAllCategorySlugs } from "@/lib/queries";
 import { BusinessExplorer } from "@/components/BusinessExplorer";
+import { GovernmentDirectory } from "@/components/GovernmentDirectory";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { LocationMap } from "@/components/LocationMap";
 import { JsonLd } from "@/components/JsonLd";
@@ -106,13 +107,17 @@ export default async function CategoryPage({
       ) : null}
 
       <div className="mt-8">
-        <Suspense fallback={<div className="h-24" />}>
-          <BusinessExplorer
-            businesses={businesses}
-            showCategoryFilter={false}
-            showSubcategoryFilter
-          />
-        </Suspense>
+        {category.slug === "government-and-civic" ? (
+          <GovernmentDirectory businesses={businesses} />
+        ) : (
+          <Suspense fallback={<div className="h-24" />}>
+            <BusinessExplorer
+              businesses={businesses}
+              showCategoryFilter={false}
+              showSubcategoryFilter
+            />
+          </Suspense>
+        )}
       </div>
     </div>
   );

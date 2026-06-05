@@ -30,7 +30,7 @@ match): counts are current as of 2026-06-03.
 `Professional Services` · `Financial` · `Real Estate` · `Fitness & Recreation` ·
 `Childcare & Education` · `Arts & Entertainment` · `Agriculture` ·
 `Manufacturing` · `Other` · `Government & Civic` · `Public Safety` · `Schools` ·
-`Places of Worship` · `Community & Nonprofit` · `Wedding & Event Venues`
+`Places of Worship` · `Community & Nonprofit` · `Event Venues`
 
 Adding a category is a deliberate schema/seed act by the maintainer — it is NOT
 something an enrichment pass does. If a location doesn't fit any category, see the
@@ -50,7 +50,7 @@ hero cards (`VisitorBand`) so the hero and the browse reinforce instead of compe
 | **Eat & Drink** | Restaurant & Food |
 | **Shop** | Retail & Shopping |
 | **Outdoors & Recreation** | Fitness & Recreation |
-| **Arts, History & Culture** | Arts & Entertainment, Wedding & Event Venues |
+| **Arts, History & Culture** | Arts & Entertainment, Event Venues |
 | **Home, Auto & Services** | Automotive, Home & Trades |
 | **Professional & Financial** | Financial, Professional Services, Real Estate |
 | **Health & Beauty** | Health & Medical, Beauty & Personal Care |
@@ -242,17 +242,18 @@ Preschool`.)*
 **Arts & Entertainment:** `Museum` · `Theatre` · `Gallery` · `Cinema` ·
 `Live Music Venue`
 
-**Wedding & Event Venues:** `Event Venue` *(v2: collapsed to one venue type;
+**Event Venues:** `Event Venue` *(v2: collapsed to one venue type;
 `barn`, `outdoor`, `farm` are tags, not separate subcategories. This category
 displays under the **Arts, History & Culture** browse category.)*
 
 ### Civic categories (Community & Government group)
 
-**Government & Civic:** `City Hall` · `County Government Office` · `Court & Clerk` ·
-`Post Office` · `Public Library` · `Public Works` · `Cemetery` *(the many specific
-county offices — Register of Deeds, Trustee, Assessor, Election — → `County
-Government Office` + a tag for the function, OR keep specific if you want office-
-level pages. Decide before the pass finishes; currently 19 one-off values.)*
+**Government & Civic:** `City Hall` · `County Government Office` ·
+`Post Office` · `Public Library` · `Public Works` · `Cemetery` *(all specific
+county offices — Register of Deeds, Trustee, Assessor, Election, and the court
+clerks (Circuit Court Clerk, Clerk & Master) — fold into `County Government
+Office` with a function tag (e.g. `Court & Clerk`). The category page groups
+these by jurisdiction (Marshall County + each town) rather than by subcategory.)*
 
 **Schools:** `Elementary School` · `Intermediate School` · `Middle School` ·
 `High School` · `Middle & High School` · `District Administration` ·

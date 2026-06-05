@@ -34,7 +34,7 @@ const CATEGORIES: Array<{ slug: string; name: string; description: string; icon:
   { slug: "schools", name: "Schools", description: "Public schools and the career-technical center.", icon: "School", sortOrder: 52 },
   { slug: "places-of-worship", name: "Places of Worship", description: "Churches and congregations across the county.", icon: "Church", sortOrder: 53 },
   { slug: "community-and-nonprofit", name: "Community & Nonprofit", description: "Chamber, civic clubs, senior services, and assistance organizations.", icon: "Users", sortOrder: 54 },
-  { slug: "wedding-and-event-venues", name: "Wedding & Event Venues", description: "Farms, barns, and lodges for weddings and events.", icon: "PartyPopper", sortOrder: 55 },
+  { slug: "wedding-and-event-venues", name: "Event Venues", description: "Farms, barns, and lodges for weddings and events.", icon: "PartyPopper", sortOrder: 55 },
 ];
 
 interface Entity {

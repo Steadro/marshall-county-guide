@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import { Search, X, SlidersHorizontal } from "lucide-react";
 import type { BusinessCard as BusinessCardData } from "@/lib/queries";
 import { BusinessCard } from "@/components/BusinessCard";
-import { GoldNote } from "@/components/GoldNote";
 import { matchesQuery } from "@/lib/search";
 import { knownTypeNames, typesOf } from "@/lib/category-groups";
 import { cn } from "@/lib/utils";
@@ -14,6 +13,8 @@ interface FilterOption {
   value: string;
   label: string;
 }
+
+type SortKey = "name" | "city" | "type";
 
 export function BusinessExplorer({
   businesses,
@@ -41,6 +42,7 @@ export function BusinessExplorer({
   // pre-filtered subcategory (e.g. /category/restaurant-and-food?type=Cafe).
   const [subcategory, setSubcategory] = useState(searchParams.get("type") ?? "");
   const [localOnly, setLocalOnly] = useState(defaultLocalOnly);
+  const [sort, setSort] = useState<SortKey>("name");
 
   const hasChains = useMemo(() => businesses.some((b) => b.isChain), [businesses]);
 
@@ -84,8 +86,22 @@ export function BusinessExplorer({
     });
   }, [businesses, query, category, town, subcategory, localOnly, knownTypes]);
 
+  const sorted = useMemo(() => {
+    const arr = [...filtered];
+    if (sort === "city") {
+      arr.sort((a, b) => a.city.localeCompare(b.city) || a.name.localeCompare(b.name));
+    } else if (sort === "type") {
+      arr.sort(
+        (a, b) =>
+          (a.subcategory ?? "").localeCompare(b.subcategory ?? "") || a.name.localeCompare(b.name),
+      );
+    } else {
+      arr.sort((a, b) => a.name.localeCompare(b.name));
+    }
+    return arr;
+  }, [filtered, sort]);
+
   const hasFilters = query || category || town || subcategory || localOnly;
-  const hasGold = useMemo(() => filtered.some((b) => b.qualityTier === "GOLD"), [filtered]);
 
   return (
     <div>
@@ -105,55 +121,46 @@ export function BusinessExplorer({
           />
         </div>
 
-        {showCategoryFilter || showTownFilter ? (
-          <div className="flex flex-wrap items-center gap-2">
-            <SlidersHorizontal
-              className="hidden h-4 w-4 text-ink-faint sm:block"
-              aria-hidden="true"
-            />
-            {showCategoryFilter ? (
-              <>
-                <label className="sr-only" htmlFor="filter-category">
-                  Filter by category
-                </label>
-                <select
-                  id="filter-category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="rounded-pill border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
-                >
-                  <option value="">All categories</option>
-                  {categoryOptions.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              </>
-            ) : null}
+        <div className="flex flex-wrap items-center gap-2">
+          <SlidersHorizontal
+            className="hidden h-4 w-4 text-ink-faint sm:block"
+            aria-hidden="true"
+          />
+          {showCategoryFilter ? (
+            <>
+              <label className="sr-only" htmlFor="filter-category">
+                Filter by category
+              </label>
+              <select
+                id="filter-category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="rounded-pill border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
+              >
+                <option value="">All categories</option>
+                {categoryOptions.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </>
+          ) : null}
 
-            {showTownFilter ? (
-              <>
-                <label className="sr-only" htmlFor="filter-town">
-                  Filter by town
-                </label>
-                <select
-                  id="filter-town"
-                  value={town}
-                  onChange={(e) => setTown(e.target.value)}
-                  className="rounded-pill border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
-                >
-                  <option value="">All towns</option>
-                  {townOptions.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              </>
-            ) : null}
-          </div>
-        ) : null}
+          <label className="sr-only" htmlFor="sort-by">
+            Sort by
+          </label>
+          <select
+            id="sort-by"
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortKey)}
+            className="rounded-pill border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
+          >
+            <option value="name">Sort: A–Z</option>
+            <option value="city">Sort: City</option>
+            <option value="type">Sort: Type</option>
+          </select>
+        </div>
 
         {hasChains ? (
           <label
@@ -174,6 +181,40 @@ export function BusinessExplorer({
           </label>
         ) : null}
       </div>
+
+      {showTownFilter && townOptions.length > 1 ? (
+        <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter by town">
+          <button
+            type="button"
+            onClick={() => setTown("")}
+            aria-pressed={town === ""}
+            className={cn(
+              "rounded-pill border px-3 py-1.5 text-sm font-medium transition",
+              town === ""
+                ? "border-pine bg-pine-soft text-pine-dark"
+                : "border-line bg-paper text-ink-soft hover:border-pine/50",
+            )}
+          >
+            All towns
+          </button>
+          {townOptions.map((o) => (
+            <button
+              key={o.value}
+              type="button"
+              onClick={() => setTown((t) => (t === o.value ? "" : o.value))}
+              aria-pressed={town === o.value}
+              className={cn(
+                "rounded-pill border px-3 py-1.5 text-sm font-medium transition",
+                town === o.value
+                  ? "border-pine bg-pine-soft text-pine-dark"
+                  : "border-line bg-paper text-ink-soft hover:border-pine/50",
+              )}
+            >
+              {o.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       {showSubcategoryFilter && subcategoryOptions.length > 1 ? (
         <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Filter by type">
@@ -232,11 +273,9 @@ export function BusinessExplorer({
         ) : null}
       </div>
 
-      {hasGold ? <GoldNote className="mt-3" /> : null}
-
       {filtered.length > 0 ? (
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((b) => (
+          {sorted.map((b) => (
             <BusinessCard key={b.id} business={b} />
           ))}
         </div>

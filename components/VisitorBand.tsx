@@ -90,8 +90,8 @@ export function VisitorBand() {
               href={it.href}
               className="group flex flex-col overflow-hidden rounded-card bg-card text-ink shadow-soft ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-lift"
             >
-              {/* Photo (16:10) */}
-              <div className="relative aspect-[16/10] overflow-hidden bg-paper-2">
+              {/* Photo (16:10) — hidden on phones so the cards stay compact */}
+              <div className="relative hidden aspect-[16/10] overflow-hidden bg-paper-2 sm:block">
                 <Image
                   src={it.src}
                   alt={it.alt}

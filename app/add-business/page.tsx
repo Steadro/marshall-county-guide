@@ -20,6 +20,11 @@ export default function AddBusinessPage() {
         If yours isn&apos;t here yet, tell us a few basics and we&apos;ll build your listing. No
         account, no fee.
       </p>
+      <p className="mt-4 text-sm leading-relaxed text-ink-faint">
+        To keep the guide trustworthy, we add businesses we can verify are real — please include a
+        public listing link (Google, Facebook, Yelp, or a website). Not online yet? Add a note in
+        the form and we&apos;ll follow up to confirm.
+      </p>
 
       <div className="mt-10">
         <IntakeForm />

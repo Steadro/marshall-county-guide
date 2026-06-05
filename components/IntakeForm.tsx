@@ -135,9 +135,17 @@ export function IntakeForm() {
         </div>
         <div>
           <label htmlFor="website" className={labelClass}>
-            Website or Facebook page {optional}
+            Public listing link{" "}
+            <span className="font-normal text-ink-faint">(Google, Facebook, Yelp, or website)</span>
           </label>
-          <input id="website" name="website" type="text" inputMode="url" className={fieldClass} />
+          <input
+            id="website"
+            name="website"
+            type="text"
+            inputMode="url"
+            placeholder="e.g. your Google or Facebook page"
+            className={fieldClass}
+          />
         </div>
       </div>
 

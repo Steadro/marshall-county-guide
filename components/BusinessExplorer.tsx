@@ -166,6 +166,49 @@ export function BusinessExplorer({
             <option value="city">Sort: City</option>
             <option value="type">Sort: Type</option>
           </select>
+
+          {/* Mobile: native dropdowns for town/type (big tap targets); the chip
+              rows below are desktop-only. */}
+          {showTownFilter && townOptions.length > 1 ? (
+            <>
+              <label className="sr-only" htmlFor="filter-town-m">
+                Filter by town
+              </label>
+              <select
+                id="filter-town-m"
+                value={town}
+                onChange={(e) => setTown(e.target.value)}
+                className="rounded-pill border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20 sm:hidden"
+              >
+                <option value="">All towns</option>
+                {townOptions.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </>
+          ) : null}
+          {showSubcategoryFilter && subcategoryOptions.length > 1 ? (
+            <>
+              <label className="sr-only" htmlFor="filter-type-m">
+                Filter by type
+              </label>
+              <select
+                id="filter-type-m"
+                value={subcategory}
+                onChange={(e) => setSubcategory(e.target.value)}
+                className="rounded-pill border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20 sm:hidden"
+              >
+                <option value="">All types</option>
+                {subcategoryOptions.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.value} ({o.count})
+                  </option>
+                ))}
+              </select>
+            </>
+          ) : null}
         </div>
 
         {hasChains ? (
@@ -189,7 +232,7 @@ export function BusinessExplorer({
       </div>
 
       {showTownFilter && townOptions.length > 1 ? (
-        <div className="mt-5 flex flex-wrap gap-2.5" role="group" aria-label="Filter by town">
+        <div className="mt-5 hidden flex-wrap gap-2.5 sm:flex" role="group" aria-label="Filter by town">
           <button
             type="button"
             onClick={() => setTown("")}
@@ -213,7 +256,7 @@ export function BusinessExplorer({
       ) : null}
 
       {showSubcategoryFilter && subcategoryOptions.length > 1 ? (
-        <div className="mt-5 flex flex-wrap gap-2" role="group" aria-label="Filter by type">
+        <div className="mt-5 hidden flex-wrap gap-2 sm:flex" role="group" aria-label="Filter by type">
           <button
             type="button"
             onClick={() => setSubcategory("")}

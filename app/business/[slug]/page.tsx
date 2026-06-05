@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Phone, Globe, MapPin, Clock, ChevronRight, ExternalLink } from "lucide-react";
+import { Phone, Globe, MapPin, Clock, ChevronRight, ExternalLink, Info } from "lucide-react";
 import { getBusinessBySlug, getAllBusinessSlugs } from "@/lib/queries";
 import { CategoryTag } from "@/components/CategoryTag";
 import { LocationMap } from "@/components/LocationMap";
@@ -89,24 +89,12 @@ export default async function BusinessPage({
     `${b.name} ${b.city} ${b.state}`,
   )}`;
 
-  const isGold = b.qualityTier === "GOLD";
+  // New, unreviewed listings (fresh intake/seed) get a small "needs data" notice
+  // inviting the community to help fill them in.
+  const needsData = b.qualityTier === "UNREVIEWED";
 
   return (
-    <article className="relative isolate pb-12">
-      {/* Gold-standard listings get a soft gold wash that bleeds down from the top.
-          Explained in plain language in the footnotes at the bottom of the page. */}
-      {isGold ? (
-        <>
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 bg-gradient-to-b from-gold-soft via-gold-soft/40 to-transparent"
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute left-1/2 top-0 -z-10 h-64 w-[44rem] max-w-full -translate-x-1/2 rounded-full bg-gold/20 blur-3xl"
-          />
-        </>
-      ) : null}
+    <article className="pb-12">
       <JsonLd data={buildBusinessJsonLd(b)} />
       <JsonLd
         data={buildBreadcrumbJsonLd([
@@ -161,6 +149,21 @@ export default async function BusinessPage({
               </span>
             )}
           </p>
+
+          {needsData ? (
+            <p className="mt-4 flex items-start gap-2 rounded-lg bg-paper-2 px-3 py-2 text-sm leading-relaxed text-ink-soft ring-1 ring-line">
+              <Info className="mt-0.5 h-4 w-4 shrink-0 text-ink-faint" aria-hidden="true" />
+              <span>
+                This is a new listing and likely requires additional data.{" "}
+                <Link
+                  href={contactHref({ topic: "update", business: { name: b.name, slug: b.slug } })}
+                  className="font-medium text-pine underline-offset-2 hover:text-pine-dark hover:underline"
+                >
+                  Know this place? Help fill it in.
+                </Link>
+              </span>
+            </p>
+          ) : null}
 
           {/* Primary actions */}
           {websiteHref || phoneLink ? (
@@ -317,21 +320,8 @@ export default async function BusinessPage({
             </section>
           ) : null}
 
-          {/* Footnotes: gold-standard explainer (explains the gold wash up top) + owner note */}
+          {/* Footnote: owner / accuracy note */}
           <div className="mt-12 space-y-3 border-t border-line/70 pt-6 text-xs leading-relaxed">
-            {isGold ? (
-              <p className="flex items-start gap-2 text-gold-dark">
-                <span
-                  aria-hidden="true"
-                  className="mt-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-gold ring-1 ring-gold/40"
-                />
-                <span>
-                  <span className="font-semibold">Gold-standard listing.</span> The gold at the top
-                  of the page marks listings we&apos;ve researched in depth and are fairly confident
-                  the hours and details are current. Still worth a quick confirm before you go.
-                </span>
-              </p>
-            ) : null}
             <p className="text-ink-faint">
               Details can change, so please confirm with the business before you visit. Is this your
               business?{" "}

@@ -11,7 +11,6 @@ import {
 import { siteConfig, addBusinessPath, TOWNS } from "@/lib/site";
 import { buildBrowseGroups, knownTypeNames, typesOf } from "@/lib/category-groups";
 import { BusinessCard } from "@/components/BusinessCard";
-import { GoldNote } from "@/components/GoldNote";
 import { SectionHeading } from "@/components/SectionHeading";
 import { HomeSearch } from "@/components/HomeSearch";
 import { RotatingPlace } from "@/components/RotatingPlace";
@@ -161,9 +160,6 @@ export default async function HomePage() {
                 <BusinessCard key={b.id} business={b} />
               ))}
             </div>
-            {spotlight.some((b) => b.qualityTier === "GOLD") ? (
-              <GoldNote className="mt-5" />
-            ) : null}
           </div>
         </section>
       ) : null}

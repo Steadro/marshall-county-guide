@@ -7,10 +7,6 @@ import { cn } from "@/lib/utils";
 /**
  * Compact, info-only card: category tag, name, town, and a two-line summary.
  * No imagery, keeping the directory dense and text-forward.
- *
- * GOLD-tier (gold-standard) businesses get a subtle warm gold tint (ring +
- * gradient) as a quiet trust signal. The tint is explained by a low-emphasis
- * legend on listing pages (GoldNote) rather than a per-card badge.
  */
 export function BusinessCard({
   business,
@@ -20,7 +16,6 @@ export function BusinessCard({
   className?: string;
 }) {
   const summary = business.tagline || business.shortDescription;
-  const isGold = business.qualityTier === "GOLD";
 
   return (
     <Link
@@ -28,8 +23,6 @@ export function BusinessCard({
       className={cn(
         "group relative flex flex-col gap-2 rounded-card bg-card p-5 shadow-soft ring-1 ring-line/70",
         "transition duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-lift",
-        isGold &&
-          "bg-gradient-to-b from-gold-soft/35 to-card ring-gold/45 hover:shadow-[var(--shadow-gold)] hover:ring-gold/60",
         className,
       )}
     >

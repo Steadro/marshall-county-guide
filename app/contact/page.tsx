@@ -3,12 +3,12 @@ import { ContactForm } from "@/components/ContactForm";
 import { siteConfig, type ContactTopic } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description: `Update a listing, add a missing business or service, or send a note to ${siteConfig.name}. No account needed.`,
+  title: "Report a problem",
+  description: `Report a problem with a listing on ${siteConfig.name} — wrong info, a closed business, or a correction. No account needed.`,
   alternates: { canonical: "/contact" },
 };
 
-const TOPICS: ContactTopic[] = ["update", "add", "remove", "other"];
+const TOPICS: ContactTopic[] = ["update", "remove", "other"];
 
 const HEADINGS: Record<ContactTopic, { eyebrow: string; title: string; blurb: string }> = {
   update: {
@@ -30,10 +30,10 @@ const HEADINGS: Record<ContactTopic, { eyebrow: string; title: string; blurb: st
       "To protect businesses from bad-faith requests, we remove a listing only when its official Google or Facebook page shows it's permanently closed. Tell us which listing and link that page.",
   },
   other: {
-    eyebrow: "Get in touch",
-    title: "Send us a message",
+    eyebrow: "Report a problem",
+    title: "Report a problem",
     blurb:
-      "A correction, a question, or anything else about the guide. We read every message and act on it quickly.",
+      "Wrong info, a closed business, a correction, or anything else off about a listing. Tell us and we'll sort it out.",
   },
 };
 

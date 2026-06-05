@@ -191,28 +191,24 @@ export default async function HomePage() {
       <section className="container-page pt-12 pb-12">
         <div className="overflow-hidden rounded-card bg-ink px-8 py-12 text-center text-paper sm:py-16">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-paper/55">
-            For business owners &amp; governments
+            Help keep the guide current
           </p>
           <h2 className="mx-auto mt-3 max-w-2xl text-balance text-2xl text-paper sm:text-3xl">
-            Is one of these places yours?
+            Are we missing a local business or service?
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-pretty leading-relaxed text-paper/70">
-            Listings are built from public information and free to everyone. If a business, service,
-            or local office is yours, you’re in control of it, no account needed.
-          </p>
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/for-owners"
+              href={addBusinessPath}
               className="inline-flex items-center gap-1.5 rounded-pill bg-pine px-6 py-3 text-sm font-semibold text-white transition hover:bg-pine-dark"
             >
-              Update place info
+              Add a place
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <Link
-              href={addBusinessPath}
+              href="/contact"
               className="inline-flex items-center gap-1.5 rounded-pill border border-paper/30 px-6 py-3 text-sm font-semibold text-paper transition hover:border-paper/60 hover:bg-paper/10"
             >
-              Add a missing business or service
+              Report a problem
             </Link>
           </div>
         </div>

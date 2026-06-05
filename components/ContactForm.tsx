@@ -5,9 +5,8 @@ import { Send, CheckCircle2, Info } from "lucide-react";
 import type { ContactTopic } from "@/lib/site";
 
 const TOPIC_OPTIONS: { value: ContactTopic; label: string }[] = [
-  { value: "update", label: "Update listing info" },
-  { value: "add", label: "Add a missing business or service" },
-  { value: "remove", label: "Remove a listing" },
+  { value: "update", label: "Wrong or outdated info" },
+  { value: "remove", label: "Business has closed / remove it" },
   { value: "other", label: "Something else" },
 ];
 
@@ -85,7 +84,7 @@ export function ContactForm({
     <form onSubmit={onSubmit} className="space-y-5" noValidate>
       <div>
         <label htmlFor="topic" className={labelClass}>
-          What's this about?
+          What's the problem?
         </label>
         <select
           id="topic"

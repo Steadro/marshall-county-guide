@@ -20,7 +20,7 @@ interface Interest {
 const INTERESTS: Interest[] = [
   {
     name: "Eat & Drink",
-    blurb: "Where locals actually eat, from meat-and-three to pie.",
+    blurb: "From meat-and-three diners to coffee shops and homemade pie, the local spots neighbors love.",
     href: "/category/restaurant-and-food",
     src: "/images/eat-drink-pie.jpg",
     alt: "A slice of apple pie topped with a scoop of vanilla ice cream",
@@ -29,7 +29,7 @@ const INTERESTS: Interest[] = [
   },
   {
     name: "Shop Local",
-    blurb: "Main-street shops, makers, and finds you won't get online.",
+    blurb: "Main-street boutiques, makers, and family-run shops, full of finds you won't get online.",
     href: "/category/retail-and-shopping",
     src: "/images/lewisburg-square.jpg",
     alt: "Historic storefronts on the Lewisburg town square in Marshall County, Tennessee",
@@ -38,7 +38,7 @@ const INTERESTS: Interest[] = [
   },
   {
     name: "Outdoors & Rec",
-    blurb: "Parks, fields, and open country to get outside.",
+    blurb: "Parks, ballfields, trails, the rec center, and wide-open country for getting outside.",
     href: "/category/fitness-and-recreation",
     src: "/images/tn-pasture-gordonsville.jpg",
     alt: "Green Tennessee pastures with a red barn and treeline under a blue sky",
@@ -47,8 +47,8 @@ const INTERESTS: Interest[] = [
   },
   {
     name: "History & Culture",
-    blurb: "The courthouse square and the stories behind it.",
-    href: "/category/arts-and-entertainment",
+    blurb: "The courthouse square, local landmarks, and the stories that made Marshall County home.",
+    href: "/history",
     src: "/images/lewisburg-courthouse.jpg",
     alt: "The historic Marshall County Courthouse on the square in Lewisburg, Tennessee",
     dot: "bg-clay",

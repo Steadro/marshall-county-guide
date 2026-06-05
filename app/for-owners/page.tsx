@@ -33,7 +33,7 @@ const ACTIONS: {
   {
     Icon: Trash2,
     title: "Remove my listing",
-    body: "Prefer not to be listed? We'll take your listing down, no questions asked.",
+    body: "Permanently closed? We'll remove it once the official Google or Facebook page confirms.",
     href: contactHref({ topic: "remove" }),
     cta: "Open the form",
   },

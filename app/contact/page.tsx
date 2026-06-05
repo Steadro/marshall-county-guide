@@ -27,7 +27,7 @@ const HEADINGS: Record<ContactTopic, { eyebrow: string; title: string; blurb: st
     eyebrow: "Remove a listing",
     title: "Ask us to remove a listing",
     blurb:
-      "Prefer not to be listed? Let us know which listing and we'll take it down, no questions asked.",
+      "To protect businesses from bad-faith requests, we remove a listing only when its official Google or Facebook page shows it's permanently closed. Tell us which listing and link that page.",
   },
   other: {
     eyebrow: "Get in touch",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Send, CheckCircle2 } from "lucide-react";
+import { Send, CheckCircle2, Info } from "lucide-react";
 import type { ContactTopic } from "@/lib/site";
 
 const TOPIC_OPTIONS: { value: ContactTopic; label: string }[] = [
@@ -15,7 +15,7 @@ const TOPIC_OPTIONS: { value: ContactTopic; label: string }[] = [
 const MESSAGE_HINT: Record<ContactTopic, string> = {
   update: "What's changed? Hours, phone, address, website, a better description…",
   add: "Tell us the business or service name, the town, and anything else you know (website, phone, what they do).",
-  remove: "Let us know which listing to remove. We'll take it down, no questions asked.",
+  remove: "Which listing? Please include a link to its Google or Facebook page showing it's permanently closed.",
   other: "How can we help?",
 };
 
@@ -101,6 +101,18 @@ export function ContactForm({
           ))}
         </select>
       </div>
+
+      {topic === "remove" ? (
+        <div className="flex items-start gap-2 rounded-xl bg-gold-soft/50 px-4 py-3 text-sm leading-relaxed text-gold-dark ring-1 ring-gold/30">
+          <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+          <span>
+            We can only remove a business when its official Google, Facebook, or other business
+            page clearly shows it as permanently closed. This protects legitimate businesses from
+            removal requests by people who don&apos;t own them. Please include a link to that page
+            below.
+          </span>
+        </div>
+      ) : null}
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>

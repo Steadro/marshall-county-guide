@@ -3,10 +3,10 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { siteConfig } from "@/lib/site";
 
-// Default social share card: the homepage courthouse hero photo with the title
-// over it (mirrors the front page) instead of a flat brand graphic. Inherited by
-// every route without its own opengraph-image; business pages override per-listing.
-export const runtime = "nodejs"; // need fs to read the hero photo
+// Default social share card, built to mirror the homepage hero: paper ground,
+// the headline with "Marshall County" in green italic, and the courthouse photo
+// fading in on the right. Inherited by every route without its own card.
+export const runtime = "nodejs";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = `${siteConfig.name} — local business directory for Marshall County, Tennessee`;
@@ -17,13 +17,14 @@ export default async function OgImage() {
 
   return new ImageResponse(
     (
-      <div style={{ position: "relative", width: "100%", height: "100%", display: "flex" }}>
+      <div style={{ position: "relative", width: "100%", height: "100%", display: "flex", backgroundColor: "#f5f2e8" }}>
         <img
-          width={1200}
+          width={780}
           height={630}
           src={photoSrc}
-          style={{ position: "absolute", top: 0, left: 0, width: 1200, height: 630, objectFit: "cover" }}
+          style={{ position: "absolute", top: 0, right: 0, width: 780, height: 630, objectFit: "cover" }}
         />
+        {/* fade the photo into the paper ground on its left edge */}
         <div
           style={{
             position: "absolute",
@@ -32,31 +33,37 @@ export default async function OgImage() {
             width: 1200,
             height: 630,
             display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-            padding: 80,
             backgroundImage:
-              "linear-gradient(to top, rgba(14,34,24,0.92) 0%, rgba(14,34,24,0.45) 45%, rgba(14,34,24,0.12) 100%)",
-            color: "#f5f2e9",
+              "linear-gradient(to right, #f5f2e8 36%, rgba(245,242,232,0.55) 60%, rgba(245,242,232,0) 78%)",
+          }}
+        />
+        {/* text column */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: 720,
+            height: 630,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: 72,
             fontFamily: "serif",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              fontSize: 28,
-              textTransform: "uppercase",
-              letterSpacing: 6,
-              opacity: 0.9,
-            }}
-          >
-            Marshall County, Tennessee
-          </div>
-          <div style={{ display: "flex", fontSize: 96, fontWeight: 700, marginTop: 10, lineHeight: 1.02 }}>
+          <div style={{ display: "flex", fontSize: 26, letterSpacing: 4, textTransform: "uppercase", color: "#7a8a7f" }}>
             {siteConfig.name}
           </div>
-          <div style={{ display: "flex", fontSize: 34, opacity: 0.95, marginTop: 16, maxWidth: 1000 }}>
-            Local restaurants, shops, makers, and services across Marshall County.
+          <div style={{ display: "flex", fontSize: 62, fontWeight: 700, lineHeight: 1.06, color: "#1f2a23", marginTop: 18 }}>
+            Discover the places that make
+          </div>
+          <div style={{ display: "flex", fontSize: 62, fontWeight: 700, lineHeight: 1.06 }}>
+            <span style={{ display: "flex", color: "#3f6b54" }}>Marshall County</span>
+            <span style={{ display: "flex", color: "#1f2a23", marginLeft: 18 }}>home.</span>
+          </div>
+          <div style={{ display: "flex", fontSize: 26, lineHeight: 1.4, color: "#4b554f", marginTop: 26, maxWidth: 540 }}>
+            Local restaurants, shops, makers, and services across the county.
           </div>
         </div>
       </div>

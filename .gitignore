@@ -49,6 +49,9 @@ yarn-error.log*
 
 # research / scratch data outputs (regenerated locally, not source)
 /data/coverage-scan-*.json
+# Enrichment worklist: queued (UNREVIEWED) businesses + their internalContext
+# (incl. submitter PII from intake). Local research seed, never committed.
+/data/enrich-worklist-*.json
 # Live-DB exports: full snapshots incl. internalContext (internal-only). Local
 # research artifacts, never committed (public repo). Regenerate from Neon.
 /data/businesses-export-*.csv

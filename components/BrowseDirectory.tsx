@@ -61,7 +61,44 @@ export function BrowseDirectory({
   const isFoodGroup = activeGroup?.categories.some((c) => c.slug === FOOD_CATEGORY_SLUG);
 
   return (
-    <div className="grid gap-4 md:grid-cols-[19rem_1fr]">
+    <>
+      {/* Mobile: a simple, tappable category list (no master-detail, no chips).
+          Each big row deep-links to its category page, which has its own filters. */}
+      <div className="flex flex-col gap-5 md:hidden">
+        {all.map((g) => (
+          <div key={g.key}>
+            <div className="mb-2 flex items-baseline gap-2 px-1">
+              <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${ACCENTS[g.accent].dot}`} />
+              <h3 className="font-serif text-sm font-semibold text-ink">{g.title}</h3>
+              <span className="text-xs text-ink-faint">{g.count}</span>
+            </div>
+            <div className="flex flex-col gap-2">
+              {g.categories.map((c) => (
+                <Link
+                  key={c.slug}
+                  href={`/category/${c.slug}`}
+                  className="flex items-center gap-3 rounded-card bg-card p-3.5 shadow-soft ring-1 ring-line/70 transition active:bg-paper-2"
+                >
+                  <span
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${ACCENTS[g.accent].iconWrap}`}
+                  >
+                    <CategoryIcon slug={c.slug} className="h-5 w-5" />
+                  </span>
+                  <span className="flex flex-1 items-baseline justify-between gap-2">
+                    <span className="truncate font-serif text-base font-semibold text-ink">
+                      {c.name}
+                    </span>
+                    <span className="shrink-0 text-xs text-ink-faint">{c.count}</span>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: master-detail (group rail + category pane) */}
+      <div className="hidden gap-4 md:grid md:grid-cols-[19rem_1fr]">
       {/* Left rail: groups (commercial, then a demoted Community block) */}
       <div className="self-start rounded-card bg-card p-2 shadow-soft ring-1 ring-line/70">
         {groups.map((g) => (
@@ -112,6 +149,7 @@ export function BrowseDirectory({
         )}
       </div>
     </div>
+    </>
   );
 }
 

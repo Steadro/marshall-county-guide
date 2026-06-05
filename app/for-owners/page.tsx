@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FileText, Trash2, MessageCircle, Plus, ArrowRight } from "lucide-react";
-import { siteConfig, contactHref, type ContactTopic } from "@/lib/site";
+import { siteConfig, contactHref, addBusinessPath } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "For Business Owners & Governments",
@@ -13,35 +13,35 @@ const ACTIONS: {
   Icon: typeof FileText;
   title: string;
   body: string;
-  topic: ContactTopic;
+  href: string;
   cta: string;
 }[] = [
   {
     Icon: FileText,
     title: "Update my information",
     body: "Hours, phone, address, website, description. Tell us what's changed.",
-    topic: "update",
+    href: contactHref({ topic: "update" }),
     cta: "Open the form",
   },
   {
     Icon: Plus,
     title: "Add a missing listing",
     body: "A business, service, or office that isn't here yet? Send us the details.",
-    topic: "add",
-    cta: "Open the form",
+    href: addBusinessPath,
+    cta: "Add a business",
   },
   {
     Icon: Trash2,
     title: "Remove my listing",
     body: "Prefer not to be listed? We'll take your listing down, no questions asked.",
-    topic: "remove",
+    href: contactHref({ topic: "remove" }),
     cta: "Open the form",
   },
   {
     Icon: MessageCircle,
     title: "Something else",
     body: "A correction, a question, or anything we didn't cover here.",
-    topic: "other",
+    href: contactHref({ topic: "other" }),
     cta: "Open the form",
   },
 ];
@@ -61,10 +61,10 @@ export default function ForOwnersPage() {
       </p>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2">
-        {ACTIONS.map(({ Icon, title, body, topic, cta }) => (
+        {ACTIONS.map(({ Icon, title, body, href, cta }) => (
           <Link
             key={title}
-            href={contactHref({ topic })}
+            href={href}
             className="group flex flex-col gap-3 rounded-card bg-card p-6 shadow-soft ring-1 ring-line/70 transition duration-300 hover:-translate-y-0.5 hover:shadow-lift"
           >
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-pine-soft text-pine-dark transition-colors group-hover:bg-pine group-hover:text-white">

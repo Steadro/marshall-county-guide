@@ -22,6 +22,12 @@ export const maintainer = {
 // webhook → Resend pipeline (see app/api/contact/route.ts).
 export const contactEmail = "kyle@steadro.com";
 
+// Path to the structured "add your business" intake form. Distinct from the
+// generic contact form: it captures real fields (name/type/address) straight
+// into the Submission table, where it surfaces in the admin Intake tab. The
+// temporary acquisition CTA (IntakeCta) and the prominent "add" links point here.
+export const addBusinessPath = "/add-business";
+
 export type ContactTopic = "update" | "add" | "remove" | "other";
 
 /**

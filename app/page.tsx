@@ -8,7 +8,7 @@ import {
   getRestaurantsForPicker,
   getAllBusinesses,
 } from "@/lib/queries";
-import { siteConfig, contactHref, TOWNS } from "@/lib/site";
+import { siteConfig, addBusinessPath, TOWNS } from "@/lib/site";
 import { buildBrowseGroups, knownTypeNames, typesOf } from "@/lib/category-groups";
 import { BusinessCard } from "@/components/BusinessCard";
 import { GoldNote } from "@/components/GoldNote";
@@ -213,7 +213,7 @@ export default async function HomePage() {
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <Link
-              href={contactHref({ topic: "add" })}
+              href={addBusinessPath}
               className="inline-flex items-center gap-1.5 rounded-pill border border-paper/30 px-6 py-3 text-sm font-semibold text-paper transition hover:border-paper/60 hover:bg-paper/10"
             >
               Add a missing business or service

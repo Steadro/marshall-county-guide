@@ -1,7 +1,17 @@
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import {
+  clean,
+  clientIp,
+  fireWebhook,
+  hashIp,
+  looksLikeEmail,
+  rateLimited,
+  TOPIC_TO_KIND,
+} from "@/lib/submissions";
 
 // Server-only: the n8n webhook that fans out to Resend. Never exposed to the
-// browser (no NEXT_PUBLIC prefix). Set in .env.local and in Vercel.
+// browser (no NEXT_PUBLIC prefix). Set in .env and in Vercel.
 const WEBHOOK = process.env.N8N_CONTACT_WEBHOOK_URL;
 
 // Topic key (from the form) → human label shown in the notification email.
@@ -11,25 +21,6 @@ const TOPICS: Record<string, string> = {
   remove: "Remove a listing",
   other: "Something else",
 };
-
-// Best-effort in-memory rate limit. On Vercel this is per warm instance, not
-// global, so it's a speed bump for casual abuse, not a hard guarantee. The
-// honeypot + server-only webhook URL do most of the work.
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_PER_WINDOW = 5;
-const hits = new Map<string, number[]>();
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now();
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
-  recent.push(now);
-  hits.set(ip, recent);
-  return recent.length > MAX_PER_WINDOW;
-}
-
-function clean(value: unknown, max: number): string {
-  return typeof value === "string" ? value.trim().slice(0, max) : "";
-}
 
 export async function POST(req: Request) {
   let data: Record<string, unknown>;
@@ -59,52 +50,58 @@ export async function POST(req: Request) {
       { status: 422 },
     );
   }
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+  if (!looksLikeEmail(email)) {
     return NextResponse.json(
       { ok: false, error: "That email address doesn't look right." },
       { status: 422 },
     );
   }
 
-  const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
-  if (rateLimited(ip)) {
+  const ip = clientIp(req);
+  if (rateLimited("contact", ip)) {
     return NextResponse.json(
       { ok: false, error: "That's a few messages in a row. Please try again in a few minutes." },
       { status: 429 },
     );
   }
 
-  if (!WEBHOOK) {
-    console.error("N8N_CONTACT_WEBHOOK_URL is not set — contact form cannot send.");
+  // Persist first — everything lands in the Submission table so the admin Intake
+  // tab is the single place to triage, and nothing depends on email. The n8n
+  // ping below is best-effort on top of that.
+  try {
+    await prisma.submission.create({
+      data: {
+        kind: TOPIC_TO_KIND[topicKey] ?? "WEBMASTER",
+        status: "NEW",
+        submitterName: name,
+        submitterEmail: email,
+        businessName: businessName || null,
+        listingUrl: listingUrl || null,
+        message,
+        sourcePage: page || null,
+        ipHash: hashIp(ip),
+      },
+    });
+  } catch (err) {
+    console.error("Contact submission create failed:", err);
     return NextResponse.json(
-      { ok: false, error: "The form isn't set up yet. Please email us directly for now." },
+      { ok: false, error: "Something went wrong sending your message. Please try again." },
       { status: 500 },
     );
   }
 
-  try {
-    const res = await fetch(WEBHOOK, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        topic: TOPICS[topicKey],
-        name,
-        email,
-        businessName,
-        listingUrl,
-        message,
-        page,
-        timestamp: new Date().toISOString(),
-      }),
-    });
-    if (!res.ok) throw new Error(`webhook responded ${res.status}`);
-  } catch (err) {
-    console.error("Contact webhook failed:", err);
-    return NextResponse.json(
-      { ok: false, error: "Something went wrong sending your message. Please try again." },
-      { status: 502 },
-    );
-  }
+  // Non-blocking notification / future triage. Not having a webhook configured is
+  // fine now that the message is already saved.
+  await fireWebhook(WEBHOOK, {
+    topic: TOPICS[topicKey],
+    name,
+    email,
+    businessName,
+    listingUrl,
+    message,
+    page,
+    timestamp: new Date().toISOString(),
+  });
 
   return NextResponse.json({ ok: true });
 }

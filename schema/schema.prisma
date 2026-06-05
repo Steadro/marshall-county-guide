@@ -200,8 +200,80 @@ model Claim {
 }
 
 // ---------------------------------------------------------------------------
+// Public submissions (intake) — untrusted public input, kept OUT of the curated
+// Business catalog until an admin reviews it. The temporary "Add your business"
+// CTA and the contact form both land here. Approving a BUSINESS_INTAKE row
+// promotes it into a DRAFT Business (promotedBusinessId links the two).
+//
+// autoAnalysis/autoStatus are the seam for future automation: an n8n flow can
+// call the Claude API, write its analysis back via POST /api/intake/[id]/analysis,
+// and leave a human the final approve. No schema change needed to turn that on.
+// ---------------------------------------------------------------------------
+
+model Submission {
+  id     String           @id @default(cuid())
+  kind   SubmissionKind   @default(BUSINESS_INTAKE)
+  status SubmissionStatus @default(NEW)
+
+  // Submitter (optional — a patron may report a business that isn't theirs)
+  submitterName  String?
+  submitterEmail String?
+
+  // Business intake — name/type/address are the captured minimum
+  businessName  String?
+  businessType  String? // submitter's free-text; admin maps to a real category on approve
+  streetAddress String?
+  city          String?
+  phone         String?
+  website       String?
+  message       String? @db.Text // free text / "anything else"
+
+  // Linkage
+  relatedBusinessId  String? // existing listing this references (UPDATE/REMOVAL)
+  listingUrl         String? // public URL the submission came from / referenced
+  promotedBusinessId String? // the DRAFT Business created when approved
+
+  // Automation-ready (future n8n → Claude API). autoAnalysis holds the model's
+  // structured output (dedup guess, suggested category, confidence, draft fields).
+  autoAnalysis Json?
+  autoStatus   String? // pending | drafted | needs_human
+
+  // Provenance / anti-abuse
+  sourcePage String? // path the form was submitted from
+  ipHash     String? // hashed submitter IP, for rate-abuse triage (never the raw IP)
+
+  // Review
+  reviewedAt DateTime?
+  reviewedBy String?
+  adminNotes String?   @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([kind])
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
 // Enums
 // ---------------------------------------------------------------------------
+
+enum SubmissionKind {
+  BUSINESS_INTAKE // "Add your business" intake form
+  WEBMASTER // generic note to the maintainer
+  UPDATE // change an existing listing
+  REMOVAL // take a listing down
+  OTHER
+}
+
+enum SubmissionStatus {
+  NEW // unreviewed — drives the admin unread badge
+  IN_REVIEW
+  APPROVED // promoted to a Business (BUSINESS_INTAKE) or actioned
+  REJECTED
+  SPAM
+}
 
 enum BusinessStatus {
   DRAFT // not yet shown publicly

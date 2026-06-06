@@ -210,6 +210,12 @@ export default async function HomePage() {
             >
               Report a problem
             </Link>
+            <Link
+              href="/contact?topic=suggestion"
+              className="inline-flex items-center gap-1.5 rounded-pill border border-paper/30 px-6 py-3 text-sm font-semibold text-paper transition hover:border-paper/60 hover:bg-paper/10"
+            >
+              Make a suggestion
+            </Link>
           </div>
         </div>
       </section>

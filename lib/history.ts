@@ -38,7 +38,7 @@ export const PLACES: HistoryPlace[] = [
     label: "Lewisburg",
     meta: "County seat",
     paragraphs: [
-      "Lewisburg sits at the center of the county, laid out around a courthouse square the way county seats usually are. The current courthouse went up in 1929. Walk the square and you’ll still find the old Ladies Rest Room, built in 1924 so women who came in from the farms had somewhere to sit and wait; people say it was the first building of its kind in Tennessee.",
+      "Lewisburg sits at the center of the county, laid out around a courthouse square the way county seats usually are. The current courthouse went up in 1929. Walk the square and you’ll still find the Ladies Rest Room, built in 1924 so women who came in from the farms had somewhere to sit and wait; people say it was the first building of its kind in Tennessee.",
       "The town made its name on pencils. Factories here turned out millions of them for decades, enough that Lewisburg went by “Pencil City” for a stretch. And in 1935 a group of horsemen met here and started the registry that put the Tennessee Walking Horse on the map.",
     ],
     facts: [

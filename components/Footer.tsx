@@ -39,7 +39,7 @@ export function Footer() {
             services.
           </p>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink-soft">
-            Designed and maintained by{" "}
+            A community project, designed and maintained by{" "}
             <a
               href={maintainer.url}
               target="_blank"
@@ -48,7 +48,7 @@ export function Footer() {
             >
               {maintainer.name}
             </a>
-            , {maintainer.note}.
+            .
           </p>
         </div>
 
@@ -107,6 +107,18 @@ export function Footer() {
             </p>
             <p>Details can change, so please confirm with each business before you visit.</p>
           </div>
+          <p className="mt-4">
+            An independent community guide, not affiliated with county government. Looking for the
+            official Marshall County government website?{" "}
+            <a
+              href="https://www.marshallcountytn.gov"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-pine hover:text-pine-dark"
+            >
+              marshallcountytn.gov
+            </a>
+          </p>
           <p className="mt-4 text-[11px] leading-relaxed text-ink-faint">
             Photos via Wikimedia Commons:{" "}
             {PHOTO_CREDITS.map((c, i) => (

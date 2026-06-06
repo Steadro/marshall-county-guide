@@ -15,7 +15,6 @@ export const siteConfig = {
 export const maintainer = {
   name: "Steadro",
   url: "https://steadro.com",
-  note: "a Lewisburg business",
 } as const;
 
 // Maintainer inbox. Messages from the on-site form route here via the n8n

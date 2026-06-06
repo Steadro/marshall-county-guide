@@ -53,6 +53,7 @@ export const TOPIC_TO_KIND: Record<string, SubmissionKind> = {
   update: "UPDATE",
   add: "BUSINESS_INTAKE",
   remove: "REMOVAL",
+  suggestion: "SUGGESTION",
   other: "WEBMASTER",
 };
 

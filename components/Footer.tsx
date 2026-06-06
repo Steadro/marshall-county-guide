@@ -82,6 +82,11 @@ export function Footer() {
                 For business owners
               </Link>
             </li>
+            <li>
+              <Link href="/contact?topic=suggestion" className="text-ink-soft hover:text-pine">
+                Make a suggestion
+              </Link>
+            </li>
           </ul>
         </div>
 

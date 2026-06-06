@@ -27,7 +27,7 @@ export const contactEmail = "kyle@steadro.com";
 // temporary acquisition CTA (IntakeCta) and the prominent "add" links point here.
 export const addBusinessPath = "/add-business";
 
-export type ContactTopic = "update" | "add" | "remove" | "other";
+export type ContactTopic = "update" | "add" | "remove" | "suggestion" | "other";
 
 /**
  * Build a link to the on-site contact form, optionally preset with a topic and

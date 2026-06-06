@@ -268,6 +268,7 @@ enum SubmissionKind {
   WEBMASTER // generic note to the maintainer
   UPDATE // change an existing listing
   REMOVAL // take a listing down
+  SUGGESTION // an idea/feature request (not a fix)
   OTHER
 }
 

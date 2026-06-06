@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
 };
 
-const TOPICS: ContactTopic[] = ["update", "remove", "other"];
+const TOPICS: ContactTopic[] = ["update", "remove", "suggestion", "other"];
 
 const HEADINGS: Record<ContactTopic, { eyebrow: string; title: string; blurb: string }> = {
   update: {
@@ -28,6 +28,12 @@ const HEADINGS: Record<ContactTopic, { eyebrow: string; title: string; blurb: st
     title: "Ask us to remove a listing",
     blurb:
       "To protect businesses from bad-faith requests, we remove a listing only when its official Google or Facebook page shows it's permanently closed. Tell us which listing and link that page.",
+  },
+  suggestion: {
+    eyebrow: "Make a suggestion",
+    title: "Make a suggestion",
+    blurb:
+      "Have an idea to make the guide better? A feature, a section, a town, or something we should cover. We'd love to hear it.",
   },
   other: {
     eyebrow: "Report a problem",

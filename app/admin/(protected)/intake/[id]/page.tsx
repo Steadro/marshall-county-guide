@@ -14,6 +14,7 @@ const KIND_LABELS: Record<string, string> = {
   WEBMASTER: "Webmaster note",
   UPDATE: "Update request",
   REMOVAL: "Removal request",
+  SUGGESTION: "Suggestion",
   OTHER: "Other",
 };
 

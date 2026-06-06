@@ -7,6 +7,7 @@ import type { ContactTopic } from "@/lib/site";
 const TOPIC_OPTIONS: { value: ContactTopic; label: string }[] = [
   { value: "update", label: "Wrong or outdated info" },
   { value: "remove", label: "Business has closed / remove it" },
+  { value: "suggestion", label: "Make a suggestion" },
   { value: "other", label: "Something else" },
 ];
 
@@ -15,6 +16,7 @@ const MESSAGE_HINT: Record<ContactTopic, string> = {
   update: "What's changed? Hours, phone, address, website, a better description…",
   add: "Tell us the business or service name, the town, and anything else you know (website, phone, what they do).",
   remove: "Which listing? Please include a link to its Google or Facebook page showing it's permanently closed.",
+  suggestion: "What would make the guide more useful? A feature, a section, a town, something we should cover.",
   other: "How can we help?",
 };
 

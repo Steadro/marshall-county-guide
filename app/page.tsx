@@ -194,8 +194,12 @@ export default async function HomePage() {
             Help keep the guide current
           </p>
           <h2 className="mx-auto mt-3 max-w-2xl text-balance text-2xl text-paper sm:text-3xl">
-            Are we missing a local business or service?
+            See something missing, wrong, or worth adding?
           </h2>
+          <p className="mx-auto mt-3 max-w-xl text-pretty leading-relaxed text-paper/70">
+            This guide is built with the community. Add a business we&apos;ve missed, flag anything
+            that&apos;s off, or send us an idea to make it better.
+          </p>
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href={addBusinessPath}

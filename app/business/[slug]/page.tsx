@@ -9,7 +9,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { AdminEditLink } from "@/components/admin/AdminEditLink";
 import { buildBusinessJsonLd, buildBreadcrumbJsonLd, businessUrl } from "@/lib/schema-org";
 import { siteConfig, townNameToSlug, townCentroidByName, contactHref } from "@/lib/site";
-import { formatPhone, telHref, prettyUrl, ensureHttp } from "@/lib/utils";
+import { formatPhone, telHref, prettyUrl, ensureHttp, formatTime12h } from "@/lib/utils";
 
 export const revalidate = 3600;
 export const dynamicParams = false;
@@ -250,13 +250,16 @@ export default async function BusinessPage({
             <section className="mt-10">
               <h2 className="flex items-center gap-2 text-xl">
                 <Clock className="h-5 w-5 text-pine" aria-hidden="true" /> Hours
+                <span className="text-xs font-normal text-ink-faint">Central Time</span>
               </h2>
               <dl className="mt-4 divide-y divide-line/70 overflow-hidden rounded-card bg-card ring-1 ring-line/70">
                 {b.hours.map((h, i) => (
                   <div key={i} className="flex justify-between px-5 py-2.5 text-sm">
                     <dt className="text-ink-soft">{DAY_NAMES[h.dayOfWeek]}</dt>
                     <dd className="font-medium text-ink">
-                      {h.isClosed ? "Closed" : `${h.opens} – ${h.closes}`}
+                      {h.isClosed
+                        ? "Closed"
+                        : `${formatTime12h(h.opens)} – ${formatTime12h(h.closes)}`}
                     </dd>
                   </div>
                 ))}

@@ -74,3 +74,38 @@ export function ensureHttp(url?: string | null): string | null {
   if (!u) return null;
   return /^https?:\/\//i.test(u) ? u : `https://${u}`;
 }
+
+/**
+ * Format a 24-hour "HH:MM" hours string (as stored on BusinessHours) into a
+ * friendly 12-hour clock, e.g. "09:00" -> "9 AM", "17:30" -> "5:30 PM".
+ * Returns the trimmed input unchanged if it isn't a valid HH:MM time.
+ */
+export function formatTime12h(hhmm?: string | null): string | null {
+  if (!hhmm) return null;
+  const trimmed = hhmm.trim();
+  const m = trimmed.match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return trimmed || null;
+  const hour24 = parseInt(m[1], 10);
+  const min = m[2];
+  if (hour24 > 23 || parseInt(min, 10) > 59) return trimmed;
+  const period = hour24 >= 12 ? "PM" : "AM";
+  const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
+  return min === "00" ? `${hour12} ${period}` : `${hour12}:${min} ${period}`;
+}
+
+/**
+ * Format a Date as a Central Time wall-clock string with a "CT" label, e.g.
+ * "6/9/2026, 6:59 PM CT". Pins the zone to America/Chicago so it reads the same
+ * regardless of where the server (or admin's browser) happens to be.
+ */
+export function formatDateTimeCT(date: Date): string {
+  const formatted = date.toLocaleString("en-US", {
+    timeZone: "America/Chicago",
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+  return `${formatted} CT`;
+}

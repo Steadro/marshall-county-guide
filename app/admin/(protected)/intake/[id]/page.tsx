@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { formatDateTimeCT } from "@/lib/utils";
 import {
   approveIntake,
   saveSubmissionNotes,
@@ -65,7 +66,7 @@ export default async function IntakeDetail({ params }: { params: Promise<{ id: s
           <span className="rounded-full bg-paper-2 px-2 py-0.5 text-xs text-ink-soft">{s.status}</span>
         </div>
         <p className="mt-1 text-sm text-ink-faint">
-          {KIND_LABELS[s.kind] ?? s.kind} · received {s.createdAt.toLocaleString()}
+          {KIND_LABELS[s.kind] ?? s.kind} · received {formatDateTimeCT(s.createdAt)}
         </p>
       </div>
 
@@ -145,7 +146,7 @@ export default async function IntakeDetail({ params }: { params: Promise<{ id: s
             {s.reviewedBy ? (
               <Field
                 label="Reviewed"
-                value={`${s.reviewedBy}${s.reviewedAt ? ` · ${s.reviewedAt.toLocaleString()}` : ""}`}
+                value={`${s.reviewedBy}${s.reviewedAt ? ` · ${formatDateTimeCT(s.reviewedAt)}` : ""}`}
               />
             ) : null}
           </dl>

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MessageCircle, Plus, ArrowRight } from "lucide-react";
-import { siteConfig, addBusinessPath } from "@/lib/site";
+import { siteConfig, addBusinessPath, pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Add or fix a listing",
   description: `Add a missing business or report a problem with a listing on ${siteConfig.name}. No account needed.`,
-  alternates: { canonical: "/for-owners" },
-};
+  path: "/for-owners",
+});
 
 const ACTIONS: {
   Icon: typeof Plus;

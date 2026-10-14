@@ -46,19 +46,14 @@ export const metadata: Metadata = {
     "Belfast TN",
     "shop local",
   ],
+  // Page-specific og:/twitter: tags come from pageMetadata() in each page; the
+  // layout only sets defaults that hold everywhere.
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: siteConfig.url,
     siteName: siteConfig.name,
-    title: `${siteConfig.name}: Local Business & Services Directory for Marshall County, TN`,
-    description: siteConfig.description,
   },
-  twitter: {
-    card: "summary_large_image",
-    title: siteConfig.name,
-    description: siteConfig.description,
-  },
+  twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },
 };
 

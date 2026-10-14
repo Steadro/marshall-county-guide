@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Phone, Globe, MapPin, Clock, ChevronRight, ExternalLink, Info } from "lucide-react";
+import { Phone, Globe, MapPin, Clock, ChevronRight, ExternalLink, Info, Ban } from "lucide-react";
 import { getBusinessBySlug, getAllBusinessSlugs } from "@/lib/queries";
 import { CategoryTag } from "@/components/CategoryTag";
-import { LocationMap } from "@/components/LocationMap";
+import { MapEmbed } from "@/components/MapEmbed";
 import { JsonLd } from "@/components/JsonLd";
 import { AdminEditLink } from "@/components/admin/AdminEditLink";
 import { buildBusinessJsonLd, buildBreadcrumbJsonLd, businessUrl } from "@/lib/schema-org";
-import { siteConfig, townNameToSlug, townCentroidByName, contactHref } from "@/lib/site";
+import { siteConfig, townNameToSlug, contactHref, pageMetadata } from "@/lib/site";
 import { formatPhone, telHref, prettyUrl, ensureHttp, formatTime12h } from "@/lib/utils";
 
+// Slugs published after the last deploy render on first request (then ISR),
+// instead of 404ing until the next build. Unknown slugs still 404 via notFound().
 export const revalidate = 3600;
-export const dynamicParams = false;
 
 export async function generateStaticParams() {
   const slugs = await getAllBusinessSlugs();
@@ -33,20 +34,22 @@ export async function generateMetadata({
     b.description?.slice(0, 155) ||
     `${b.name}, ${b.category.name} in ${b.city}, ${b.state}.`;
 
-  return {
-    title: b.metaTitle ?? `${b.name} in ${b.city}, ${b.state}`,
+  const title = b.metaTitle ?? `${b.name} in ${b.city}, ${b.state}`;
+  return pageMetadata({
+    title: b.status === "CLOSED" ? `${title} (permanently closed)` : title,
     description: b.metaDescription ?? fallbackDesc,
-    alternates: { canonical: `/business/${b.slug}` },
-    openGraph: {
-      type: "website",
-      title: b.metaTitle ?? `${b.name} in ${b.city}, ${b.state}`,
-      description: b.metaDescription ?? fallbackDesc,
-      url: businessUrl(b.slug),
-    },
-  };
+    path: `/business/${b.slug}`,
+    image: false, // this route has its own opengraph-image
+  });
 }
 
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+const monthYear = new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  year: "numeric",
+  timeZone: "America/Chicago",
+});
 
 export default async function BusinessPage({
   params,
@@ -75,23 +78,19 @@ export default async function BusinessPage({
   ].filter((s) => s.href);
 
   const hasContact = phoneLink || websiteHref || b.streetAddress;
+  const closed = b.status === "CLOSED";
 
-  // Map: precise pin if the business is geocoded, otherwise a wider town-level
-  // view centered on the town centroid so every listing still gets a map.
+  // Map: precise pin if the business is geocoded, otherwise a wider view of the
+  // town so every listing still gets a map.
   const precise = b.latitude != null && b.longitude != null;
-  const centroid = townCentroidByName.get(b.city.toLowerCase());
-  const mapPoint = precise
-    ? { latitude: b.latitude as number, longitude: b.longitude as number, name: b.name, city: b.city }
-    : centroid
-      ? { latitude: centroid.lat, longitude: centroid.lng, name: `${b.city}, ${b.state}` }
-      : null;
   const mapsSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     `${b.name} ${b.city} ${b.state}`,
   )}`;
 
   // New, unreviewed listings (fresh intake/seed) get a small "needs data" notice
   // inviting the community to help fill them in.
-  const needsData = b.qualityTier === "UNREVIEWED";
+  const needsData = b.qualityTier === "UNREVIEWED" && !closed;
+  const checked = b.lastVerifiedAt ? monthYear.format(b.lastVerifiedAt) : null;
 
   return (
     <article className="pb-12">
@@ -150,6 +149,22 @@ export default async function BusinessPage({
             )}
           </p>
 
+          {closed ? (
+            <p className="mt-4 flex items-start gap-2 rounded-lg bg-paper-2 px-3 py-2 text-sm font-medium leading-relaxed text-ink ring-1 ring-line-strong">
+              <Ban className="mt-0.5 h-4 w-4 shrink-0 text-ink-soft" aria-hidden="true" />
+              <span>
+                Permanently closed. This page stays up so old links still explain what happened.{" "}
+                <Link
+                  href={`/category/${b.category.slug}`}
+                  className="text-pine underline underline-offset-2 hover:text-pine-dark"
+                >
+                  Find other {b.category.name.toLowerCase()} nearby
+                </Link>
+                .
+              </span>
+            </p>
+          ) : null}
+
           {needsData ? (
             <p className="mt-4 flex items-start gap-2 rounded-lg bg-paper-2 px-3 py-2 text-sm leading-relaxed text-ink-soft ring-1 ring-line">
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-ink-faint" aria-hidden="true" />
@@ -157,7 +172,7 @@ export default async function BusinessPage({
                 This is a new listing and likely requires additional data.{" "}
                 <Link
                   href={contactHref({ topic: "update", business: { name: b.name, slug: b.slug } })}
-                  className="font-medium text-pine underline-offset-2 hover:text-pine-dark hover:underline"
+                  className="font-medium text-pine underline underline-offset-2 hover:text-pine-dark"
                 >
                   Know this place? Help fill it in.
                 </Link>
@@ -165,8 +180,8 @@ export default async function BusinessPage({
             </p>
           ) : null}
 
-          {/* Primary actions */}
-          {websiteHref || phoneLink ? (
+          {/* Primary actions (none for a closed business) */}
+          {!closed && (websiteHref || phoneLink) ? (
             <div className="mt-6 flex flex-wrap gap-3">
               {websiteHref ? (
                 <a
@@ -211,26 +226,29 @@ export default async function BusinessPage({
           {hasContact ? (
             <section className="mt-10">
               <h2 className="text-xl">Details</h2>
-              <dl className="mt-4 divide-y divide-line/60 overflow-hidden rounded-card bg-card text-sm ring-1 ring-line/70">
+              <ul className="mt-4 divide-y divide-line/60 overflow-hidden rounded-card bg-card text-sm ring-1 ring-line/70">
                 {addressLine ? (
-                  <div className="flex gap-3 px-5 py-3.5">
+                  <li className="flex gap-3 px-5 py-3.5">
                     <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-pine" aria-hidden="true" />
+                    <span className="sr-only">Address: </span>
                     <span className="text-ink-soft">{addressLine}</span>
-                  </div>
+                  </li>
                 ) : null}
                 {phoneDisplay ? (
-                  <div className="flex gap-3 px-5 py-3.5">
+                  <li className="flex gap-3 px-5 py-3.5">
                     <Phone className="mt-0.5 h-4 w-4 shrink-0 text-pine" aria-hidden="true" />
+                    <span className="sr-only">Phone: </span>
                     {phoneLink ? (
                       <a href={phoneLink} className="text-ink hover:text-pine">{phoneDisplay}</a>
                     ) : (
                       <span className="text-ink-soft">{phoneDisplay}</span>
                     )}
-                  </div>
+                  </li>
                 ) : null}
                 {websiteHref ? (
-                  <div className="flex gap-3 px-5 py-3.5">
+                  <li className="flex gap-3 px-5 py-3.5">
                     <Globe className="mt-0.5 h-4 w-4 shrink-0 text-pine" aria-hidden="true" />
+                    <span className="sr-only">Website: </span>
                     <a
                       href={websiteHref}
                       target="_blank"
@@ -239,14 +257,14 @@ export default async function BusinessPage({
                     >
                       {websiteLabel}
                     </a>
-                  </div>
+                  </li>
                 ) : null}
-              </dl>
+              </ul>
             </section>
           ) : null}
 
           {/* Hours */}
-          {b.hours.length > 0 ? (
+          {b.hours.length > 0 && !closed ? (
             <section className="mt-10">
               <h2 className="flex items-center gap-2 text-xl">
                 <Clock className="h-5 w-5 text-pine" aria-hidden="true" /> Hours
@@ -269,10 +287,14 @@ export default async function BusinessPage({
           ) : null}
 
           {/* Map (precise pin, or a town-level view as a fallback) */}
-          {mapPoint ? (
+          {!closed ? (
             <section className="mt-10">
               <h2 className="mb-4 text-xl">Location</h2>
-              <LocationMap points={[mapPoint]} zoom={precise ? 15 : 13} />
+              <MapEmbed
+                query={precise ? `${b.latitude},${b.longitude}` : `${b.city}, ${b.state}`}
+                zoom={precise ? 15 : 13}
+                title={precise ? `Map showing ${b.name}` : `Map of ${b.city}, ${b.state}`}
+              />
               {precise ? (
                 <a
                   href={`https://www.google.com/maps/dir/?api=1&destination=${b.latitude},${b.longitude}`}
@@ -292,7 +314,7 @@ export default async function BusinessPage({
                     href={mapsSearch}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-pine hover:text-pine-dark"
+                    className="font-medium text-pine underline underline-offset-2 hover:text-pine-dark"
                   >
                     Find on Google Maps
                   </a>
@@ -325,12 +347,22 @@ export default async function BusinessPage({
 
           {/* Footnote: owner / accuracy note */}
           <div className="mt-12 space-y-3 border-t border-line/70 pt-6 text-xs leading-relaxed">
+            {checked || b.status === "UNVERIFIED" ? (
+              <p className="text-ink-soft">
+                {[
+                  checked ? `Details last checked ${checked}.` : null,
+                  b.status === "UNVERIFIED" ? "Not yet confirmed with the business." : null,
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+              </p>
+            ) : null}
             <p className="text-ink-faint">
               Details can change, so please confirm with the business before you visit. Is this your
               business?{" "}
               <Link
                 href={contactHref({ topic: "update", business: { name: b.name, slug: b.slug } })}
-                className="font-medium text-pine hover:text-pine-dark"
+                className="font-medium text-pine underline underline-offset-2 hover:text-pine-dark"
               >
                 Update or remove this listing.
               </Link>

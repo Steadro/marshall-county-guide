@@ -87,7 +87,10 @@ Copy [`.env.example`](.env.example) to `.env`. Never commit `.env` (it's git-ign
 | `GEOCODER`                  | No       | `google` or `mapbox` to enable the geocode step. Blank = skip.          |
 | `GOOGLE_GEOCODING_API_KEY`  | No       | Required when `GEOCODER=google`.                                        |
 | `MAPBOX_TOKEN`              | No       | Required when `GEOCODER=mapbox`.                                        |
-| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Prod | Browser key for the Google maps (Maps JavaScript API). Referrer-restrict it. |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Prod | Browser key for the maps: Maps JavaScript API (category maps) + Maps Embed API (business pages). Referrer-restrict it. |
+| `N8N_CONTACT_WEBHOOK_URL` / `N8N_INTAKE_WEBHOOK_URL` | No | Server-only n8n webhooks for form notifications. Submissions are saved to the DB either way. |
+| `N8N_WEBHOOK_SECRET`        | No       | Sent as `x-mcg-secret` to the webhooks; have n8n require it.            |
+| `IP_HASH_SALT`              | No       | Salt for hashed submitter IPs (falls back to `SESSION_SECRET`).         |
 
 > **Note:** `latitude`/`longitude` are empty in the seed. Pages work fine without them, the map is
 > simply hidden. Run `npm run geocode` once with a key to fill them in. The step skips rows that
@@ -125,6 +128,7 @@ app/
   category/[slug]/         Category landing pages
   [town]/page.tsx          Per-town pages (local SEO)
   about/page.tsx           Mission / about page
+  privacy/page.tsx         What the site collects and who processes it
   history/page.tsx         Local history of the county + towns
   for-owners/page.tsx      Info for business owners & local governments
   contact/page.tsx         Contact form (update/add/remove a listing)

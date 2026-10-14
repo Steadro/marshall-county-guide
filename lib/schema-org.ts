@@ -20,7 +20,20 @@ const TYPE_BY_CATEGORY: Record<string, string> = {
   "fitness-and-recreation": "SportsActivityLocation",
   "childcare-and-education": "ChildCare",
   "arts-and-entertainment": "EntertainmentBusiness",
+  schools: "School",
+  "places-of-worship": "PlaceOfWorship",
+  "government-and-civic": "GovernmentOffice",
+  "public-safety": "EmergencyService",
+  "community-and-nonprofit": "NGO",
+  "wedding-and-event-venues": "EventVenue",
 };
+
+// Cuisine tags (schema/TAXONOMY.md "Tags â€” cuisine") emitted as servesCuisine.
+const CUISINE_TAGS = new Set([
+  "American", "Southern", "BBQ", "Italian", "Mexican", "Tex-Mex", "Pizza", "Seafood",
+  "Chinese", "Japanese", "Sushi", "Thai", "Burgers", "Sandwiches", "Breakfast", "Wings",
+  "Steakhouse",
+]);
 
 const DAY_NAMES = [
   "Sunday",
@@ -95,7 +108,12 @@ export function buildBusinessJsonLd(b: BusinessDetail): Record<string, unknown> 
     };
   }
   if (sameAs.length > 0) jsonLd.sameAs = sameAs;
-  if (openingHours.length > 0) jsonLd.openingHoursSpecification = openingHours;
+  // A closed business has no current hours to advertise.
+  if (openingHours.length > 0 && b.status !== "CLOSED") jsonLd.openingHoursSpecification = openingHours;
+  const cuisines = b.tags.map((t) => t.name).filter((n) => CUISINE_TAGS.has(n));
+  if (jsonLd["@type"] === "Restaurant" && cuisines.length > 0) jsonLd.servesCuisine = cuisines;
+  // Real photo when we have one; otherwise the generated OG card.
+  if (b.photos[0]?.url) jsonLd.image = b.photos[0].url;
 
   return jsonLd;
 }

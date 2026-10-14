@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, HeartHandshake, RefreshCw, MapPinned } from "lucide-react";
-import { siteConfig, TOWNS } from "@/lib/site";
+import { siteConfig, TOWNS, pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "About",
   description: `About ${siteConfig.name}, a curated, community-minded directory of local businesses and services across Marshall County, Tennessee.`,
-  alternates: { canonical: "/about" },
-};
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (
@@ -108,7 +108,7 @@ export default function AboutPage() {
           information, and inclusion here is not an endorsement of any business. Business names,
           logos, and trademarks belong to their respective owners. If a listing is yours and you’d
           like it updated or removed, just{" "}
-          <Link href="/for-owners" className="font-medium text-pine hover:text-pine-dark">
+          <Link href="/for-owners" className="font-medium text-pine underline underline-offset-2 hover:text-pine-dark">
             let us know
           </Link>
           .

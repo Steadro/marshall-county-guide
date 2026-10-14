@@ -1,16 +1,15 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import { getAllBusinesses } from "@/lib/queries";
 import { BusinessExplorer } from "@/components/BusinessExplorer";
-import { siteConfig } from "@/lib/site";
+import { siteConfig, pageMetadata } from "@/lib/site";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "All Businesses",
   description: `Browse and search every business and service in the ${siteConfig.name} directory. Filter by category and town across Marshall County, Tennessee.`,
-  alternates: { canonical: "/businesses" },
-};
+  path: "/businesses",
+});
 
 export default async function BusinessesPage() {
   const businesses = await getAllBusinesses();
@@ -28,9 +27,7 @@ export default async function BusinessesPage() {
         </p>
       </header>
 
-      <Suspense fallback={<div className="h-24" />}>
-        <BusinessExplorer businesses={businesses} defaultLocalOnly />
-      </Suspense>
+      <BusinessExplorer businesses={businesses} defaultLocalOnly />
     </div>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { Search, X, SlidersHorizontal } from "lucide-react";
 import type { BusinessCard as BusinessCardData } from "@/lib/queries";
 import { BusinessCard } from "@/components/BusinessCard";
@@ -39,16 +38,24 @@ export function BusinessExplorer({
   showSubcategoryFilter?: boolean;
   defaultLocalOnly?: boolean;
 }) {
-  // Seed the search box from `?q=` so the homepage search can deep-link here.
-  const searchParams = useSearchParams();
-  const [query, setQuery] = useState(searchParams.get("q") ?? "");
+  const [query, setQuery] = useState("");
   const [category, setCategory] = useState(initialCategory ?? "");
   const [town, setTown] = useState(initialTown ?? "");
-  // Seed from `?type=` so the homepage browse chips can deep-link to a
-  // pre-filtered subcategory (e.g. /category/restaurant-and-food?type=Cafe).
-  const [subcategory, setSubcategory] = useState(searchParams.get("type") ?? "");
+  const [subcategory, setSubcategory] = useState("");
   const [localOnly, setLocalOnly] = useState(defaultLocalOnly);
   const [sort, setSort] = useState<SortKey>("name");
+
+  // Apply `?q=` (homepage search) and `?type=` (homepage browse chips, e.g.
+  // /category/restaurant-and-food?type=Cafe) after mount. Reading them during
+  // render via useSearchParams would make Next bail the whole list out of the
+  // static HTML, leaving crawlers and slow connections with an empty page.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("q");
+    const type = params.get("type");
+    if (q) setQuery(q);
+    if (type) setSubcategory(type);
+  }, []);
 
   const hasChains = useMemo(() => businesses.some((b) => b.isChain), [businesses]);
 
@@ -123,7 +130,7 @@ export function BusinessExplorer({
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search places…"
             aria-label="Search places"
-            className="w-full rounded-pill border border-line bg-paper py-2.5 pl-9 pr-3 text-sm text-ink outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
+            className="w-full rounded-pill border border-field bg-paper py-2.5 pl-9 pr-3 text-sm text-ink outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
           />
         </div>
 
@@ -141,7 +148,7 @@ export function BusinessExplorer({
                 id="filter-category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="rounded-pill border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
+                className="rounded-pill border border-field bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
               >
                 <option value="">All categories</option>
                 {categoryOptions.map((o) => (
@@ -160,7 +167,7 @@ export function BusinessExplorer({
             id="sort-by"
             value={sort}
             onChange={(e) => setSort(e.target.value as SortKey)}
-            className="rounded-pill border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
+            className="rounded-pill border border-field bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
           >
             <option value="name">Sort: A–Z</option>
             <option value="city">Sort: City</option>
@@ -178,7 +185,7 @@ export function BusinessExplorer({
                 id="filter-town-m"
                 value={town}
                 onChange={(e) => setTown(e.target.value)}
-                className="rounded-pill border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20 sm:hidden"
+                className="rounded-pill border border-field bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20 sm:hidden"
               >
                 <option value="">All towns</option>
                 {townOptions.map((o) => (
@@ -198,7 +205,7 @@ export function BusinessExplorer({
                 id="filter-type-m"
                 value={subcategory}
                 onChange={(e) => setSubcategory(e.target.value)}
-                className="rounded-pill border border-line bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20 sm:hidden"
+                className="rounded-pill border border-field bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20 sm:hidden"
               >
                 <option value="">All types</option>
                 {subcategoryOptions.map((o) => (

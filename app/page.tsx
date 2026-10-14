@@ -8,7 +8,7 @@ import {
   getRestaurantsForPicker,
   getAllBusinesses,
 } from "@/lib/queries";
-import { siteConfig, addBusinessPath, TOWNS } from "@/lib/site";
+import { siteConfig, addBusinessPath, TOWNS, pageMetadata } from "@/lib/site";
 import { buildBrowseGroups, knownTypeNames, typesOf } from "@/lib/category-groups";
 import { BusinessCard } from "@/components/BusinessCard";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -21,8 +21,19 @@ import { buildSiteJsonLd } from "@/lib/schema-org";
 
 export const revalidate = 3600;
 
+// Tab title stays the bare brand (df8b71a); the share card gets the descriptor.
+const home = pageMetadata({
+  title: siteConfig.name,
+  description: siteConfig.description,
+  path: "/",
+  absoluteTitle: true,
+});
 export const metadata = {
-  alternates: { canonical: "/" },
+  ...home,
+  openGraph: {
+    ...home.openGraph,
+    title: `${siteConfig.name}: Local Business & Services Directory for Marshall County, TN`,
+  },
 };
 
 export default async function HomePage() {
@@ -105,12 +116,13 @@ export default async function HomePage() {
 
         <div className="container-page py-8 sm:py-10 lg:py-10">
           <div className="max-w-2xl">
-            {/* Fluid size + nowrap locks the headline to exactly three lines at
-                every width, so "places that make" never wraps. */}
-            <h1 className="leading-[1.05] [font-size:clamp(1.5rem,6.5vw,3.75rem)]">
-              <span className="block whitespace-nowrap">Discover the</span>
-              <span className="block whitespace-nowrap">places that make</span>
-              <span className="block whitespace-nowrap">
+            {/* Fluid size + nowrap locks the headline to three lines from sm up.
+                Below sm the lines may wrap, so a narrow phone or enlarged text
+                reflows instead of clipping inside the overflow-hidden hero. */}
+            <h1 className="leading-[1.05] [font-size:clamp(1.25rem,6.5vw,3.75rem)]">
+              <span className="block sm:whitespace-nowrap">Discover the</span>
+              <span className="block sm:whitespace-nowrap">places that make</span>
+              <span className="block sm:whitespace-nowrap">
                 <RotatingPlace />
               </span>
             </h1>

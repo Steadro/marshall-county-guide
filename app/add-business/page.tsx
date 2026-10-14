@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { IntakeForm } from "@/components/IntakeForm";
-import { siteConfig } from "@/lib/site";
+import { siteConfig, pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Add Your Business",
   description: `Own or run a business, service, or office in Marshall County, TN? Add it to ${siteConfig.name} for free. No account, no fee — just a few details.`,
-  alternates: { canonical: "/add-business" },
-};
+  path: "/add-business",
+});
 
 export default function AddBusinessPage() {
   return (

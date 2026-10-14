@@ -1,11 +1,16 @@
+import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import { Prisma, BusinessStatus } from "@/app/generated/prisma/client";
 import { hashString } from "@/lib/utils";
 
-// Businesses we show publicly. DRAFT is hidden; CLOSED is excluded from primary
-// lists (none in the seed, but render-safe if added later).
+// Businesses we show publicly. DRAFT is hidden. CLOSED keeps its own page
+// (rendered as permanently closed, so old links and search results still land
+// somewhere useful) but is left out of every list, map, and the sitemap.
 const VISIBLE_STATUSES: BusinessStatus[] = [BusinessStatus.PUBLISHED, BusinessStatus.UNVERIFIED];
 const visibleWhere = { status: { in: VISIBLE_STATUSES } } satisfies Prisma.BusinessWhereInput;
+const pageWhere = {
+  status: { in: [...VISIBLE_STATUSES, BusinessStatus.CLOSED] },
+} satisfies Prisma.BusinessWhereInput;
 
 // --- Selections (kept narrow for listing perf) -----------------------------
 
@@ -71,13 +76,17 @@ const cardOrder: Prisma.BusinessOrderByWithRelationInput[] = [
   { name: "asc" },
 ];
 
-export function getAllBusinesses(): Promise<BusinessCard[]> {
-  return prisma.business.findMany({
-    where: visibleWhere,
-    select: businessCardSelect,
-    orderBy: cardOrder,
-  });
-}
+// cache(): dedupes repeat calls within one render (e.g. the homepage spotlight
+// and browse both read the full list; generateMetadata and the page both look
+// up the same slug).
+export const getAllBusinesses = cache(
+  (): Promise<BusinessCard[]> =>
+    prisma.business.findMany({
+      where: visibleWhere,
+      select: businessCardSelect,
+      orderBy: cardOrder,
+    }),
+);
 
 // Categories never surfaced in the homepage spotlight (slugs). Manufacturers are
 // employers, not places residents visit, so they don't belong in a "go take a
@@ -120,19 +129,29 @@ export async function getSpotlightBusinesses(count = 8): Promise<BusinessCard[]>
     .slice(0, count);
 }
 
-export function getBusinessBySlug(slug: string): Promise<BusinessDetail | null> {
-  return prisma.business.findFirst({
-    where: { slug, ...visibleWhere },
-    select: businessDetailSelect,
-  });
-}
+export const getBusinessBySlug = cache(
+  (slug: string): Promise<BusinessDetail | null> =>
+    prisma.business.findFirst({
+      where: { slug, ...pageWhere },
+      select: businessDetailSelect,
+    }),
+);
 
+/** Every slug that has a page (visible + closed), for static generation. */
 export async function getAllBusinessSlugs(): Promise<string[]> {
   const rows = await prisma.business.findMany({
-    where: visibleWhere,
+    where: pageWhere,
     select: { slug: true },
   });
   return rows.map((r) => r.slug);
+}
+
+/** Visible listings with their last edit, for sitemap.xml lastmod. */
+export function getSitemapBusinesses(): Promise<{ slug: string; updatedAt: Date }[]> {
+  return prisma.business.findMany({
+    where: visibleWhere,
+    select: { slug: true, updatedAt: true },
+  });
 }
 
 export interface RestaurantPick {
@@ -193,7 +212,7 @@ export async function getCategoriesWithCounts(): Promise<CategoryWithCount[]> {
     .filter((c) => c.count > 0);
 }
 
-export async function getCategoryBySlug(slug: string) {
+export const getCategoryBySlug = cache(async (slug: string) => {
   const category = await prisma.category.findUnique({
     where: { slug },
     select: { id: true, slug: true, name: true, description: true, icon: true },
@@ -205,7 +224,7 @@ export async function getCategoryBySlug(slug: string) {
     orderBy: cardOrder,
   });
   return { category, businesses };
-}
+});
 
 export async function getAllCategorySlugs(): Promise<string[]> {
   const rows = await prisma.category.findMany({ select: { slug: true } });

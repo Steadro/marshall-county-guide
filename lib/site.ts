@@ -1,5 +1,7 @@
 // Centralized site metadata + small shared constants.
 
+import type { Metadata } from "next";
+
 export const siteConfig = {
   name: "Marshall County Guide",
   tagline: "A guide to the local businesses and services of Marshall County, Tennessee.",
@@ -10,6 +12,53 @@ export const siteConfig = {
   url: (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, ""),
   region: "Marshall County, Tennessee",
 } as const;
+
+/**
+ * Per-page metadata with matching Open Graph + Twitter tags. Next replaces (not
+ * merges) a parent's openGraph/twitter objects, so every page sets the full set
+ * here rather than inheriting the homepage's og:url/og:title from the layout.
+ * `title` is the bare page title; the layout template adds the brand
+ * (brand-first, matching the tab-title choice in df8b71a).
+ * Pass `image: false` on routes with their own opengraph-image file.
+ */
+export function pageMetadata({
+  title,
+  description,
+  path,
+  absoluteTitle = false,
+  image = true,
+}: {
+  title: string;
+  description: string;
+  path: string;
+  absoluteTitle?: boolean;
+  image?: boolean;
+}): Metadata {
+  const fullTitle = absoluteTitle ? title : `${siteConfig.name} | ${title}`;
+  const images = image
+    ? [{ url: "/opengraph-image.png", width: 1200, height: 630, alt: `${siteConfig.name}: ${siteConfig.tagline}` }]
+    : undefined;
+  return {
+    title: absoluteTitle ? { absolute: title } : title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website",
+      locale: "en_US",
+      siteName: siteConfig.name,
+      url: `${siteConfig.url}${path === "/" ? "" : path}`,
+      title: fullTitle,
+      description,
+      ...(images ? { images } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: fullTitle,
+      description,
+      ...(images ? { images: images.map((i) => i.url) } : {}),
+    },
+  };
+}
 
 // Who built/maintains the site (shown in the footer).
 export const maintainer = {
@@ -48,24 +97,19 @@ export function contactHref(opts?: {
   return qs ? `/contact?${qs}` : "/contact";
 }
 
-// Towns covered (Lewisburg + ~15-mile radius). `slug` powers /[town] pages;
-// lat/lng are town centroids used as a map fallback when a business has no
-// street address of its own.
+// Towns covered (Lewisburg + ~15-mile radius). `slug` powers /[town] pages.
 export const TOWNS = [
-  { slug: "lewisburg", name: "Lewisburg", lat: 35.449, lng: -86.7889 },
-  { slug: "chapel-hill", name: "Chapel Hill", lat: 35.6373, lng: -86.6939 },
-  { slug: "cornersville", name: "Cornersville", lat: 35.359, lng: -86.8403 },
-  { slug: "petersburg", name: "Petersburg", lat: 35.3151, lng: -86.6386 },
-  { slug: "belfast", name: "Belfast", lat: 35.5012, lng: -86.7036 },
+  { slug: "lewisburg", name: "Lewisburg" },
+  { slug: "chapel-hill", name: "Chapel Hill" },
+  { slug: "cornersville", name: "Cornersville" },
+  { slug: "petersburg", name: "Petersburg" },
+  { slug: "belfast", name: "Belfast" },
 ] as const;
 
 export const townNameToSlug = new Map<string, string>(
   TOWNS.map((t) => [t.name.toLowerCase(), t.slug]),
 );
 export const townSlugToName = new Map<string, string>(TOWNS.map((t) => [t.slug, t.name]));
-export const townCentroidByName = new Map<string, { lat: number; lng: number }>(
-  TOWNS.map((t) => [t.name.toLowerCase(), { lat: t.lat, lng: t.lng }]),
-);
 
 export const mainNav = [
   { href: "/businesses", label: "All Businesses" },

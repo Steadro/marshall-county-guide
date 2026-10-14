@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/ContactForm";
-import { siteConfig, type ContactTopic } from "@/lib/site";
+import { siteConfig, type ContactTopic, pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Report a problem",
   description: `Report a problem with a listing on ${siteConfig.name} — wrong info, a closed business, or a correction. No account needed.`,
-  alternates: { canonical: "/contact" },
-};
+  path: "/contact",
+});
 
 const TOPICS: ContactTopic[] = ["update", "remove", "suggestion", "other"];
 

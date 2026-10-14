@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -10,10 +9,9 @@ import { CategoryIcon } from "@/components/CategoryIcon";
 import { LocationMap } from "@/components/LocationMap";
 import { JsonLd } from "@/components/JsonLd";
 import { buildBreadcrumbJsonLd } from "@/lib/schema-org";
-import { siteConfig } from "@/lib/site";
+import { siteConfig, pageMetadata } from "@/lib/site";
 
 export const revalidate = 3600;
-export const dynamicParams = false;
 
 export async function generateStaticParams() {
   const slugs = await getAllCategorySlugs();
@@ -28,22 +26,17 @@ export async function generateMetadata({
   const { slug } = await params;
   const data = await getCategoryBySlug(slug);
   if (!data) return { title: "Category not found" };
-  const { category } = data;
-  const title = `${category.name} in Marshall County, TN`;
-  const description =
-    category.description ??
-    `Find ${category.name.toLowerCase()} businesses across Marshall County, Tennessee.`;
-  return {
-    title,
-    description,
-    alternates: { canonical: `/category/${category.slug}` },
-    openGraph: {
-      type: "website",
-      title,
-      description,
-      url: `${siteConfig.url}/category/${category.slug}`,
-    },
-  };
+  const { category, businesses } = data;
+  const meta = pageMetadata({
+    title: `${category.name} in Marshall County, TN`,
+    description:
+      category.description ??
+      `Find ${category.name.toLowerCase()} businesses across Marshall County, Tennessee.`,
+    path: `/category/${category.slug}`,
+  });
+  // An empty category is a thin page: keep it reachable, but out of the index
+  // (it's also left out of the sitemap) until it has listings.
+  return businesses.length > 0 ? meta : { ...meta, robots: { index: false, follow: true } };
 }
 
 export default async function CategoryPage({
@@ -110,13 +103,11 @@ export default async function CategoryPage({
         {category.slug === "government-and-civic" ? (
           <GovernmentDirectory businesses={businesses} />
         ) : (
-          <Suspense fallback={<div className="h-24" />}>
-            <BusinessExplorer
-              businesses={businesses}
-              showCategoryFilter={false}
-              showSubcategoryFilter
-            />
-          </Suspense>
+          <BusinessExplorer
+            businesses={businesses}
+            showCategoryFilter={false}
+            showSubcategoryFilter
+          />
         )}
       </div>
     </div>

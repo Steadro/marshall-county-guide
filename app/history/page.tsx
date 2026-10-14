@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { TOWNS } from "@/lib/site";
+import { TOWNS, pageMetadata } from "@/lib/site";
 import { HistoryTabs } from "@/components/HistoryTabs";
 import { JsonLd } from "@/components/JsonLd";
 import { buildHistoryJsonLd } from "@/lib/schema-org";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: { absolute: "Marshall County, TN History: Lewisburg & Its Towns" },
-  description:
-    "How Marshall County, Tennessee and its towns came to be: Lewisburg, Chapel Hill, Cornersville, Petersburg, and Belfast, from 1807 settlement to Pencil City and the Tennessee Walking Horse.",
-  alternates: { canonical: "/history" },
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Marshall County, TN History: Lewisburg & Its Towns",
+  description: "How Marshall County, Tennessee and its towns came to be: Lewisburg, Chapel Hill, Cornersville, Petersburg, and Belfast, from 1807 settlement to Pencil City and the Tennessee Walking Horse.",
+  path: "/history",
+  absoluteTitle: true,
+});
 
 export default function HistoryPage() {
   return (

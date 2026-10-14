@@ -1,14 +1,15 @@
 import type { MetadataRoute } from "next";
-import { getAllBusinessSlugs, getAllCategorySlugs } from "@/lib/queries";
+import { getSitemapBusinesses, getCategoriesWithCounts } from "@/lib/queries";
 import { siteConfig, TOWNS } from "@/lib/site";
 
 export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = siteConfig.url;
-  const [businessSlugs, categorySlugs] = await Promise.all([
-    getAllBusinessSlugs(),
-    getAllCategorySlugs(),
+  const [businesses, categories] = await Promise.all([
+    getSitemapBusinesses(),
+    // Only categories with at least one visible listing (empty ones are noindex).
+    getCategoriesWithCounts(),
   ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -17,6 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/history`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${base}/about`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${base}/for-owners`, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${base}/privacy`, changeFrequency: "yearly", priority: 0.2 },
   ];
 
   const townRoutes: MetadataRoute.Sitemap = TOWNS.map((t) => ({
@@ -25,14 +27,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  const categoryRoutes: MetadataRoute.Sitemap = categorySlugs.map((slug) => ({
-    url: `${base}/category/${slug}`,
+  const categoryRoutes: MetadataRoute.Sitemap = categories.map((c) => ({
+    url: `${base}/category/${c.slug}`,
     changeFrequency: "weekly",
     priority: 0.7,
   }));
 
-  const businessRoutes: MetadataRoute.Sitemap = businessSlugs.map((slug) => ({
-    url: `${base}/business/${slug}`,
+  const businessRoutes: MetadataRoute.Sitemap = businesses.map((b) => ({
+    url: `${base}/business/${b.slug}`,
+    lastModified: b.updatedAt,
     changeFrequency: "monthly",
     priority: 0.8,
   }));

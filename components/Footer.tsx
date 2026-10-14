@@ -44,7 +44,7 @@ export function Footer() {
               href={maintainer.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-pine hover:text-pine-dark"
+              className="font-medium text-pine underline underline-offset-2 hover:text-pine-dark"
             >
               {maintainer.name}
             </a>
@@ -110,7 +110,12 @@ export function Footer() {
               &copy; {new Date().getFullYear()} {siteConfig.name}. A community directory for{" "}
               {siteConfig.region}.
             </p>
-            <p>Details can change, so please confirm with each business before you visit.</p>
+            <p>
+              Details can change, so please confirm with each business before you visit.{" "}
+              <Link href="/privacy" className="underline underline-offset-2 hover:text-ink-soft">
+                Privacy
+              </Link>
+            </p>
           </div>
           <p className="mt-4">
             An independent community guide, not affiliated with county government. Looking for the
@@ -119,7 +124,7 @@ export function Footer() {
               href="https://www.marshallcountytn.gov"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-pine hover:text-pine-dark"
+              className="font-medium text-pine underline underline-offset-2 hover:text-pine-dark"
             >
               marshallcountytn.gov
             </a>

@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -7,7 +6,7 @@ import { getBusinessesByCity } from "@/lib/queries";
 import { BusinessExplorer } from "@/components/BusinessExplorer";
 import { JsonLd } from "@/components/JsonLd";
 import { buildBreadcrumbJsonLd } from "@/lib/schema-org";
-import { TOWNS, townSlugToName, siteConfig } from "@/lib/site";
+import { TOWNS, townSlugToName, siteConfig, pageMetadata } from "@/lib/site";
 
 export const revalidate = 3600;
 export const dynamicParams = false;
@@ -24,19 +23,11 @@ export async function generateMetadata({
   const { town } = await params;
   const name = townSlugToName.get(town);
   if (!name) return { title: "Town not found" };
-  const title = `Businesses in ${name}, TN`;
-  const description = `A directory of local businesses and services in ${name}, Tennessee. Find restaurants, shops, trades, schools, and more in Marshall County.`;
-  return {
-    title,
-    description,
-    alternates: { canonical: `/${town}` },
-    openGraph: {
-      type: "website",
-      title,
-      description,
-      url: `${siteConfig.url}/${town}`,
-    },
-  };
+  return pageMetadata({
+    title: `Businesses in ${name}, TN`,
+    description: `A directory of local businesses and services in ${name}, Tennessee. Find restaurants, shops, trades, schools, and more in Marshall County.`,
+    path: `/${town}`,
+  });
 }
 
 export default async function TownPage({
@@ -77,9 +68,7 @@ export default async function TownPage({
 
       <div className="mt-8">
         {businesses.length > 0 ? (
-          <Suspense fallback={<div className="h-24" />}>
-            <BusinessExplorer businesses={businesses} showTownFilter={false} defaultLocalOnly />
-          </Suspense>
+          <BusinessExplorer businesses={businesses} showTownFilter={false} defaultLocalOnly />
         ) : (
           <div className="rounded-card border border-dashed border-line-strong bg-card/60 p-12 text-center">
             <p className="font-serif text-lg text-ink">No listings here yet.</p>

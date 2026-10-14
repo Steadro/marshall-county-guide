@@ -161,7 +161,7 @@ export default async function IntakeDetail({ params }: { params: Promise<{ id: s
               name="adminNotes"
               rows={3}
               defaultValue={s.adminNotes ?? ""}
-              className="mt-1.5 w-full rounded-md border border-line bg-paper px-3 py-2 text-sm text-ink outline-none focus:border-pine focus:ring-2 focus:ring-pine/30"
+              className="mt-1.5 w-full rounded-md border border-field bg-paper px-3 py-2 text-sm text-ink outline-none focus:border-pine focus:ring-2 focus:ring-pine/30"
             />
             <button
               type="submit"

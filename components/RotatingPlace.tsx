@@ -36,7 +36,7 @@ export function RotatingPlace() {
   // animates in as one unit (home shifts once here, deliberately).
   if (isFinal) {
     return (
-      <span key="final" className="place-word inline-block whitespace-nowrap">
+      <span key="final" className="place-word inline-block sm:whitespace-nowrap">
         <span className={cn(SCRIPT, "text-pine")}>Marshall County</span> home.
       </span>
     );
@@ -47,7 +47,7 @@ export function RotatingPlace() {
   // both sides of the town so the offset isn't lopsided. Inactive towns stay
   // (visibility:hidden) to hold the slot width.
   return (
-    <span className="whitespace-nowrap">
+    <span className="sm:whitespace-nowrap">
       <span className="inline-grid justify-items-center align-baseline">
         {TOWNS.map((town, i) => (
           <span

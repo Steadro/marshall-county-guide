@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, onTabListKeyDown } from "@/lib/utils";
 import { PLACES } from "@/lib/history";
 
 export function HistoryTabs() {
   const [active, setActive] = useState(PLACES[0].key);
   const place = PLACES.find((p) => p.key === active) ?? PLACES[0];
+  const keys = PLACES.map((p) => p.key);
 
   return (
     <div className="mx-auto max-w-4xl rounded-[1.75rem] bg-card p-5 shadow-soft ring-1 ring-line/70 sm:p-8 lg:p-10">
@@ -14,6 +15,7 @@ export function HistoryTabs() {
       <div
         role="tablist"
         aria-label="Town histories"
+        onKeyDown={(e) => onTabListKeyDown(e, keys, active, setActive)}
         className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {PLACES.map((p) => (
@@ -21,7 +23,11 @@ export function HistoryTabs() {
             key={p.key}
             type="button"
             role="tab"
+            id={`history-tab-${p.key}`}
+            data-tab={p.key}
             aria-selected={p.key === active}
+            aria-controls="history-panel"
+            tabIndex={p.key === active ? 0 : -1}
             onClick={() => setActive(p.key)}
             className={cn(
               "shrink-0 whitespace-nowrap rounded-pill px-4 py-2 text-sm font-semibold transition",
@@ -36,7 +42,7 @@ export function HistoryTabs() {
       </div>
 
       <div className="mt-7 grid gap-8 lg:grid-cols-[1.6fr_1fr]">
-        <div role="tabpanel">
+        <div role="tabpanel" id="history-panel" aria-labelledby={`history-tab-${active}`}>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-pine">
             {place.meta}
           </p>

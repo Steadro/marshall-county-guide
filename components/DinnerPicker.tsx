@@ -23,6 +23,9 @@ export function DinnerPicker({
   const [display, setDisplay] = useState("");
   const [spinning, setSpinning] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Native modal <dialog>: showModal() moves focus in, traps it, makes the page
+  // inert, closes on Escape, and returns focus to the trigger on close.
+  const dialog = useRef<HTMLDialogElement>(null);
 
   const clearTimer = () => {
     if (timer.current) clearTimeout(timer.current);
@@ -36,12 +39,8 @@ export function DinnerPicker({
   useEffect(() => clearTimer, []);
 
   useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    if (open) dialog.current?.showModal();
+    else dialog.current?.close();
   }, [open]);
 
   function resetState() {
@@ -55,9 +54,15 @@ export function DinnerPicker({
   function spin(list: RestaurantPick[]) {
     if (list.length === 0) return;
     clearTimer();
+    let idx = Math.floor(Math.random() * list.length);
+    // Reduced motion: skip the slot-machine cycling and show the pick directly.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setResult(list[idx]);
+      setSpinning(false);
+      return;
+    }
     setResult(null);
     setSpinning(true);
-    let idx = Math.floor(Math.random() * list.length);
     let delay = 45;
     let elapsed = 0;
     const total = 2000;
@@ -101,18 +106,19 @@ export function DinnerPicker({
         Can’t decide on dinner?
       </button>
 
-      {open ? (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4 backdrop-blur-sm"
-          onClick={() => setOpen(false)}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="dinner-title"
-            className="relative w-full max-w-md animate-fade-up rounded-card bg-card p-5 text-center shadow-lift ring-1 ring-line sm:p-7"
-            onClick={(e) => e.stopPropagation()}
-          >
+      <dialog
+        ref={dialog}
+        aria-labelledby="dinner-title"
+        onClose={() => setOpen(false)}
+        // The inner div fills the dialog, so a click landing on the <dialog>
+        // itself can only be on the backdrop.
+        onClick={(e) => {
+          if (e.target === e.currentTarget) setOpen(false);
+        }}
+        className="m-auto w-[calc(100%-2rem)] max-w-md rounded-card bg-card p-0 text-center shadow-lift ring-1 ring-line backdrop:bg-ink/40 backdrop:backdrop-blur-sm"
+      >
+        {open ? (
+          <div className="relative animate-fade-up p-5 sm:p-7">
             <button
               type="button"
               onClick={() => setOpen(false)}
@@ -158,6 +164,9 @@ export function DinnerPicker({
                 <h2 id="dinner-title" className="font-serif text-lg font-semibold text-ink-soft">
                   {city === "*" ? "Somewhere nearby" : city}
                 </h2>
+                <span className="sr-only" aria-live="polite">
+                  {result ? `Picked ${result.name} in ${result.city}.` : ""}
+                </span>
                 <div className="mt-4 flex min-h-[4.5rem] items-center justify-center">
                   {result ? (
                     <Link
@@ -176,7 +185,7 @@ export function DinnerPicker({
                       </span>
                     </Link>
                   ) : (
-                    <span className="font-serif text-2xl font-semibold text-ink/80 sm:text-3xl">
+                    <span aria-hidden="true" className="font-serif text-2xl font-semibold text-ink/80 sm:text-3xl">
                       {display}
                     </span>
                   )}
@@ -207,8 +216,8 @@ export function DinnerPicker({
               </>
             )}
           </div>
-        </div>
-      ) : null}
+        ) : null}
+      </dialog>
     </>
   );
 }

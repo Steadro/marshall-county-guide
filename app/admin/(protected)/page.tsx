@@ -58,7 +58,7 @@ export default async function AdminDashboard({
           name="q"
           defaultValue={query}
           placeholder="Search name, slug, or city…"
-          className="w-full max-w-md rounded-md border border-line bg-card px-3 py-2 text-ink outline-none focus:border-pine focus:ring-2 focus:ring-pine/30"
+          className="w-full max-w-md rounded-md border border-field bg-card px-3 py-2 text-ink outline-none focus:border-pine focus:ring-2 focus:ring-pine/30"
         />
       </form>
 

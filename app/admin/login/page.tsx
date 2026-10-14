@@ -14,7 +14,7 @@ export default async function LoginPage({
   const { next } = await searchParams;
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-paper px-4">
+    <div className="min-h-screen flex items-center justify-center bg-paper px-4">
       <div className="w-full max-w-sm">
         <div className="mb-6 text-center">
           <h1 className="font-serif text-2xl text-ink">Marshall County Guide</h1>
@@ -24,6 +24,6 @@ export default async function LoginPage({
           <LoginForm next={next} />
         </div>
       </div>
-    </main>
+    </div>
   );
 }

@@ -65,7 +65,14 @@ export function ContactForm({
 
   if (status === "sent") {
     return (
-      <div className="rounded-card bg-pine-soft/60 p-8 text-center ring-1 ring-pine-line">
+      // The form (and the focused submit button) is replaced, so move focus to
+      // the confirmation and announce it instead of dropping focus to <body>.
+      <div
+        role="status"
+        tabIndex={-1}
+        ref={(el) => el?.focus()}
+        className="rounded-card bg-pine-soft/60 p-8 text-center outline-none ring-1 ring-pine-line"
+      >
         <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-pine text-white">
           <CheckCircle2 className="h-6 w-6" aria-hidden="true" />
         </span>
@@ -80,7 +87,7 @@ export function ContactForm({
 
   const labelClass = "block text-sm font-medium text-ink";
   const fieldClass =
-    "mt-1.5 w-full rounded-xl border border-line bg-card px-4 py-3 text-sm text-ink shadow-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20";
+    "mt-1.5 w-full rounded-xl border border-field bg-card px-4 py-3 text-sm text-ink shadow-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20";
 
   return (
     <form onSubmit={onSubmit} className="space-y-5" noValidate>

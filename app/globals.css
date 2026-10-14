@@ -28,6 +28,9 @@
   /* Lines / borders */
   --color-line: oklch(0.905 0.011 95);
   --color-line-strong: oklch(0.85 0.014 92);
+  /* Form-field outlines: â‰¥3:1 against paper/card (WCAG 1.4.11). --color-line
+     stays the decorative divider. */
+  --color-field: oklch(0.6 0.014 92);
 
   /* Primary, rolling-hills pine — buttons, links, accents */
   --color-pine: oklch(0.475 0.072 158);
@@ -165,5 +168,6 @@
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

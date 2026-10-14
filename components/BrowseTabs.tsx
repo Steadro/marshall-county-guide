@@ -5,7 +5,7 @@ import { LayoutGrid, MapPin } from "lucide-react";
 import { BrowseDirectory } from "@/components/BrowseDirectory";
 import type { BrowseGroup } from "@/lib/category-groups";
 import type { RestaurantPick } from "@/lib/queries";
-import { cn } from "@/lib/utils";
+import { cn, onTabListKeyDown } from "@/lib/utils";
 import { useSessionState } from "@/lib/useSessionState";
 
 interface TownCount {
@@ -36,9 +36,11 @@ export function BrowseTabs({
       <div
         role="tablist"
         aria-label="Browse the directory"
+        onKeyDown={(e) => onTabListKeyDown(e, TAB_KEYS, tab, setTab)}
         className="flex w-full rounded-pill border border-line bg-card p-1 shadow-soft sm:inline-flex sm:w-auto"
       >
         <TabButton
+          tabKey="category"
           active={tab === "category"}
           onClick={() => setTab("category")}
           icon={<LayoutGrid className="h-4 w-4" aria-hidden="true" />}
@@ -46,6 +48,7 @@ export function BrowseTabs({
           <span className="hidden sm:inline">Browse by </span>Category
         </TabButton>
         <TabButton
+          tabKey="community"
           active={tab === "community"}
           onClick={() => setTab("community")}
           icon={<MapPin className="h-4 w-4" aria-hidden="true" />}
@@ -54,7 +57,7 @@ export function BrowseTabs({
         </TabButton>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-8" role="tabpanel" id="browse-panel" aria-labelledby={`browse-tab-${tab}`}>
         {tab === "category" ? (
           <BrowseDirectory
             groups={groups}
@@ -85,12 +88,16 @@ export function BrowseTabs({
   );
 }
 
+const TAB_KEYS = ["category", "community"] as const;
+
 function TabButton({
+  tabKey,
   active,
   onClick,
   icon,
   children,
 }: {
+  tabKey: (typeof TAB_KEYS)[number];
   active: boolean;
   onClick: () => void;
   icon: React.ReactNode;
@@ -100,7 +107,11 @@ function TabButton({
     <button
       type="button"
       role="tab"
+      id={`browse-tab-${tabKey}`}
+      data-tab={tabKey}
       aria-selected={active}
+      aria-controls="browse-panel"
+      tabIndex={active ? 0 : -1}
       onClick={onClick}
       className={cn(
         "inline-flex flex-1 items-center justify-center gap-2 rounded-pill px-4 py-2.5 text-sm font-semibold transition sm:flex-none",

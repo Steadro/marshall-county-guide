@@ -1,5 +1,30 @@
 // Small dependency-free helpers shared across the app.
 
+import type { KeyboardEvent } from "react";
+
+/**
+ * ARIA tabs keyboard model for a role="tablist" onKeyDown: Left/Right move (and
+ * wrap), Home/End jump, selection follows focus. Tabs carry data-tab={key}.
+ */
+export function onTabListKeyDown<T extends string>(
+  e: KeyboardEvent<HTMLElement>,
+  keys: readonly T[],
+  current: T,
+  select: (key: T) => void,
+): void {
+  const i = keys.indexOf(current);
+  const next = {
+    ArrowRight: keys[(i + 1) % keys.length],
+    ArrowLeft: keys[(i - 1 + keys.length) % keys.length],
+    Home: keys[0],
+    End: keys[keys.length - 1],
+  }[e.key];
+  if (!next) return;
+  e.preventDefault();
+  select(next);
+  e.currentTarget.querySelector<HTMLElement>(`[data-tab="${next}"]`)?.focus();
+}
+
 /** Join class names, dropping falsy values. */
 export function cn(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(" ");

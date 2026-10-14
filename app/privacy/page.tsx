@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { siteConfig, contactEmail, pageMetadata } from "@/lib/site";
+import { siteConfig, pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
   title: "Privacy",
@@ -53,22 +53,15 @@ export default function PrivacyPage() {
           <h2 className="text-xl text-ink">Who handles it</h2>
           <p className="mt-2">
             The site runs on Vercel, listings and form submissions are stored in a Neon database,
-            and new submissions are emailed to the maintainer through n8n and Resend. None of them
-            get your information for their own marketing.
+            and new submissions are emailed to the maintainer through n8n and Resend. We don&apos;t
+            share your information with anyone else.
           </p>
         </section>
 
         <section>
           <h2 className="text-xl text-ink">Getting something removed</h2>
           <p className="mt-2">
-            To have a submission you sent deleted, email{" "}
-            <a
-              href={`mailto:${contactEmail}`}
-              className="text-pine underline underline-offset-2 hover:text-pine-dark"
-            >
-              {contactEmail}
-            </a>{" "}
-            or use the{" "}
+            To have a submission you sent deleted, ask through the{" "}
             <Link href="/contact" className="text-pine underline underline-offset-2 hover:text-pine-dark">
               contact form
             </Link>

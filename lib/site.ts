@@ -24,8 +24,24 @@ export const contactEmail = "kyle@steadro.com";
 // Path to the structured "add your business" intake form. Distinct from the
 // generic contact form: it captures real fields (name/type/address) straight
 // into the Submission table, where it surfaces in the admin Intake tab. The
-// temporary acquisition CTA (IntakeCta) and the prominent "add" links point here.
+// prominent "add" links point here.
 export const addBusinessPath = "/add-business";
+
+/**
+ * Sitewide voting eyebrow (components/VotingBanner.tsx). Nonpartisan: it only
+ * points to the Secretary of State. For the next election, update the copy and
+ * dates here (and `id`, so earlier dismissals don't hide the new notice).
+ * Dates from https://sos.tn.gov/govotetn.
+ */
+export const votingNotice = {
+  id: "2026-11-03",
+  headline: "Early voting runs Oct. 14–29.",
+  detail: "Election Day is Tuesday, Nov. 3.",
+  linkLabel: "Polling places, hours & ID rules",
+  url: "https://sos.tn.gov/govotetn",
+  // Hidden from midnight Central after Election Day (Nov 4, 00:00 CST).
+  endsAt: new Date("2026-11-04T06:00:00Z"),
+} as const;
 
 export type ContactTopic = "update" | "add" | "remove" | "suggestion" | "other";
 

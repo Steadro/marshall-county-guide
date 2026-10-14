@@ -6,8 +6,7 @@
 // demoted section. Any category slug not listed here is swept into "Everything Else"
 // at render time, so nothing ever silently disappears from the wall.
 //
-// This file is intentionally pure data + types so it can back both the /browse-test
-// mockup and (later) the real browse page without a schema change.
+// Pure data + types, no schema dependency.
 
 export type GroupAccent =
   | "gold"

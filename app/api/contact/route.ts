@@ -20,6 +20,7 @@ const TOPICS: Record<string, string> = {
   update: "Update listing info",
   add: "Add a missing business or service",
   remove: "Remove a listing",
+  suggestion: "Make a suggestion",
   other: "Something else",
 };
 

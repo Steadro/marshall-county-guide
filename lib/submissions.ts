@@ -11,11 +11,12 @@ export function clientIp(req: Request): string {
 
 /**
  * One-way hash of the submitter IP, for rate-abuse triage in the admin tab. We
- * never store the raw IP. Salted with SESSION_SECRET so the digest isn't a plain
- * rainbow-table lookup; falls back to an unsalted digest if the secret is unset.
+ * never store the raw IP. Salted with IP_HASH_SALT (falling back to
+ * SESSION_SECRET, so rotating the session secret to log admins out doesn't have
+ * to break IP-hash continuity once IP_HASH_SALT is set).
  */
 export function hashIp(ip: string): string {
-  const salt = process.env.SESSION_SECRET ?? "";
+  const salt = process.env.IP_HASH_SALT ?? process.env.SESSION_SECRET ?? "";
   return createHash("sha256").update(`${salt}:${ip}`).digest("hex").slice(0, 32);
 }
 
@@ -61,13 +62,17 @@ export const TOPIC_TO_KIND: Record<string, SubmissionKind> = {
  * Fire a webhook without blocking the response on it. Best-effort: a submission
  * is already persisted in Neon before this runs, so a webhook failure (n8n down)
  * never loses data. Used for notifications + future Claude-API triage.
+ *
+ * Sends N8N_WEBHOOK_SECRET as `x-mcg-secret` when set; have the n8n Webhook node
+ * check it (Header Auth) so a leaked webhook URL alone can't inject messages.
  */
 export async function fireWebhook(url: string | undefined, payload: unknown): Promise<void> {
   if (!url) return;
+  const secret = process.env.N8N_WEBHOOK_SECRET;
   try {
     const res = await fetch(url, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", ...(secret ? { "x-mcg-secret": secret } : {}) },
       body: JSON.stringify(payload),
     });
     if (!res.ok) throw new Error(`webhook responded ${res.status}`);

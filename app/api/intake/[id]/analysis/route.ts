@@ -1,3 +1,4 @@
+import { createHash, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
@@ -17,7 +18,9 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     return NextResponse.json({ ok: false, error: "Analysis endpoint not enabled." }, { status: 503 });
   }
   const provided = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
-  if (provided !== expected) {
+  // Compare fixed-length digests in constant time (no length or prefix leak).
+  const digest = (s: string) => createHash("sha256").update(s).digest();
+  if (!timingSafeEqual(digest(provided), digest(expected))) {
     return NextResponse.json({ ok: false, error: "Unauthorized." }, { status: 401 });
   }
 

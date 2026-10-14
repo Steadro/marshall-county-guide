@@ -23,8 +23,8 @@ export const config = {
 // Re-issue the client-readable hint cookie whenever an authenticated admin hits
 // an /admin route without it. This self-heals sessions created before the hint
 // existed (and any cookie drift), so the public-page admin banner + edit links
-// light up without forcing a re-login. Only admins reach here (see matcher), so
-// it adds nothing to public traffic.
+// light up without forcing a re-login. Only called with a verified session, so
+// anonymous visitors to /admin/login never get the hint.
 function ensureHint(res: NextResponse, req: NextRequest): NextResponse {
   if (req.cookies.get(SESSION_HINT_COOKIE)?.value !== "1") {
     res.cookies.set(SESSION_HINT_COOKIE, "1", {
@@ -58,6 +58,9 @@ export async function proxy(req: NextRequest) {
     if (target.startsWith("/admin")) loginUrl.searchParams.set("next", target);
     return NextResponse.redirect(loginUrl);
   }
+
+  // Anonymous on the login page: render it, no hint cookie.
+  if (!session) return NextResponse.next();
 
   // Authenticated on a protected /admin route: proceed, re-arming the hint.
   return ensureHint(NextResponse.next(), req);

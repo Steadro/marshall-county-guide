@@ -5,7 +5,7 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
-  // ponytail: structural CSP only (no script-src) â€” Next's inline bootstrap
+  // ponytail: structural CSP only (no script-src) — Next's inline bootstrap
   // scripts would need per-request nonces, which forces dynamic rendering of
   // every page. Revisit if the site ever renders untrusted HTML.
   {

@@ -28,7 +28,7 @@ const TYPE_BY_CATEGORY: Record<string, string> = {
   "wedding-and-event-venues": "EventVenue",
 };
 
-// Cuisine tags (schema/TAXONOMY.md "Tags â€” cuisine") emitted as servesCuisine.
+// Cuisine tags (schema/TAXONOMY.md "Tags — cuisine") emitted as servesCuisine.
 const CUISINE_TAGS = new Set([
   "American", "Southern", "BBQ", "Italian", "Mexican", "Tex-Mex", "Pizza", "Seafood",
   "Chinese", "Japanese", "Sushi", "Thai", "Burgers", "Sandwiches", "Breakfast", "Wings",

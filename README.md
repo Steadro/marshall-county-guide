@@ -87,6 +87,7 @@ Copy [`.env.example`](.env.example) to `.env`. Never commit `.env` (it's git-ign
 | `GEOCODER`                  | No       | `google` or `mapbox` to enable the geocode step. Blank = skip.          |
 | `GOOGLE_GEOCODING_API_KEY`  | No       | Required when `GEOCODER=google`.                                        |
 | `MAPBOX_TOKEN`              | No       | Required when `GEOCODER=mapbox`.                                        |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Prod | Browser key for the Google maps (Maps JavaScript API). Referrer-restrict it. |
 
 > **Note:** `latitude`/`longitude` are empty in the seed. Pages work fine without them, the map is
 > simply hidden. Run `npm run geocode` once with a key to fill them in. The step skips rows that

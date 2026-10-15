@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export interface MapPoint {
@@ -63,12 +63,23 @@ export function LocationMap({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!API_KEY) return;
+    const el = ref.current;
+    if (!API_KEY || !el) return;
     let cancelled = false;
 
-    (async () => {
+    // Don't fetch Maps until the map scrolls into view: it's below the fold, and
+    // loading it eagerly made a map tile the page's LCP element on mobile.
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      observer.disconnect();
+      draw().catch((err) => console.error(err));
+    });
+    observer.observe(el);
+
+    async function draw() {
       await loadGoogleMaps();
       const [{ Map, InfoWindow }, { Marker }, { LatLngBounds }] = await Promise.all([
         google.maps.importLibrary("maps") as Promise<google.maps.MapsLibrary>,
@@ -110,10 +121,12 @@ export function LocationMap({
           if ((map.getZoom() ?? 0) > 15) map.setZoom(15);
         });
       }
-    })().catch((err) => console.error(err));
+      setReady(true);
+    }
 
     return () => {
       cancelled = true;
+      observer.disconnect();
     };
   }, [points, zoom]);
 
@@ -124,7 +137,7 @@ export function LocationMap({
         className,
       )}
     >
-      {API_KEY ? "Loading map…" : "Map unavailable"}
+      {ready ? null : API_KEY ? "Loading map…" : "Map unavailable"}
       {/* Google owns this node's children; kept separate from the React-rendered text. */}
       <div ref={ref} className="absolute inset-0" />
     </div>

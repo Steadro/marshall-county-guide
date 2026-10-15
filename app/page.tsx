@@ -177,7 +177,7 @@ export default async function HomePage() {
       ) : null}
 
       {/* Categories */}
-      <section id="categories" className="scroll-mt-20 bg-paper-2 py-16">
+      <section id="categories" className="bg-paper-2 py-16">
         <div className="container-page">
           <div className="max-w-xl">
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-creek-dark">
@@ -215,20 +215,20 @@ export default async function HomePage() {
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href={addBusinessPath}
-              className="inline-flex items-center gap-1.5 rounded-pill bg-pine px-6 py-3 text-sm font-semibold text-white transition hover:bg-pine-dark"
+              className="inline-flex items-center gap-1.5 rounded-pill bg-pine px-6 py-3 text-sm font-semibold text-white transition hover:bg-pine-dark focus-visible:outline-paper"
             >
               Add a place
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-1.5 rounded-pill border border-paper/30 px-6 py-3 text-sm font-semibold text-paper transition hover:border-paper/60 hover:bg-paper/10"
+              className="inline-flex items-center gap-1.5 rounded-pill border border-paper/30 px-6 py-3 text-sm font-semibold text-paper transition hover:border-paper/60 hover:bg-paper/10 focus-visible:outline-paper"
             >
               Report a problem
             </Link>
             <Link
               href="/contact?topic=suggestion"
-              className="inline-flex items-center gap-1.5 rounded-pill border border-paper/30 px-6 py-3 text-sm font-semibold text-paper transition hover:border-paper/60 hover:bg-paper/10"
+              className="inline-flex items-center gap-1.5 rounded-pill border border-paper/30 px-6 py-3 text-sm font-semibold text-paper transition hover:border-paper/60 hover:bg-paper/10 focus-visible:outline-paper"
             >
               Make a suggestion
             </Link>

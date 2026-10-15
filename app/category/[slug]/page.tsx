@@ -90,15 +90,6 @@ export default async function CategoryPage({
         </div>
       </header>
 
-      {mapPoints.length > 1 ? (
-        <section className="mt-8">
-          <h2 className="mb-3 text-lg font-semibold text-ink">
-            {category.name} on the map
-          </h2>
-          <LocationMap points={mapPoints} />
-        </section>
-      ) : null}
-
       <div className="mt-8">
         {category.slug === "government-and-civic" ? (
           <GovernmentDirectory businesses={businesses} />
@@ -110,6 +101,16 @@ export default async function CategoryPage({
           />
         )}
       </div>
+
+      {/* Below the listings, so the map never competes for LCP. */}
+      {mapPoints.length > 1 ? (
+        <section className="mt-8">
+          <h2 className="mb-3 text-lg font-semibold text-ink">
+            {category.name} on the map
+          </h2>
+          <LocationMap points={mapPoints} />
+        </section>
+      ) : null}
     </div>
   );
 }

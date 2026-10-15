@@ -20,6 +20,7 @@ export function BusinessCard({
   return (
     <Link
       href={`/business/${business.slug}`}
+      prefetch={false}
       className={cn(
         "group relative flex flex-col gap-2 rounded-card bg-card p-5 shadow-soft ring-1 ring-line/70",
         "transition duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-lift",

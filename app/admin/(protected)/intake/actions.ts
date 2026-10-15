@@ -103,13 +103,12 @@ export async function approveIntake(id: string): Promise<void> {
   const categoryId = await guessCategoryId(sub.businessType);
 
   // Stash the raw submission context where it won't render publicly, so the
-  // editor has the submitter's words + the type they typed.
+  // editor has the submitter's words + the type they typed. Their name and email
+  // stay on the Submission row only: internalContext feeds the AI enrichment
+  // worklist (scripts/enrich-worklist.ts).
   const contextLines = [
     "Created from a public intake submission.",
     sub.businessType ? `Submitted type: ${sub.businessType}` : null,
-    sub.submitterName || sub.submitterEmail
-      ? `Submitter: ${[sub.submitterName, sub.submitterEmail].filter(Boolean).join(" — ")}`
-      : null,
     sub.message ? `Note: ${sub.message}` : null,
   ].filter(Boolean);
 

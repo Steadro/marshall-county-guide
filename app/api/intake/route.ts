@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { clean, clientIp, fireWebhook, hashIp, looksLikeEmail, rateLimited } from "@/lib/submissions";
 import { screenText } from "@/lib/content-filter";
@@ -89,22 +89,25 @@ export async function POST(req: Request) {
     );
   }
 
-  // Non-blocking: the row is already safe in Neon.
-  await fireWebhook(WEBHOOK, {
-    type: "business_intake",
-    submissionId: id,
-    businessName,
-    businessType,
-    streetAddress,
-    city,
-    phone,
-    website,
-    submitterName,
-    submitterEmail,
-    message,
-    page: sourcePage,
-    timestamp: new Date().toISOString(),
-  });
+  // Sent after the response, so a slow n8n can't hold up the form; the row is
+  // already safe in Neon.
+  after(() =>
+    fireWebhook(WEBHOOK, {
+      type: "business_intake",
+      submissionId: id,
+      businessName,
+      businessType,
+      streetAddress,
+      city,
+      phone,
+      website,
+      submitterName,
+      submitterEmail,
+      message,
+      page: sourcePage,
+      timestamp: new Date().toISOString(),
+    }),
+  );
 
   return NextResponse.json({ ok: true });
 }

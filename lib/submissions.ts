@@ -13,10 +13,11 @@ export function clientIp(req: Request): string {
  * One-way hash of the submitter IP, for rate-abuse triage in the admin tab. We
  * never store the raw IP. Salted with IP_HASH_SALT (falling back to
  * SESSION_SECRET, so rotating the session secret to log admins out doesn't have
- * to break IP-hash continuity once IP_HASH_SALT is set).
+ * to break IP-hash continuity once IP_HASH_SALT is set). `||`, not `??`: an
+ * empty IP_HASH_SALT="" must fall back too, or the hash goes unsalted.
  */
 export function hashIp(ip: string): string {
-  const salt = process.env.IP_HASH_SALT ?? process.env.SESSION_SECRET ?? "";
+  const salt = process.env.IP_HASH_SALT || process.env.SESSION_SECRET || "";
   return createHash("sha256").update(`${salt}:${ip}`).digest("hex").slice(0, 32);
 }
 
@@ -59,9 +60,11 @@ export const TOPIC_TO_KIND: Record<string, SubmissionKind> = {
 };
 
 /**
- * Fire a webhook without blocking the response on it. Best-effort: a submission
- * is already persisted in Neon before this runs, so a webhook failure (n8n down)
- * never loses data. Used for notifications + future Claude-API triage.
+ * Fire a webhook. Callers run it inside after() so the response never waits on
+ * it, and the 5s timeout caps how long a stalled n8n keeps the function alive.
+ * Best-effort: a submission is already persisted in Neon before this runs, so a
+ * webhook failure (n8n down) never loses data. Used for notifications + future
+ * Claude-API triage.
  *
  * Sends N8N_WEBHOOK_SECRET as `x-mcg-secret` when set; have the n8n Webhook node
  * check it (Header Auth) so a leaked webhook URL alone can't inject messages.
@@ -74,6 +77,7 @@ export async function fireWebhook(url: string | undefined, payload: unknown): Pr
       method: "POST",
       headers: { "content-type": "application/json", ...(secret ? { "x-mcg-secret": secret } : {}) },
       body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) throw new Error(`webhook responded ${res.status}`);
   } catch (err) {

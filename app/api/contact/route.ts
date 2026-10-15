@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import {
   clean,
@@ -96,18 +96,21 @@ export async function POST(req: Request) {
     );
   }
 
-  // Non-blocking notification / future triage. Not having a webhook configured is
-  // fine now that the message is already saved.
-  await fireWebhook(WEBHOOK, {
-    topic: TOPICS[topicKey],
-    name,
-    email,
-    businessName,
-    listingUrl,
-    message,
-    page,
-    timestamp: new Date().toISOString(),
-  });
+  // Notification / future triage, sent after the response so a slow n8n can't
+  // hold up the form. Not having a webhook configured is fine now that the
+  // message is already saved.
+  after(() =>
+    fireWebhook(WEBHOOK, {
+      topic: TOPICS[topicKey],
+      name,
+      email,
+      businessName,
+      listingUrl,
+      message,
+      page,
+      timestamp: new Date().toISOString(),
+    }),
+  );
 
   return NextResponse.json({ ok: true });
 }

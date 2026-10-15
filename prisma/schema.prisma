@@ -4,8 +4,8 @@
 // Design notes:
 // - Starts CURATED (you/an editor own the data) but every piece needed for
 //   self-service ("businesses claim & edit their own listing") is already here
-//   (User, ownerId, claimStatus, Claim). Ship without auth and turn it on later
-//   with NO schema rewrite.
+//   (User, ownerId, claimStatus, Claim). They stay dormant until owner accounts
+//   are turned on, with NO schema rewrite.
 // - Fields map 1:1 to schema.org/LocalBusiness so each listing page can emit
 //   JSON-LD structured data — the single biggest SEO lever for a directory.
 // - Provenance fields (dataSource, sourceUrl, lastVerifiedAt) are first-class

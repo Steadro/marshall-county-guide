@@ -6,12 +6,13 @@ Conventions and context for working in this repo. **Start with the two local mas
 
 ## Project
 
-Public, curated directory of businesses across Marshall County, TN — the county seat Lewisburg plus Chapel Hill, Cornersville, Petersburg, and Belfast. Design-forward passion project. Next.js (App Router) + TypeScript + Tailwind + Prisma/Postgres. Deploy on Vercel. Curated for v1 — no auth yet, but the schema is built to add business self-service later without a migration. (Brand scope is county-level; `city` still defaults to "Lewisburg" since it's the most common town, and Lewisburg is the anchor town page.)
+Public, curated directory of businesses across Marshall County, TN — the county seat Lewisburg plus Chapel Hill, Cornersville, Petersburg, and Belfast. Design-forward passion project. Next.js (App Router) + TypeScript + Tailwind + Prisma/Postgres. Deploy on Vercel. Curated for v1 through a single curator login at `/admin`; the schema is built to add business self-service later without a migration. (Brand scope is county-level; `city` still defaults to "Lewisburg" since it's the most common town, and Lewisburg is the anchor town page.)
 
 ## Source of truth
 
-- **Data model:** `prisma/schema.prisma` is the operative schema Prisma migrates/generates from; `schema/schema.prisma` is the annotated reference (keep both `.prisma` files in sync). The model + schema.org mapping is documented in `DATA.md`. Don't redesign the model; extend only with clear reason.
-- **Seed data:** `data/businesses-seed.csv` (LF line endings — see `.gitattributes`). Don't hand-edit it to fix code problems — fix the seed script instead.
+- **Data model:** `prisma/schema.prisma` is the schema Prisma migrates and generates from, annotated inline. The model + schema.org mapping is documented in `DATA.md`. Don't redesign the model; extend only with clear reason.
+- **Schema changes ship as migrations:** `prisma migrate dev` against a Neon branch, commit the migration, then `prisma migrate deploy` to production. Never `db push` or hand-run SQL on production; that drift is what `prisma/migrations/*_baseline_live_schema` had to repair.
+- **Seed data:** `data/businesses-seed.csv` (LF line endings — see `.gitattributes`) is the original import, not a live source: Neon is the system of record, and `prisma/seed.ts` refuses to run once the Business table has rows. Don't hand-edit the CSV to fix code problems — fix the seed script instead.
 - **Data quality + enrichment:** `DATA.md` defines the `qualityTier` bar (UNREVIEWED → STANDARD → GOLD) and the workflow; `scripts/apply-enrichment.ts` raises records to it.
 - **Classification (committed):** `schema/TAXONOMY.md` is the closed vocabulary for category, subcategory, and tags — the 9 consumer browse categories over the 22 DB categories, the per-category subcategory lists, the tag axis, the fit-or-flag protocol, and multi-type (a place showing under more than one type chip via tags). `lib/category-groups.ts` is the presentation grouping; `scripts/normalize-taxonomy.ts` enforces the closed lists.
 - **State, decisions, runbooks:** `PROJECT.md`.
@@ -28,7 +29,7 @@ Public, curated directory of businesses across Marshall County, TN — the count
 
 - Treat every field except `name`, `category`, `city`, `state` as possibly empty. Degrade gracefully — never render "undefined"/"null".
 - Slugs must be unique and stable; chains have multiple locations (e.g. "Dollar General", "O'Reilly Auto Parts") — disambiguate slugs with city/street.
-- `latitude`/`longitude` are empty in the seed; geocode at seed time with an API key (see spec §3). Pages must work whether or not coords exist (hide the map if absent).
+- `latitude`/`longitude` are empty in the seed; `npm run geocode` fills them for free (US Census, then OpenStreetMap; no key). Pages must work whether or not coords exist (hide the map if absent).
 
 ## SEO is a primary feature, not polish
 
@@ -41,4 +42,4 @@ Key gates: full local bring-up via seed, valid structured data, Lighthouse SEO/A
 
 ## Out of scope for v1
 
-Auth, claim/self-service, reviews, payments, admin CMS. The schema reserves space for these (`User`, `Claim`, `claimStatus`, `ownerId`) — leave them dormant.
+Owner accounts and claim/self-service, reviews, payments. The schema reserves space for these (`User`, `Claim`, `claimStatus`, `ownerId`) — leave them dormant.

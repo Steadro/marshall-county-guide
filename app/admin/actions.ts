@@ -50,7 +50,7 @@ export async function updateBusiness(_prev: SaveState, formData: FormData): Prom
 
   const existing = await prisma.business.findUnique({
     where: { id },
-    select: { slug: true },
+    select: { slug: true, streetAddress: true, city: true, postalCode: true },
   });
   if (!existing) return { error: "That business no longer exists." };
 
@@ -78,6 +78,16 @@ export async function updateBusiness(_prev: SaveState, formData: FormData): Prom
 
   const tagIds = formData.getAll("tags").filter((t): t is string => typeof t === "string");
 
+  // A moved address strands the old pin: clear it so scripts/geocode.ts re-pins.
+  const address = {
+    streetAddress: str(formData, "streetAddress"),
+    city: str(formData, "city") ?? "Lewisburg",
+    postalCode: str(formData, "postalCode"),
+  };
+  const moved = (Object.keys(address) as (keyof typeof address)[]).some(
+    (k) => address[k] !== (existing[k]?.trim() || null),
+  );
+
   try {
     await prisma.business.update({
       where: { id },
@@ -97,10 +107,9 @@ export async function updateBusiness(_prev: SaveState, formData: FormData): Prom
         email: str(formData, "email"),
         phone: str(formData, "phone"),
         website: str(formData, "website"),
-        streetAddress: str(formData, "streetAddress"),
-        city: str(formData, "city") ?? "Lewisburg",
+        ...address,
+        ...(moved ? { latitude: null, longitude: null } : {}),
         state: str(formData, "state") ?? "TN",
-        postalCode: str(formData, "postalCode"),
         priceRange: str(formData, "priceRange"),
         foundingYear: intOrNull(formData, "foundingYear"),
         logoUrl: str(formData, "logoUrl"),

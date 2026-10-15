@@ -21,9 +21,9 @@ machine, gitignored); keep this file in sync with it.
 
 These 22 categories are the **complete, closed set**. A location MUST be assigned
 exactly one. **Never invent a category.** `apply-enrichment.ts` enforces this — an
-unrecognized `categoryName` fails to apply (`UNKNOWN CATEGORY`), so an invented
-category silently drops the record. Use the name **verbatim** (it is slugified to
-match): counts are current as of 2026-06-03.
+unrecognized `categoryName` (`UNKNOWN CATEGORY`) rejects the whole batch, so nothing
+from that file is written. Use the name **verbatim** (matched by name,
+case-insensitive, or by slug): counts are current as of 2026-06-03.
 
 `Restaurant & Food` · `Retail & Shopping` · `Beauty & Personal Care` ·
 `Health & Medical` · `Pets & Animals` · `Automotive` · `Home & Trades` ·
@@ -73,9 +73,13 @@ extendable by the maintainer**. The pass does not get to expand them silently.
    fits, do **not** invent a value to "make it work." Instead:
    - set `subcategory` to the closest existing value, and
    - set `reviewFlag` to `subcategory: <your proposed value> — <why>`.
+
+   `apply-enrichment.ts` enforces the lists in `lib/taxonomy.ts`: an off-list
+   value is not written, and the record is held at `STANDARD` with a `reviewFlag`
+   naming it.
 3. **`reviewFlag` is the control valve.** Any record with `reviewFlag` set is
-   pinned to `STANDARD` (never auto-promoted to `GOLD`) and listed under "needs
-   attention" by the apply script. The maintainer reviews flagged proposals and
+   pinned to `STANDARD` (never auto-promoted to `GOLD`) and shown with its note
+   in the apply log. The maintainer reviews flagged proposals and
    either adds the value to this doc (making it canonical) or reclassifies. This
    is how we keep control while still surfacing gaps the closed list misses.
 4. When in doubt between two subcategories, pick one and add a `reviewFlag`
@@ -286,11 +290,12 @@ change (not subcategory) and a schema/seed touch — hold until the gold pass is
 
 ## Workflow
 
-- Adding a value: edit this file first, then use it. PRs that introduce a new
-  subcategory should update this doc in the same change.
+- Adding a value: edit this file and `lib/taxonomy.ts` (the list the apply
+  enforces) first, then use it. PRs that introduce a new subcategory should update
+  both in the same change.
 - The enrichment pass should be handed this file (or its relevant section) so it
   emits canonical values, not invented ones.
-- `scripts/normalize-taxonomy.ts` encodes the closed lists + drift map and was
+- `scripts/normalize-taxonomy.ts` encodes the drift map onto those lists and was
   **applied to Neon on 2026-06-04** (229 updates, 0 flags, 7 `Other` rows held).
   It's idempotent (canonical values map to themselves), so it's safe to re-run
   after editing the map. DB snapshot before the run: `data/businesses-export-2026-06-04.csv`.

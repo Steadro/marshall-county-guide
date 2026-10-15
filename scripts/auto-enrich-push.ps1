@@ -7,7 +7,11 @@
   Neon. This watcher is the missing link: a Windows Task Scheduler job runs it on
   an interval; when it finds batch files that have not been applied yet, it applies
   each to Neon via scripts/apply-enrichment.ts, then moves it into
-  data/enrichment/.applied/ (gitignored) so it is not applied again.
+  data/enrichment/.applied/ (gitignored) so it is not applied again. A batch that
+  fails (exit 2 = rejected by validation, nothing written; any other non-zero =
+  crashed mid-run) moves to data/enrichment/.needs-attention/ (gitignored) instead
+  of being retried every tick: fix it and move it back to retry. Files starting
+  with _ or . are scratch/working files and are never picked up.
 
   Batch files are NEVER committed. This repo is public and the notes inside the
   batches are the maintainer's private research; Neon is the system of record.
@@ -34,8 +38,9 @@ Set-Location -LiteralPath $repo
 
 $enrichDir  = Join-Path $repo 'data\enrichment'
 $appliedDir = Join-Path $enrichDir '.applied'
+$needsDir   = Join-Path $enrichDir '.needs-attention'
 $logDir     = Join-Path $PSScriptRoot 'logs'
-foreach ($d in @($appliedDir, $logDir)) {
+foreach ($d in @($appliedDir, $needsDir, $logDir)) {
   if (-not (Test-Path $d)) { New-Item -ItemType Directory -Path $d | Out-Null }
 }
 $log = Join-Path $logDir 'auto-enrich-apply.log'
@@ -43,8 +48,11 @@ function Write-Log($msg) {
   Add-Content -LiteralPath $log -Encoding utf8 -Value ("{0}  {1}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss'), $msg)
 }
 
-# Fast path: any batch files waiting directly under data/enrichment/?
-$pending = @(Get-ChildItem -LiteralPath $enrichDir -Filter '*.json' -File -ErrorAction SilentlyContinue)
+# Fast path: any batch files waiting directly under data/enrichment/? Names
+# starting with _ or . are scratch files; we pass names explicitly, which would
+# bypass apply-enrichment.ts's own skip rule, so filter them here.
+$pending = @(Get-ChildItem -LiteralPath $enrichDir -Filter '*.json' -File -ErrorAction SilentlyContinue |
+  Where-Object { $_.Name -notmatch '^[_.]' })
 if ($pending.Count -eq 0) { exit 0 }
 
 $names = ($pending | ForEach-Object { $_.Name }) -join ', '
@@ -64,7 +72,9 @@ foreach ($file in $pending) {
   $out = & npx tsx scripts/apply-enrichment.ts $name 2>&1
   $out | ForEach-Object { Write-Log "  $_" }
   if ($LASTEXITCODE -ne 0) {
-    Write-Log "ERROR applying $name (exit $LASTEXITCODE) - left in place to retry next tick."
+    $why = if ($LASTEXITCODE -eq 2) { 'rejected, nothing written' } else { 'crashed, may be partly applied' }
+    Move-Item -LiteralPath $file.FullName -Destination (Join-Path $needsDir $name) -Force
+    Write-Log "ERROR applying $name (exit $LASTEXITCODE, $why) - moved to .needs-attention/; fix it and move it back to retry."
     continue
   }
   Move-Item -LiteralPath $file.FullName -Destination (Join-Path $appliedDir $name) -Force

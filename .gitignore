@@ -46,6 +46,7 @@ yarn-error.log*
 # files and their applied archive do not. Neon is the system of record.
 /data/enrichment/*.json
 /data/enrichment/.applied/
+/data/enrichment/.needs-attention/
 
 # research / scratch data outputs (regenerated locally, not source)
 /data/coverage-scan-*.json

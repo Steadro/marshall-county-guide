@@ -163,7 +163,7 @@ scripts/
   auto-enrich-push.ps1     Local watcher that applies new enrichment batches to Neon
   sql/                     Historical hand-run SQL, now folded into the baseline migration
 data/
-  businesses-seed.csv      Source data for every business
+  businesses-seed.csv      Original import the seed loads (Neon is the system of record)
   enrichment/              Data-quality enrichment batches (JSON)
 ```
 
@@ -209,7 +209,7 @@ data/
   `npm run seed -- --force` overrides that, so don't use it on a database with real data.
 - **Changing the schema:** edit `prisma/schema.prisma`, run `npm run db:migrate -- --name <change>`
   against your Neon branch, and commit the new migration folder. Once it merges, run
-  `npx prisma migrate deploy` against production.
+  `npx prisma migrate deploy` against production's direct (non-pooled) connection string.
 - **Never `prisma db push` or hand-run SQL on production.** That is how the live schema drifted
   from its migrations; `prisma/migrations/*_baseline_live_schema` caught the history back up.
 
@@ -263,9 +263,9 @@ Validate structured data with Google's [Rich Results Test](https://search.google
    - `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, plus the [admin variables](#admin-and-submissions) if
      you use `/admin`. (Geocoding runs from your machine, so `GEOCODER` isn't needed here.)
 3. Build settings: defaults work. `prisma generate` runs automatically via `postinstall`.
-4. **Bootstrap a new, empty production database** once, from your machine pointed at the prod
-   `DATABASE_URL`. After that the seed refuses to run there, and schema changes reach production
-   only through `npx prisma migrate deploy`.
+4. **Bootstrap a new, empty production database** once, from your machine with `DATABASE_URL`
+   set to the prod database's direct (non-pooled) connection string. After that the seed refuses
+   to run there, and schema changes reach production only through `npx prisma migrate deploy`.
    ```bash
    npx prisma migrate deploy
    npm run seed          # load the businesses

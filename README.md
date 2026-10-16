@@ -196,6 +196,9 @@ data/
   ([`scripts/auto-enrich-push.ps1`](scripts/auto-enrich-push.ps1)) applies new batches to Neon via
   `npm run enrich:apply <file>` and archives the applied file; `npm run enrich:dry` previews without
   writing. Neon is the system of record. (ISR means enrichment shows up live within ~1h, no redeploy.)
+  A batch that fails validation moves to `data/enrichment/.needs-attention/` instead; check it now
+  and then. To install the watcher on Windows, run once from the repo root in PowerShell:
+  `schtasks /Create /SC MINUTE /MO 15 /TN "MCG auto-enrich" /TR "wscript.exe `"$PWD\scripts\run-enrich-push-hidden.vbs`""`
 - **Editing content:** Neon is the system of record; the CSV is the original import, not a live
   source. Edit listings in [`/admin`](#admin-and-submissions); new businesses come in through the
   intake queue. Slugs are stable and unique (chains are de-collided by city/street).

@@ -1,5 +1,5 @@
 // Marshall County Guide — Prisma schema
-// Target: PostgreSQL. See DATA.md for the schema.org mapping rationale.
+// Target: PostgreSQL. Fields map to schema.org (see lib/schema-org.ts).
 //
 // Design notes:
 // - Starts CURATED (you/an editor own the data) but every piece needed for
@@ -89,7 +89,7 @@ model Business {
   lastVerifiedAt DateTime?
   verifiedBy     String?
 
-  // Quality / gold-standard pipeline (see DATA.md)
+  // Quality / gold-standard pipeline (see scripts/apply-enrichment.ts)
   qualityTier     QualityTier @default(UNREVIEWED) // data depth/trust, distinct from publish `status`
   internalContext String?     @db.Text // internal-only brief; NEVER rendered publicly
   reviewFlag      String?     // set when auto-enrichment can't safely promote (conflict, rebrand, no source)
@@ -302,7 +302,7 @@ enum ClaimStatus {
 enum QualityTier {
   UNREVIEWED // seed data as imported; unconfirmed
   STANDARD // name/category/contact confirmed against a primary source
-  GOLD // meets every criterion in DATA.md, dated + sourced
+  GOLD // meets every Gold criterion (scripts/apply-enrichment.ts), dated + sourced
 }
 
 enum UserRole {

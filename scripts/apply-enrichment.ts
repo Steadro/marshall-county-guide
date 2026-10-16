@@ -1,7 +1,7 @@
 /**
  * Apply enrichment batches to the database.
  *
- * The enrichment workflow (see DATA.md) researches businesses and writes
+ * The enrichment workflow (see COWORK.md) researches businesses and writes
  * structured records to data/enrichment/*.json. This script applies those
  * records to the live DB. It is the WRITE half of "automated batches" — the
  * research half happens via web/browser tooling and produces the JSON.
@@ -23,7 +23,7 @@
  * - Only fields present in a record are written; absent, null and blank ("")
  *   fields are left untouched.
  * - Enforces the gold bar: a record may only reach GOLD if every criterion in
- *   DATA.md is satisfied; otherwise it is written as STANDARD with a note.
+ *   goldGaps() below is satisfied; otherwise it is written as STANDARD with a note.
  * - Classification (categoryName, subcategory, tags) follows schema/TAXONOMY.md.
  *   A subcategory off its category's closed list (lib/taxonomy.ts) is not
  *   written; the record is held at STANDARD with a reviewFlag instead.

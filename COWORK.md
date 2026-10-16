@@ -2,16 +2,15 @@
 
 This file tells **Claude Cowork** how to help with this project given the one
 thing it keeps tripping on: **Cowork runs in a network-sandboxed environment.**
-Read this before doing enrichment work. For *what* a good record looks like, the
-source of truth is `DATA.md` (§2 the six Gold criteria, §3 the batch loop, record
-format, and source-tiering). This file is about *how the work flows*, not the data spec.
+Read this before doing enrichment work. It covers both *how the work flows* and *what a
+good record looks like*; `scripts/apply-enrichment.ts` is the final word on the format.
 
 ## Your role in one line
 
 **Research businesses and draft enrichment batch JSON into `data/enrichment/`.**
 You do **not** apply to the database, and you **cannot** — but you no longer need a
 human to ship it either. A local watcher on the maintainer's machine
-(`scripts/auto-enrich-push.ps1`, a Task Scheduler job running every 15 min) applies
+(`scripts/auto-enrich-push.ps1`, a Task Scheduler job running every 15 min once installed; see README) applies
 any new batch you write straight to Neon, then archives it locally. So just **write a
 valid batch file and you're done** — it goes live (within ~15 min + ~1h ISR) on its
 own. Think "author the record," not "ship the change."
@@ -69,7 +68,7 @@ The watcher is `scripts/auto-enrich-push.ps1`; it runs `scripts/apply-enrichment
 against Neon on the maintainer's machine. You never invoke either — you just produce
 the file. There is no CI and no review gate: a valid batch goes live on its own.
 
-## How to produce a batch (essentials; full spec in DATA.md §3)
+## How to produce a batch
 
 1. **File:** `data/enrichment/YYYY-MM-DD-<area>-<category>.json` — an array of records.
    Work in slices of ~20 (e.g. Lewisburg retail, outer-town restaurants).
@@ -82,11 +81,11 @@ the file. There is no CI and no review gate: a valid batch goes live on its own.
    - **Business's own website** = best source for story / about / what they do (`internalContext`, public copy).
    - **Google Business Profile / Google** = trust for **hours** and **phone**.
    - **Other sources** (random directories, aggregators) = generally discard.
-   Append the `SOURCES … CONFIDENCE …` trailer to `internalContext` (DATA.md §3) so every
-   record carries its own provenance.
+   End `internalContext` with a provenance trailer so every record carries its own sources:
+   `SOURCES: <url>; <url>. CONFIDENCE: high|medium|low, <what you could not verify>.`
 4. **Gold is requested, not granted.** Set `"qualityTier": "GOLD"` only when you believe all
    **six** criteria are met (verified name, hours, internal context, two-line public copy,
-   category, subcategory — see DATA.md §2). The apply script re-checks and downgrades if a
+   category, subcategory). The apply script re-checks and downgrades if a
    criterion is missing. **Activity-recency is NOT a criterion** (it was dropped 2026-05-31).
 5. **Classification uses the closed vocabulary in `schema/TAXONOMY.md` (committed).** `categoryName`
    and `subcategory` must be values from its lists, verbatim. Cuisine and attributes go in `tags`
@@ -116,7 +115,7 @@ the file. There is no CI and no review gate: a valid batch goes live on its own.
 **Do**
 - Research thoroughly (web search is available to you and is your main tool).
 - Write the batch JSON to `data/enrichment/`.
-- Reference `DATA.md` and `PROJECT.md` (local master docs in the repo root) for spec and state.
+- Use this file and `schema/TAXONOMY.md` as the spec.
 - Be explicit about confidence and what you could not verify.
 
 **Don't**
@@ -130,6 +129,5 @@ the file. There is no CI and no review gate: a valid batch goes live on its own.
 - **Batch dir:** `data/enrichment/` (gitignored — batches are local-only working data, never committed).
 - **Apply (run by the watcher or Claude Code, not you):** `npm run enrich:apply <file>` / `npm run enrich:dry`.
 - **Pipeline:** local — `scripts/auto-enrich-push.ps1` (Task Scheduler) applies new batches to Neon and archives them to `data/enrichment/.applied/`. No CI.
-- **Spec:** `DATA.md` §2 (Gold bar) + §3 (batch loop, record format, source-tiering).
+- **Spec:** this file (batch format, Gold bar, source-tiering); `scripts/apply-enrichment.ts` enforces it.
 - **Classification vocab:** `schema/TAXONOMY.md` (committed) — closed category / subcategory / tag lists.
-- **State / runbooks:** `PROJECT.md`.

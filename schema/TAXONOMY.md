@@ -12,8 +12,7 @@ School"). That drift makes clean grouping and filtering impossible.
 
 Related: [`prisma/schema.prisma`](../prisma/schema.prisma) (the fields),
 [`lib/category-groups.ts`](../lib/category-groups.ts) (the group layer). The
-canonical data-model + quality bar narrative lives in `DATA.md` (maintainer's
-machine, gitignored); keep this file in sync with it.
+quality bar is described in README and enforced by `scripts/apply-enrichment.ts`.
 
 ---
 

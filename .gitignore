@@ -37,8 +37,6 @@ yarn-error.log*
 /scripts/logs/
 
 # maintainer-local working docs (operating truth, kept out of the repo by choice)
-/PROJECT.md
-/DATA.md
 
 # Enrichment batches are the maintainer's local working data: research notes on
 # named businesses, kept off GitHub. The pipeline that applies them ships in the

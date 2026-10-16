@@ -58,7 +58,7 @@ const INTERESTS: Interest[] = [
 
 export function VisitorBand() {
   return (
-    <section id="visit" className="relative isolate scroll-mt-20 overflow-hidden bg-pine-dark text-paper">
+    <section id="visit" className="relative isolate overflow-hidden bg-pine-dark text-paper">
       {/* Decorative goldenrod glow, top-right */}
       <div
         aria-hidden="true"
@@ -88,7 +88,7 @@ export function VisitorBand() {
             <Link
               key={it.name}
               href={it.href}
-              className="group flex flex-col overflow-hidden rounded-card bg-card text-ink shadow-soft ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-lift"
+              className="group flex flex-col overflow-hidden rounded-card bg-card text-ink shadow-soft ring-1 ring-black/5 transition hover:-translate-y-1 hover:shadow-lift focus-visible:outline-paper"
             >
               {/* Photo (16:10) — hidden on phones so the cards stay compact */}
               <div className="relative hidden aspect-[16/10] overflow-hidden bg-paper-2 sm:block">

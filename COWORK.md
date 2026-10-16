@@ -26,6 +26,11 @@ Two consequences of this being fully automatic, no-review-gate:
 - **Only write a batch when it's actually ready.** A half-finished file in
   `data/enrichment/` will get applied at the next 15-min tick. If you are
   mid-draft, keep it elsewhere until done, or expect it to ship.
+- **One bad record holds the whole batch.** Before writing anything, the apply
+  checks every record and matches each to exactly one business and category. Any
+  invalid or unmatched record means nothing from that file is written, and the
+  watcher moves it to `data/enrichment/.needs-attention/` for the maintainer. Put
+  shaky records in their own file so they can't hold back the good ones.
 
 ## The hard boundary (read this twice)
 
@@ -71,8 +76,8 @@ the file. There is no CI and no review gate: a valid batch goes live on its own.
 2. **Match key:** each record needs a `slug` (preferred) or `name` + `city`. The apply
    script matches by `slug`, else by `name`+`city` (case-insensitive). **Slugs must match
    the seed's `slugify`** — notably `&` becomes `and` (e.g. `el-patron-mexican-restaurant-and-grill`).
-   Unmatched records are reported, not invented — enrichment only **updates** existing
-   businesses, it never creates them.
+   An unmatched record (no business, or more than one) rejects the whole batch — enrichment
+   only **updates** existing businesses, it never creates them.
 3. **Source-tiering (non-negotiable):**
    - **Business's own website** = best source for story / about / what they do (`internalContext`, public copy).
    - **Google Business Profile / Google** = trust for **hours** and **phone**.
@@ -87,12 +92,24 @@ the file. There is no CI and no review gate: a valid batch goes live on its own.
    and `subcategory` must be values from its lists, verbatim. Cuisine and attributes go in `tags`
    (a `string[]`), **not** in `subcategory` (e.g. subcategory `Restaurant` + tags `["Italian"]`). If
    nothing fits, set `reviewFlag` rather than inventing a value — it'll hold at STANDARD for review.
+   The apply enforces the lists: an off-list `subcategory` is not written, and the record lands
+   as STANDARD with a `reviewFlag` naming it. `categoryName` matches a category's name or slug.
 6. **When unsure, flag — don't force.** On a conflict, rebrand, possible closure, or low
    confidence on hours/identity, set `"reviewFlag": "...short note..."` and leave it STANDARD.
    Because applies are now automatic, a flagged record still goes live — but as STANDARD,
    never GOLD, and its note shows in the apply log for the maintainer to revisit. So
    flagging caps the blast radius; it does not hold the record back. Never invent fields to
    force GOLD on a business you could not verify.
+7. **Values the apply rejects** (any one rejects the batch):
+   - A field of the wrong type. Every field is a string except `tags` (array of strings) and `hours`.
+   - `hours` blocks other than `{"day": 0-6, "opens": "HH:MM", "closes": "HH:MM"}` (24h, 0 = Sunday)
+     or `{"day": 0-6, "closed": true}`. `closed: false` is an open day and still needs times.
+   - `status` outside DRAFT / PUBLISHED / UNVERIFIED / CLOSED, `qualityTier` outside
+     UNREVIEWED / STANDARD / GOLD, or a `lastActiveAt` that isn't a date (`YYYY-MM-DD`).
+   - A record with no `slug`/`name`, or with neither `qualityTier` nor `verifiedBy`.
+
+   Leave out a field you couldn't verify. `""`, whitespace and `null` count as missing: never
+   written, never counted toward Gold.
 
 ## Do / Don't
 

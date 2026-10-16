@@ -1,8 +1,10 @@
 /**
  * Seed the directory from data/businesses-seed.csv.
  *
- * - Idempotent: upserts Categories and Businesses by their stable `slug`, so
- *   re-running refreshes data without creating duplicates.
+ * - One-time bootstrap for an EMPTY database. Neon is the system of record, and
+ *   listings removed there are still in the CSV, so it refuses to run once the
+ *   Business table has rows. `--force` (npm run seed -- --force) overrides that
+ *   and re-creates every CSV row whose slug isn't in the table.
  * - Robust CSV parse (handles quoted fields containing commas).
  * - Unique, stable business slugs; chains with multiple locations are
  *   de-collided by city, then street, then a numeric suffix.
@@ -229,6 +231,18 @@ function makeUniqueSlug(
 // --- Seed -------------------------------------------------------------------
 
 async function main() {
+  const existingCount = await prisma.business.count();
+  if (existingCount > 0 && !process.argv.includes("--force")) {
+    console.error(
+      `Refusing to seed: the Business table already has ${existingCount} rows.\n` +
+        "Neon is the system of record, not the CSV. Listings removed in Neon are still in the\n" +
+        "CSV, so a re-seed would bring them back. Seed only an empty database, or pass --force\n" +
+        "(npm run seed -- --force) if you really mean it.",
+    );
+    process.exitCode = 1;
+    return;
+  }
+
   const csvPath = join(process.cwd(), "data", "businesses-seed.csv");
   const text = readFileSync(csvPath, "utf8");
   const rows = parseCsv(text).filter((r) => r.some((cell) => cell.trim() !== ""));

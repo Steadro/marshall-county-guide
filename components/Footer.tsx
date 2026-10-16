@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { siteConfig, maintainer, TOWNS } from "@/lib/site";
+import { HashLink } from "@/components/HashLink";
 
 // Photo attribution for the homepage imagery. Public domain needs no credit;
 // CC BY / CC BY-SA require author + license, satisfied here.
@@ -58,14 +59,14 @@ export function Footer() {
           </h2>
           <ul className="mt-4 space-y-2 text-sm">
             <li>
-              <Link href="/businesses" className="text-ink-soft hover:text-pine">
+              <Link href="/businesses" prefetch={false} className="text-ink-soft hover:text-pine">
                 All businesses
               </Link>
             </li>
             <li>
-              <Link href="/#categories" className="text-ink-soft hover:text-pine">
+              <HashLink href="/#categories" className="text-ink-soft hover:text-pine">
                 Categories
-              </Link>
+              </HashLink>
             </li>
             <li>
               <Link href="/history" className="text-ink-soft hover:text-pine">
@@ -95,7 +96,7 @@ export function Footer() {
           <ul className="mt-4 space-y-2 text-sm">
             {TOWNS.map((t) => (
               <li key={t.slug}>
-                <Link href={`/${t.slug}`} className="text-ink-soft hover:text-pine">
+                <Link href={`/${t.slug}`} prefetch={false} className="text-ink-soft hover:text-pine">
                   {t.name}
                 </Link>
               </li>

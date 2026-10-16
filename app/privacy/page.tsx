@@ -22,10 +22,10 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-xl text-ink">When you browse</h2>
           <p className="mt-2">
-            We count visits with Plausible, which doesn&apos;t use cookies or track you across
-            sites; we only see totals like page views and referring sites. Maps on listing and
-            category pages are loaded from Google Maps, so Google receives your IP address and may
-            set its own cookies under{" "}
+            We count visits with Vercel Web Analytics, which doesn&apos;t use cookies or track you
+            across sites; we only see totals like page views and referring sites, and what you
+            type into search is left out. Maps on listing and category pages are loaded from
+            Google Maps, so Google receives your IP address and may set its own cookies under{" "}
             <a
               href="https://policies.google.com/privacy"
               target="_blank"
@@ -53,8 +53,9 @@ export default function PrivacyPage() {
           <h2 className="text-xl text-ink">Who handles it</h2>
           <p className="mt-2">
             The site runs on Vercel, listings and form submissions are stored in a Neon database,
-            and new submissions are emailed to the maintainer through n8n and Resend. We don&apos;t
-            share your information with anyone else.
+            and new submissions are emailed to the maintainer through n8n and Resend. When we
+            research and write up a listing, submissions may be processed with AI assistance from
+            Anthropic&apos;s Claude. We don&apos;t share your information with anyone else.
           </p>
         </section>
 
@@ -69,7 +70,7 @@ export default function PrivacyPage() {
           </p>
         </section>
 
-        <p className="text-sm text-ink-faint">Last updated October 14, 2026.</p>
+        <p className="text-sm text-ink-faint">Last updated October 15, 2026.</p>
       </div>
     </div>
   );

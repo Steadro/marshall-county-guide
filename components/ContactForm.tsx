@@ -87,7 +87,7 @@ export function ContactForm({
 
   const labelClass = "block text-sm font-medium text-ink";
   const fieldClass =
-    "mt-1.5 w-full rounded-xl border border-field bg-card px-4 py-3 text-sm text-ink shadow-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20";
+    "mt-1.5 w-full rounded-xl border border-field bg-card px-4 py-3 text-sm text-ink shadow-soft transition focus:border-pine focus:outline-hidden focus:ring-2 focus:ring-pine/20";
 
   return (
     <form onSubmit={onSubmit} className="space-y-5" noValidate>

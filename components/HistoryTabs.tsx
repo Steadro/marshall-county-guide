@@ -6,7 +6,6 @@ import { PLACES } from "@/lib/history";
 
 export function HistoryTabs() {
   const [active, setActive] = useState(PLACES[0].key);
-  const place = PLACES.find((p) => p.key === active) ?? PLACES[0];
   const keys = PLACES.map((p) => p.key);
 
   return (
@@ -26,7 +25,7 @@ export function HistoryTabs() {
             id={`history-tab-${p.key}`}
             data-tab={p.key}
             aria-selected={p.key === active}
-            aria-controls="history-panel"
+            aria-controls={`history-panel-${p.key}`}
             tabIndex={p.key === active ? 0 : -1}
             onClick={() => setActive(p.key)}
             className={cn(
@@ -41,38 +40,49 @@ export function HistoryTabs() {
         ))}
       </div>
 
-      <div className="mt-7 grid gap-8 lg:grid-cols-[1.6fr_1fr]">
-        <div role="tabpanel" id="history-panel" aria-labelledby={`history-tab-${active}`}>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-pine">
-            {place.meta}
-          </p>
-          <h3 className="mt-2 font-serif text-2xl text-ink sm:text-3xl">{place.label}</h3>
-          <div className="mt-4 space-y-4">
-            {place.paragraphs.map((text, i) => (
-              <p key={i} className="text-pretty leading-relaxed text-ink-soft">
-                {text}
-              </p>
-            ))}
+      {/* Every panel is server-rendered (so all six histories are in the HTML);
+          inactive ones are just `hidden`. */}
+      {PLACES.map((place) => (
+        <div
+          key={place.key}
+          role="tabpanel"
+          id={`history-panel-${place.key}`}
+          aria-labelledby={`history-tab-${place.key}`}
+          hidden={place.key !== active}
+          className="mt-7 grid gap-8 lg:grid-cols-[1.6fr_1fr]"
+        >
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-pine">
+              {place.meta}
+            </p>
+            <h3 className="mt-2 font-serif text-2xl text-ink sm:text-3xl">{place.label}</h3>
+            <div className="mt-4 space-y-4">
+              {place.paragraphs.map((text, i) => (
+                <p key={i} className="text-pretty leading-relaxed text-ink-soft">
+                  {text}
+                </p>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <aside className="rounded-card bg-paper-2/60 p-5 ring-1 ring-line/70">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-faint">
-            Good to know
-          </p>
-          <ul className="mt-4 space-y-3">
-            {place.facts.map((fact, i) => (
-              <li key={i} className="flex gap-3 text-sm leading-relaxed text-ink-soft">
-                <span
-                  aria-hidden="true"
-                  className="mt-2 h-1.5 w-1.5 shrink-0 rounded-pill bg-pine"
-                />
-                <span>{fact}</span>
-              </li>
-            ))}
-          </ul>
-        </aside>
-      </div>
+          <aside className="rounded-card bg-paper-2/60 p-5 ring-1 ring-line/70">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-faint">
+              Good to know
+            </p>
+            <ul className="mt-4 space-y-3">
+              {place.facts.map((fact, i) => (
+                <li key={i} className="flex gap-3 text-sm leading-relaxed text-ink-soft">
+                  <span
+                    aria-hidden="true"
+                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-pill bg-pine"
+                  />
+                  <span>{fact}</span>
+                </li>
+              ))}
+            </ul>
+          </aside>
+        </div>
+      ))}
     </div>
   );
 }

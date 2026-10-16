@@ -118,7 +118,7 @@ export function BusinessExplorer({
 
   return (
     <div>
-      <div className="flex flex-col gap-3 rounded-card bg-card p-4 shadow-soft ring-1 ring-line/70 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 rounded-card bg-card p-4 shadow-soft ring-1 ring-line/70 lg:flex-row lg:items-center">
         <div className="relative flex-1">
           <Search
             className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint"
@@ -130,7 +130,7 @@ export function BusinessExplorer({
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search places…"
             aria-label="Search places"
-            className="w-full rounded-pill border border-field bg-paper py-2.5 pl-9 pr-3 text-sm text-ink outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
+            className="w-full rounded-pill border border-field bg-paper py-2.5 pl-9 pr-3 text-sm text-ink transition focus:border-pine focus:outline-hidden focus:ring-2 focus:ring-pine/20"
           />
         </div>
 
@@ -148,7 +148,7 @@ export function BusinessExplorer({
                 id="filter-category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="rounded-pill border border-field bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
+                className="rounded-pill border border-field bg-paper px-3 py-2.5 text-sm text-ink-soft transition focus:border-pine focus:outline-hidden focus:ring-2 focus:ring-pine/20"
               >
                 <option value="">All categories</option>
                 {categoryOptions.map((o) => (
@@ -167,7 +167,7 @@ export function BusinessExplorer({
             id="sort-by"
             value={sort}
             onChange={(e) => setSort(e.target.value as SortKey)}
-            className="rounded-pill border border-field bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20"
+            className="rounded-pill border border-field bg-paper px-3 py-2.5 text-sm text-ink-soft transition focus:border-pine focus:outline-hidden focus:ring-2 focus:ring-pine/20"
           >
             <option value="name">Sort: A–Z</option>
             <option value="city">Sort: City</option>
@@ -185,7 +185,7 @@ export function BusinessExplorer({
                 id="filter-town-m"
                 value={town}
                 onChange={(e) => setTown(e.target.value)}
-                className="rounded-pill border border-field bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20 sm:hidden"
+                className="rounded-pill border border-field bg-paper px-3 py-2.5 text-sm text-ink-soft transition focus:border-pine focus:outline-hidden focus:ring-2 focus:ring-pine/20 sm:hidden"
               >
                 <option value="">All towns</option>
                 {townOptions.map((o) => (
@@ -205,7 +205,7 @@ export function BusinessExplorer({
                 id="filter-type-m"
                 value={subcategory}
                 onChange={(e) => setSubcategory(e.target.value)}
-                className="rounded-pill border border-field bg-paper px-3 py-2.5 text-sm text-ink-soft outline-none transition focus:border-pine focus:ring-2 focus:ring-pine/20 sm:hidden"
+                className="rounded-pill border border-field bg-paper px-3 py-2.5 text-sm text-ink-soft transition focus:border-pine focus:outline-hidden focus:ring-2 focus:ring-pine/20 sm:hidden"
               >
                 <option value="">All types</option>
                 {subcategoryOptions.map((o) => (

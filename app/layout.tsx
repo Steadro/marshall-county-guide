@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Fraunces, Inter, Playfair_Display } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { SiteAnalytics } from "@/components/SiteAnalytics";
 import { AdminProvider } from "@/components/admin/AdminContext";
 import { AdminBanner } from "@/components/admin/AdminBanner";
 import { VotingBanner } from "@/components/VotingBanner";
@@ -26,6 +26,8 @@ const playfair = Playfair_Display({
   style: ["italic"],
   variable: "--font-fancy",
   display: "swap",
+  // Only the homepage hero (RotatingPlace) uses it; don't preload it on every page.
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -61,14 +63,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable} ${playfair.variable}`}>
       <body className="flex min-h-screen flex-col">
-        <Script
-          defer
-          src="https://plausible.io/js/pa-DU0pAHVftb6J0erszPIrU.js"
-          strategy="afterInteractive"
-        />
-        <Script id="plausible-init" strategy="afterInteractive">
-          {`window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()`}
-        </Script>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-pine focus:px-4 focus:py-2 focus:text-white"
@@ -84,6 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </main>
           <Footer />
         </AdminProvider>
+        <SiteAnalytics />
       </body>
     </html>
   );

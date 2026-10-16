@@ -78,6 +78,12 @@
      animation that lands "before the section" the user left from. Anchor links
      jump instantly instead. */
 
+  /* Anchor jumps (#visit, #categories, the skip link) land clear of the sticky
+     4rem header instead of under it. */
+  html {
+    scroll-padding-top: 4.5rem;
+  }
+
   body {
     background-color: var(--color-paper);
     color: var(--color-ink);

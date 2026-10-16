@@ -39,34 +39,37 @@ base, deep green-ink text, a rolling-hills pine primary, and a goldenrod accent.
 ## Prerequisites
 
 - **Node.js 20+** (built and tested on Node 24)
-- A **PostgreSQL database**. A free [Neon](https://neon.tech) project is the recommended path —
-  it doubles as your dev and production database (Vercel is serverless and can't reach a DB on
-  your laptop).
+- A **PostgreSQL database**. A free [Neon](https://neon.tech) project is the recommended path
+  (Vercel is serverless and can't reach a DB on your laptop). Develop against a Neon **branch**,
+  never the production database: a branch is a copy-on-write clone, so you get real data and
+  can't break the live site.
 
 ---
 
 ## Quick start
 
 ```bash
-# 1. Install dependencies (runs `prisma generate` automatically)
+# 1. Configure environment FIRST: npm install runs `prisma generate`, which needs DATABASE_URL
+cp .env.example .env
+#    then edit .env and set DATABASE_URL to a Neon branch (never production)
+
+# 2. Install dependencies
 npm install
 
-# 2. Configure environment
-cp .env.example .env
-#    then edit .env and set DATABASE_URL (+ optional geocoding key)
-
-# 3. Create the database schema
-npx prisma migrate dev
-
-# 4. Seed the businesses (idempotent, safe to re-run)
+# 3. Empty database only: build the schema from prisma/migrations, then load the CSV.
+#    Skip both if your branch was cut from production; it already has schema and data.
+npx prisma migrate deploy
 npm run seed
 
-# 5. (Optional) Geocode addresses for maps, needs a geocoding key (see below)
+# 4. (Optional) Geocode addresses for maps. Free, no key needed.
 npm run geocode
 
-# 6. Run it
+# 5. Run it
 npm run dev          # http://localhost:3000
 ```
+
+The seed loads the original CSV import. The live directory has grown past it in Neon, so a branch
+of production is the way to see real data.
 
 To verify a production build locally:
 
@@ -84,7 +87,7 @@ Copy [`.env.example`](.env.example) to `.env`. Never commit `.env` (it's git-ign
 | --------------------------- | -------- | ----------------------------------------------------------------------- |
 | `DATABASE_URL`              | **Yes**  | Postgres connection string. Use the **pooled** string in production.    |
 | `NEXT_PUBLIC_SITE_URL`      | Prod     | Public base URL (no trailing slash). Drives canonical URLs, sitemap, OG. |
-| `GEOCODER`                  | No       | `google` or `mapbox` to enable the geocode step. Blank = skip.          |
+| `GEOCODER`                  | No       | Blank = free US Census + OpenStreetMap geocoding. `google` or `mapbox` = paid provider instead. |
 | `GOOGLE_GEOCODING_API_KEY`  | No       | Required when `GEOCODER=google`.                                        |
 | `MAPBOX_TOKEN`              | No       | Required when `GEOCODER=mapbox`.                                        |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Prod | Browser key for the maps: Maps JavaScript API (category maps) + Maps Embed API (business pages). Referrer-restrict it. |
@@ -92,9 +95,13 @@ Copy [`.env.example`](.env.example) to `.env`. Never commit `.env` (it's git-ign
 | `N8N_WEBHOOK_SECRET`        | No       | Sent as `x-mcg-secret` to the webhooks; have n8n require it.            |
 | `IP_HASH_SALT`              | No       | Salt for hashed submitter IPs (falls back to `SESSION_SECRET`).         |
 
+The admin and moderation variables are covered under [Admin and submissions](#admin-and-submissions).
+
 > **Note:** `latitude`/`longitude` are empty in the seed. Pages work fine without them, the map is
-> simply hidden. Run `npm run geocode` once with a key to fill them in. The step skips rows that
-> already have coordinates or lack a street address, so it's safe to re-run.
+> simply hidden. Run `npm run geocode` to fill them in: it's free and needs no key (US Census
+> first, then OpenStreetMap for anything Census can't match). Set `GEOCODER` only to use Google or
+> Mapbox instead. The step skips rows that already have coordinates or lack a street address, so
+> it's safe to re-run.
 
 > **Heads-up (harmless):** the `pg` driver prints a one-line `sslmode=require` deprecation warning
 > during seed/build. It does not affect anything. To silence it, switch your `DATABASE_URL`
@@ -109,9 +116,9 @@ Copy [`.env.example`](.env.example) to `.env`. Never commit `.env` (it's git-ign
 | `npm run dev`          | Start the dev server                                         |
 | `npm run build`        | Production build (prerenders every business/category/town)   |
 | `npm run start`        | Serve the production build                                   |
-| `npm run seed`         | Upsert categories + businesses from the CSV (idempotent)     |
-| `npm run geocode`      | Fill latitude/longitude from addresses (needs a key)         |
-| `npm run db:migrate`   | `prisma migrate dev`                                         |
+| `npm run seed`         | Load the CSV into an empty database (refuses once businesses exist) |
+| `npm run geocode`      | Fill latitude/longitude from addresses (free, no key)        |
+| `npm run db:migrate`   | `prisma migrate dev`: turn a schema change into a migration (Neon branch only) |
 | `npm run db:studio`    | Open Prisma Studio to browse/edit data                       |
 | `npm run enrich:apply` | Apply data-quality enrichment batches from `data/enrichment/*.json` |
 
@@ -132,6 +139,8 @@ app/
   history/page.tsx         Local history of the county + towns
   for-owners/page.tsx      Info for business owners & local governments
   contact/page.tsx         Contact form (update/add/remove a listing)
+  add-business/            Public "Add your business" intake form
+  admin/                   Curator area: listings editor + submissions queue (login required)
   api/contact/route.ts     Contact handler: honeypot + rate limit -> n8n webhook -> Resend
   sitemap.ts, robots.ts    Generated sitemap.xml + robots.txt
   generated/prisma/        Prisma client (generated; git-ignored)
@@ -142,17 +151,19 @@ lib/
   schema-org.ts            LocalBusiness / Breadcrumb / WebSite JSON-LD
   placeholder.ts, utils.ts, site.ts, geocode.ts
 prisma/
-  schema.prisma            Data model Prisma migrates from (operative schema)
-  seed.ts                  CSV → DB seeder (enrichment-safe; see below)
+  schema.prisma            Data model, annotated inline; Prisma migrates + generates from it
+  migrations/              Migration history (see Database and migrations)
+  seed.ts                  CSV → empty-DB bootstrap (refuses once businesses exist)
 schema/
-  schema.prisma            Annotated reference copy of the data model
   TAXONOMY.md              Closed category / subcategory / tag vocabulary (classification)
 scripts/
   geocode.ts               Standalone geocoding pass
+  hash-password.ts         Generate the admin credential env vars
   apply-enrichment.ts      Apply data-quality enrichment batches (npm run enrich:apply)
-  sql/                     Hand-written additive SQL migrations
+  auto-enrich-push.ps1     Local watcher that applies new enrichment batches to Neon
+  sql/                     Historical hand-run SQL, now folded into the baseline migration
 data/
-  businesses-seed.csv      Source data for every business
+  businesses-seed.csv      Original import the seed loads (Neon is the system of record)
   enrichment/              Data-quality enrichment batches (JSON)
 ```
 
@@ -160,10 +171,10 @@ data/
 
 ## Data model & content
 
-- **Schema:** `prisma/schema.prisma` is the operative schema Prisma migrates and generates from
-  (`schema/schema.prisma` is an annotated reference copy). The model maps 1:1 onto schema.org
-  `LocalBusiness` and is built to add business self-service later (`User`, `Claim`, `ownerId`,
-  `claimStatus`) **without a migration** — those tables stay dormant in v1.
+- **Schema:** `prisma/schema.prisma` is the data model, annotated inline; Prisma migrates and
+  generates from it. The model maps 1:1 onto schema.org `LocalBusiness` and is built to add
+  business self-service later (`User`, `Claim`, `ownerId`, `claimStatus`) **without a migration** —
+  those tables stay dormant in v1.
 - **Provenance & freshness:** every record carries `dataSource`/`sourceUrl`/`lastVerifiedAt`. Seed
   rows start `UNVERIFIED`; a record is moved to `PUBLISHED` once its details are confirmed.
 - **Data quality tiers:** each business has a `qualityTier` — `UNREVIEWED` (as imported) →
@@ -184,10 +195,46 @@ data/
   ([`scripts/auto-enrich-push.ps1`](scripts/auto-enrich-push.ps1)) applies new batches to Neon via
   `npm run enrich:apply <file>` and archives the applied file; `npm run enrich:dry` previews without
   writing. Neon is the system of record. (ISR means enrichment shows up live within ~1h, no redeploy.)
-- **Editing content:** add/extend rows in `data/businesses-seed.csv` and re-run `npm run seed` (it
-  only creates new rows and refreshes `UNREVIEWED` ones — it never overwrites enriched records), or
-  edit directly via `npm run db:studio`. Slugs are stable and unique (chains are de-collided by
-  city/street).
+- **Editing content:** Neon is the system of record; the CSV is the original import, not a live
+  source. Edit listings in [`/admin`](#admin-and-submissions); new businesses come in through the
+  intake queue. Slugs are stable and unique (chains are de-collided by city/street).
+
+---
+
+## Database and migrations
+
+- **Empty database:** `npx prisma migrate deploy` builds the schema from `prisma/migrations`, then
+  `npm run seed` loads the CSV. The seed refuses once the `Business` table has rows, because
+  listings removed in Neon are still in the CSV and a re-seed would bring them back.
+  `npm run seed -- --force` overrides that, so don't use it on a database with real data.
+- **Changing the schema:** edit `prisma/schema.prisma`, run `npm run db:migrate -- --name <change>`
+  against your Neon branch, and commit the new migration folder. Once it merges, run
+  `npx prisma migrate deploy` against production's direct (non-pooled) connection string.
+- **Never `prisma db push` or hand-run SQL on production.** That is how the live schema drifted
+  from its migrations; `prisma/migrations/*_baseline_live_schema` caught the history back up.
+
+---
+
+## Admin and submissions
+
+`/admin` is the curator area: a single login held in env vars, no user accounts.
+
+1. Run `npx tsx scripts/hash-password.ts "a-long-random-password"`. It prints `ADMIN_EMAIL`,
+   `ADMIN_PASSWORD_HASH` (scrypt) and a fresh `SESSION_SECRET`. Set `ADMIN_EMAIL` to the address
+   you'll log in with, then add all three to `.env` and to the Vercel project env. The plaintext
+   password is never stored.
+2. Sign in at `/admin/login`. `/admin` lists every listing and opens an editor for each one.
+3. `/admin/intake` is the review queue for the public forms (`/add-business` and `/contact`), which
+   save to the `Submission` table. Approving a business intake creates a DRAFT listing and opens it
+   in the editor. Nothing publishes on its own.
+
+| Variable                 | Purpose                                                                    |
+| ------------------------ | -------------------------------------------------------------------------- |
+| `ADMIN_EMAIL`            | The `/admin` login email.                                                  |
+| `ADMIN_PASSWORD_HASH`    | scrypt hash from `scripts/hash-password.ts`.                               |
+| `SESSION_SECRET`         | Signs the admin session cookie. Rotate it to log everyone out.             |
+| `INTAKE_ANALYSIS_TOKEN`  | Bearer token for `POST /api/intake/[id]/analysis`, where an automation (n8n → Claude API) writes its triage onto a submission. The endpoint returns 503 until this is set. |
+| `MODERATION_EXTRA_WORDS` | Comma-separated extra terms for the submission content screen (`lib/content-filter.ts`), kept out of this public repo. A match flags the submission for review; it never blocks it. |
 
 ---
 
@@ -213,14 +260,16 @@ Validate structured data with Google's [Rich Results Test](https://search.google
    - `DATABASE_URL` — your **pooled** Neon connection string. (Required at build time, too: the
      `postinstall` `prisma generate` and the static build both need it.)
    - `NEXT_PUBLIC_SITE_URL` — your production URL, e.g. `https://marshallcountyguide.com`.
-   - Optionally `GEOCODER` + the matching key.
+   - `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, plus the [admin variables](#admin-and-submissions) if
+     you use `/admin`. (Geocoding runs from your machine, so `GEOCODER` isn't needed here.)
 3. Build settings: defaults work. `prisma generate` runs automatically via `postinstall`.
-4. **Apply the schema + seed to your production database** once, from your machine pointed at the
-   prod `DATABASE_URL`:
+4. **Bootstrap a new, empty production database** once, from your machine with `DATABASE_URL`
+   set to the prod database's direct (non-pooled) connection string. After that the seed refuses
+   to run there, and schema changes reach production only through `npx prisma migrate deploy`.
    ```bash
    npx prisma migrate deploy
    npm run seed          # load the businesses
-   npm run geocode       # optional, if you have a key
+   npm run geocode       # optional; free, no key needed
    ```
 5. Deploy. Then submit `https://your-domain/sitemap.xml` to Google Search Console.
 
@@ -228,7 +277,8 @@ Validate structured data with Google's [Rich Results Test](https://search.google
 
 ## Definition of done (v1), status
 
-- [x] `npm install && prisma migrate dev && npm run seed && npm run dev` brings up the full directory
+- [x] With `.env` in place, `npm install && npx prisma migrate deploy && npm run seed && npm run dev`
+      brings up the directory on an empty database
 - [x] All routes render; every business reachable by a unique slug; no broken links
 - [x] Valid `LocalBusiness` JSON-LD on listing pages (validate in Rich Results Test)
 - [x] Deterministic placeholder cards for every business (no empty image slots)
@@ -238,5 +288,5 @@ Validate structured data with Google's [Rich Results Test](https://search.google
 
 ## Out of scope for v1
 
-Business self-service / claim flow, auth, reviews/ratings, payments, and an admin CMS. The schema
-reserves space for these; editing happens via the CSV/seed or Prisma Studio for now.
+Business self-service / claim flow (owner accounts), reviews/ratings, and payments. The schema
+reserves space for these (`User`, `Claim`, `ownerId`, `claimStatus`).

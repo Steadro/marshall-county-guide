@@ -127,10 +127,13 @@ export const townNameToSlug = new Map<string, string>(
 );
 export const townSlugToName = new Map<string, string>(TOWNS.map((t) => [t.slug, t.name]));
 
-export const mainNav = [
-  { href: "/businesses", label: "All Businesses" },
+// "/#..." items render as a plain <a> (HashLink) so the browser's own fragment
+// jump moves keyboard focus into the section; <Link> only scrolls.
+// `prefetch: false` stops every page from prefetching the full directory.
+export const mainNav: { href: string; label: string; prefetch?: false }[] = [
+  { href: "/businesses", label: "All Businesses", prefetch: false },
   { href: "/#visit", label: "Things to Do" },
   { href: "/#categories", label: "Categories" },
   { href: "/history", label: "History" },
   { href: "/about", label: "About" },
-] as const;
+];

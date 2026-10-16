@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Inter, Playfair_Display } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { HashLink } from "@/components/HashLink";
 import { SiteAnalytics } from "@/components/SiteAnalytics";
 import { AdminProvider } from "@/components/admin/AdminContext";
 import { AdminBanner } from "@/components/admin/AdminBanner";
@@ -63,12 +64,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable} ${playfair.variable}`}>
       <body className="flex min-h-screen flex-col">
-        <a
+        <HashLink
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-pine focus:px-4 focus:py-2 focus:text-white"
         >
           Skip to content
-        </a>
+        </HashLink>
         <AdminProvider>
           {Date.now() < votingNotice.endsAt.getTime() ? <VotingBanner /> : null}
           <Header />

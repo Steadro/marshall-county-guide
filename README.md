@@ -189,7 +189,8 @@ data/
   [`schema/TAXONOMY.md`](schema/TAXONOMY.md): 9 consumer browse categories over the 22 DB categories,
   per-category subcategory lists, and a fit-or-flag rule. The browse also supports **multi-type** —
   a place can show under more than one type chip via a type-tag (e.g. a donut shop in both Bakery and
-  Restaurant). `scripts/normalize-taxonomy.ts` enforces the closed lists.
+  Restaurant). The subcategory lists live in `lib/taxonomy.ts`: `scripts/apply-enrichment.ts`
+  refuses off-list values, and `scripts/normalize-taxonomy.ts` maps drifted values onto them.
 - **Enrichment pipeline:** batches are drafted as `data/enrichment/*.json` (gitignored — they hold
   the maintainer's local research notes, so they stay off GitHub). A local watcher
   ([`scripts/auto-enrich-push.ps1`](scripts/auto-enrich-push.ps1)) applies new batches to Neon via
